@@ -9,9 +9,9 @@
  */ 
 
 $hotedeconnexion = "127.0.0.1"; // 127.0.0.1 = Localhost
-$basededonnee = "Nix";
-$utilisateur = "Nix-USER";
-$motdepasse = "Nix-PASSWORD";
+$basededonnee = "Fix";
+$utilisateur = "Fix-USER";
+$motdepasse = "Fix-PASSWORD";
 
 
 ?>
