@@ -44,7 +44,15 @@ Projet réalisé par Nem-developing, tout droits réservés.
             </div>
 
 
-
+            <?php
+            include './config/config.php';  // Import des informations de connexion à la base de données.
+            
+            // Établissement de la connexion au serveur mysql.
+            $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
+            
+            // Commande SQL permetant de récupérer la liste des tickets non-traités.
+            $req = 'SELECT * FROM `tickets` where `statut` = "0";';
+            ?>
 
             <div class="table-responsive">
                 <table class="table table-dark">
