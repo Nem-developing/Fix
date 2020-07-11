@@ -40,7 +40,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
             <div id="boutons">
                  <div class="col boutons"><a href="pages/nouveau-ticket.php"><button type="button" class="btn btn-primary btn-lg btn-block">Nouveau ticket</button></a></div>
-                <div class="col boutons"><button type="button" class="btn btn-warning btn-lg btn-block">Tickets Archivés</button></div>
+                <div class="col boutons"><a href="pages/archives.php"><button type="button" class="btn btn-warning btn-lg btn-block">Tickets Archivés</button></a></div>
             </div>
 
             <div class="table-responsive">
