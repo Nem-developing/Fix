@@ -64,7 +64,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         // Établissement de la connexion au serveur mysql.
                         $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
                         // Commande SQL permetant de récupérer la liste des serveurs actifs.
-                        $req = 'SELECT * FROM `tickets` where `etat` = "0";';
+                        $req = 'SELECT * FROM `tickets` where `etat` = "0" OR `etat` = "1";';
                         // Envoie au serveur la commande via le biais des informations de connexion.
                         $res = $cnx->query($req);
 
