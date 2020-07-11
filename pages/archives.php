@@ -37,7 +37,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
         </nav>  
 
         <div class="bg-dark">
-
+            <a href="../index.php"><button type="button" class="btn btn-primary btn-lg btn-block">Retour aux tickets actifs</button>
            
             <div class="table-responsive">
                 <table class="table table-dark">
