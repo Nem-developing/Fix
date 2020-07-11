@@ -68,6 +68,38 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
             }
+            
+            
+            switch ($erreur) {
+                case $value:
+
+
+                    break;
+            }
+            
+            // Changement du texte en INT.
+            switch ($urgence) {
+                case "Faible":
+                    $urgence = 0;
+                    break;
+                case "Normal":
+                    $urgence = 1;
+                    break;
+                case "Urgent":
+                    $urgence = 2;
+                    break;
+                
+            }
+            
+            
+            // Envoie des informations du formulaire dans la table.
+            if (!$mysqli->query("INSERT INTO `tickets` (`sujetprincipal`, `description`, `date`, `urgence`, `etat`, `ip`) VALUES ('$sujetprincipal', '$description', '$date', '0', '0', 'ip');")) {
+                echo "<div class='alert alert-danger' role='alert'> Echec lors l'inssertion des éléments dans la table 'tickets' ! </div>";    // Affichage de l'erreur.
+                echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
+                $erreur = $erreur + 1;
+            }
+            
+            
             ?>
         </div>
 
@@ -79,5 +111,3 @@ Projet réalisé par Nem-developing, tout droits réservés.
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     </body>
 </html>
-
-
