@@ -36,24 +36,79 @@ Projet réalisé par Nem-developing, tout droits réservés.
             </div>
         </nav>  
 
-        <div class="card bg-dark text-white">
-            <div class="card-header">
-                Ticket N° 45645
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">SUJET DU TICKET</h5>
-                <p class="card- text">Nunc diam dolor, commodo nec arcu non, facilisis luctus tortor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Mauris purus massa, consectetur et fermentum id, semper ut erat. Vivamus risus nunc, semper convallis rutrum a, imperdiet vitae ipsum. Aliquam luctus erat vitae efficitur iaculis. Proin egestas tristique libero et dignissim. Cras hendrerit lorem ut purus pretium, vel fringilla quam commodo. Praesent non blandit urna. Etiam venenatis elit vel velit varius posuere.</p>
-                <h6 class="card-title">Serveur : Faction | Niveau d'urgence : Normal | Statut : En-cours</h6>
-                <h6 class="card-title">Personne s'occupant du ticket : Nem </h6>
-            </div>
-            <div class="row mx-md-n5 bg-dark">
-                <div class="col boutons"><a href="pages/nouveau-ticket.html"><button type="button" class="btn btn-success btn-lg btn-block">Prendre en charge le ticket</button></a></div>
-                <div class="col boutons"><button type="button" class="btn btn-warning btn-lg btn-block">Archiver le ticket</button></div>
-            </div>
-        </div>
 
 
 
+
+        <?php
+        include '../config/config.php';  // Import des informations de connexion à la base de données.
+        // Établissement de la connexion au serveur mysql.
+        $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
+        // Commande SQL permetant de récupérer la liste des serveurs actifs.
+
+        $id = $_GET['id'];
+
+        $req = 'SELECT * FROM tickets where id = "' . $id . '"';
+        // Envoie au serveur la commande via le biais des informations de connexion.
+        $res = $cnx->query($req);
+        
+        if (!$id) {
+            echo 'Erreur, vous de devez pas être là !';
+            header('Location: ../index.php');   // redireciton vers la page d'acceuil.
+            exit();
+        }
+        // Boucle tant qu'il y a de lignes corespondantes à la requettes
+        while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
+
+
+
+            // Changement de l'INT en texte.
+            switch ($ligne->urgence) {
+                case 0:
+                    $urgence = "<span class='bg-success'>Faible</span>";
+                    break;
+                case 1:
+                    $urgence = "<span class='bg-warning'>Normal</span>";
+                    break;
+                case 2:
+                    $urgence = "<span class='bg-danger'>Urgent</span>";
+                    break;
+            }
+
+            // Changement de l'INT en texte.
+            switch ($ligne->etat) {
+                case 0:
+                    $etat = "<span class='bg-danger'>Non-Traité</span>";
+                    break;
+                case 1:
+                    $etat = "<span class='bg-success'>En-cours</span>";
+                    break;
+                case 2:
+                    $etat = "<span class='bg-info'>Archivé</span>";
+                    break;
+            }
+
+
+            // Affichage des différents serveurs (Dans des éléments de type card.)
+            echo "
+                <div class='card bg-dark text-white'>
+                    <div class='card-header'>
+                        Ticket N° $ligne->id - $ligne->date
+                    </div>
+                    <div class='card-body'>
+                        <h5 class='card-title'>$ligne->sujetprincipal</h5>
+                        <p class='card- text'>$ligne->description</p>
+                        <h6 class='card-title'>Serveur : $ligne->serveur | Niveau d'urgence : $urgence | Statut : $etat</h6>
+                        <h6 class='card-title'>Personne s'occupant du ticket : $ligne->technicien</h6>
+                    </div>
+                    <div class=row mx-md-n5 bg-dark'>
+                        <div class='col boutons'><a href='pages/nouveau-ticket.html'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a></div>
+                        <div class='col boutons'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></div>
+                    </div>
+                </div>
+                ";
+        }
+        ?>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
