@@ -92,7 +92,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             if ($ligne->technicien =="N/A"){
                 $bouton = "<a href='prendre-en-charge.php?id=$ligne->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
             } else {
-                $bouton = "<a href='prendre-en-charge.php?id=$ligne->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                $bouton = "<a href='../actions/archiver.php?id=$ligne->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
             }
             
             
