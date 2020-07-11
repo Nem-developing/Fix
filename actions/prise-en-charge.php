@@ -64,7 +64,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             if ($erreur === 0) {    // test de la présence d'erreurs ou non.
                 echo "pas d'erreurs";
-                header('Location: ../pages/ticket.php?id=$id');
+                header("Location: ../pages/ticket.php?id=$id");
                 exit();
             } else {
                 echo "<h1>Il semble y avoir une erreur, veuillez vous référer à l'alerte au dessus !</h1>";
