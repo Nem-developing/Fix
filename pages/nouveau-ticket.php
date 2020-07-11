@@ -56,7 +56,15 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Description précise du ticket :</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="12" placeholder="Exemple : Problème de permitions sur le spawn, les joueurs peuvent prendre des dégats." name="desc" required></textarea>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="12" placeholder="Exemple : Problème de permitions sur le spawn, les joueurs peuvent prendre des dégats." name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">Urgence du ticket</label>
+                        <select class="form-control" id="exampleFormControlSelect1" name="urgence" required>
+                            <option>Faible</option>
+                            <option>Normal</option>
+                            <option>Urgent</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg btn-block" value="ok">Créer le ticket</button>
                 </form>
