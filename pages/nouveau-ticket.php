@@ -62,8 +62,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         <label for="exampleFormControlSelect1">Urgence du ticket</label>
                         <select class="form-control" id="exampleFormControlSelect1" name="urgence" required>
                             <option>Faible</option>
-                            <option>Normal</option>
-                            <option>Urgent</option>
+                            <option>Normale</option>
+                            <option>Urgente</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg btn-block" value="ok">Créer le ticket</button>
