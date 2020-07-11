@@ -3,8 +3,16 @@
     Author     : Nem-devloping
 */
 
-
-.boutons {
-    padding-left: 0px;
-    padding-right: 0px;
+* {
+    background-color: rgb(50, 48, 44);
 }
+
+#boutons {
+    width: 100% !important;
+}
+.boutons {
+	float: left;
+    width: 50% !important;
+}
+
+
