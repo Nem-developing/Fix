@@ -94,7 +94,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
         </div>
         
         
-        <form class='form-inline bg-dark text-white' action='../actions/prise-en-charge.php' method='post'>
+        <form class='form-inline bg-dark text-white' action='../actions/prise-en-charge.php?id=$ligne->id' method='post'>
             <div class='input-group mb-2 mr-sm-2'>
                 <div class='input-group-prepend'>
                     <div class='input-group-text'>Nom / Pseudo</div>
