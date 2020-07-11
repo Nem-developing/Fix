@@ -42,6 +42,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             <?php
             include "../config/config.php"; // Import des données de connexion.
             date_default_timezone_set('UTC');   // On informe mysql de la zone temporelle souhaitée.
+            $serveur = $_POST['srv'];       // On récupère les informations du formulaire précédent.
             $sujetprincipal = $_POST['sujetprincipal'];       // On récupère les informations du formulaire précédent.
             $description = $_POST['description'];       // On récupère les informations du formulaire précédent.
             $urgence = $_POST['urgence'];       // On récupère les informations du formulaire précédent.
@@ -49,7 +50,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             
             
-            echo "$sujetprincipal ; $description ; $urgence ; $date";
+            echo "$serveur ; $sujetprincipal ; $description ; $urgence ; $date";
             
             
             
