@@ -93,13 +93,21 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             
             // Envoie des informations du formulaire dans la table.
-            if (!$mysqli->query("INSERT INTO `tickets` (`sujetprincipal`, `description`, `date`, `urgence`, `etat`, `ip`) VALUES ('$sujetprincipal', '$description', '$date', '$urgence', '0', 'ip');")) {
+            if (!$mysqli->query("INSERT INTO `tickets` (`sujetprincipal`, `description`, `date`, `urgence`, `etat`, `ip`) VALUES ('$sujetprincipal', '$description', '$date', '$urgence', '0', '$ip');")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors l'inssertion des éléments dans la table 'tickets' ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
             }
             
             
+            if ($erreur === 0) {    // test de la présence d'erreurs ou non.
+                echo "pas d'erreurs";
+                header('Location: ../index.php');
+                exit();
+            } else {
+                echo "<h1>Il semble y avoir une erreur, veuillez vous référer à l'alerte au dessus !</h1>";
+            }
+            ?>
             ?>
         </div>
 
