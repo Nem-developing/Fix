@@ -35,35 +35,81 @@ Projet réalisé par Nem-developing, tout droits réservés.
             </div>
         </nav>  
 
-        <div class="card bg-dark text-white">
-            <div class="card-header">
-                Prise en charge du Ticket N° 45645
+        
+        
+        
+        
+        
+        
+        <?php
+        include '../config/config.php';  // Import des informations de connexion à la base de données.
+        // Établissement de la connexion au serveur mysql.
+        $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
+        // Commande SQL permetant de récupérer la liste des serveurs actifs.
+
+        $id = $_GET['id'];
+
+        $req = 'SELECT * FROM tickets where id = "' . $id . '"';
+        // Envoie au serveur la commande via le biais des informations de connexion.
+        $res = $cnx->query($req);
+        
+        if (!$id) {
+            echo 'Erreur, vous de devez pas être là !';
+            header('Location: ../index.php');   // redireciton vers la page d'acceuil.
+            exit();
+        }
+        // Boucle tant qu'il y a de lignes corespondantes à la requettes
+        while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
+
+
+
+            // Changement de l'INT en texte.
+            switch ($ligne->urgence) {
+                case 0:
+                    $urgence = "<span class='bg-success'>Faible</span>";
+                    break;
+                case 1:
+                    $urgence = "<span class='bg-warning'>Normal</span>";
+                    break;
+                case 2:
+                    $urgence = "<span class='bg-danger'>Urgent</span>";
+                    break;
+            }            
+            
+            // Affichage des différents serveurs (Dans des éléments de type card.)
+            echo "
+                
+            
+
+                <div class='card bg-dark text-white'>
+            <div class='card-header'>
+                Prise en charge du Ticket N° $ligne->id - $ligne->date
             </div>
-            <div class="card-body">
-                <h5 class="card-title">SUJET DU TICKET</h5>
-                <h6 class="card-title">Serveur : Faction | Niveau d'urgence : Normal</h6>
+            <div class='card-body'>
+                <h5 class='card-title'>Sujet du ticket : $ligne->sujetprincipal</h5>
+                <h5 class='card-title'>Description du ticket :</h5>
+                <h6 class='card bg-dark text-primary'>$ligne->description</h6>
+                <h6 class='card-title'>Serveur : $ligne->serveur | Niveau d'urgence : $urgence</h6>
             </div>
         </div>
         
         
-        <form class="form-inline bg-dark text-white">
-            <label class="sr-only" for="inlineFormInputName2">Name</label>
-
-            <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
-            <div class="input-group mb-2 mr-sm-2">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">Nom / Pseudo</div>
+        <form class='form-inline bg-dark text-white'>
+            <div class='input-group mb-2 mr-sm-2'>
+                <div class='input-group-prepend'>
+                    <div class='input-group-text'>Nom / Pseudo</div>
                 </div>
-                <input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Exemple : Nexo">
+                <input type='text' class='form-control' id='inlineFormInputGroupUsername2' placeholder='Exemple : Nexo'>
             </div>
-
-            
-
-            <button type="submit" class="btn btn-primary mb-2">Prendre en charge le ticket</button>
+            <button type='submit' class='btn btn-primary mb-2'>Prendre en charge le ticket</button>
         </form>
 
 
-
+                ";
+        }
+        ?>
+        
+       
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
