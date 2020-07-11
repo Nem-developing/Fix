@@ -89,6 +89,14 @@ Projet réalisé par Nem-developing, tout droits réservés.
             }
 
 
+            if ($ligne->technicien =="N/A"){
+                $bouton = "<a href='prendre-en-charge.php?id=$ligne->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+            } else {
+                $bouton = "<a href='prendre-en-charge.php?id=$ligne->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+            }
+            
+            
+            
             // Affichage des différents serveurs (Dans des éléments de type card.)
             echo "
                 <div class='card bg-dark text-white'>
@@ -101,10 +109,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         <h6 class='card-title'>Serveur : $ligne->serveur | Niveau d'urgence : $urgence | Statut : $etat</h6>
                         <h6 class='card-title'>Personne s'occupant du ticket : $ligne->technicien</h6>
                     </div>
-                    <div class=row mx-md-n5 bg-dark'>
-                        <div class='col boutons'><a href='pages/nouveau-ticket.html'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a></div>
-                        <div class='col boutons'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></div>
-                    </div>
+                    $bouton
                 </div>
                 ";
         }
