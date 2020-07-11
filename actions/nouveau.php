@@ -47,18 +47,28 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $description = $_POST['description'];       // On récupère les informations du formulaire précédent.
             $urgence = $_POST['urgence'];       // On récupère les informations du formulaire précédent.
             $date = strftime("%d/%m/%y");       // On entre la date dans la variable $date.
-            
-            
-            
-            echo "$serveur ; $sujetprincipal ; $description ; $urgence ; $date";
-            
-            
-            
-            ?>
-            
-            
-            
+            $ip = $_SERVER['REMOTE_ADDR'];      // On récupère l'addresse IP du client. | Note : Cette IP est stoqué sur la base de donné client uniquement.
 
+            
+            if (!$ip) {
+                $ip = "0.0.0.0";    // Si l'utilisateur utilise un proxy ; La fonction Remote addr peut dysfonctionner ; C'est une mesure de sécurité.
+            }
+            
+            
+            //  Connexion à la base de donnée.
+            $mysqli = new mysqli("$hotedeconnexion", "$utilisateur", "$motdepasse", "$basededonnee");
+            if ($mysqli->connect_errno) {
+                echo "<div class='alert alert-danger' role='alert'> Echec lors de la connexion à MySQL ! </div>";   // Affichage de l'erreur.
+                echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
+                $erreur = $erreur + 1;
+            }
+            // Création de la table où l'on stoque les informations du ticket.
+            if (!$mysqli->query("CREATE TABLE IF NOT EXISTS `tickets` ( `id` int NOT NULL, `sujetprincipal` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `ip` varchar(19) NOT NULL );")) {
+                echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
+                echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
+                $erreur = $erreur + 1;
+            }
+            ?>
         </div>
 
 
@@ -69,3 +79,5 @@ Projet réalisé par Nem-developing, tout droits réservés.
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     </body>
 </html>
+
+
