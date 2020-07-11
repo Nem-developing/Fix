@@ -39,7 +39,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
         <div class="bg-dark">
 
             <div class="row mx-md-n5 bg-dark">
-                <div class="col boutons"><a href="pages/nouveau-ticket.php"><button type="button" class="btn btn-primary btn-lg btn-block">Nouveau ticket</button></a></div>
+                <div class="col boutons"><a href="pages/nouveau-ticket.html"><button type="button" class="btn btn-primary btn-lg btn-block">Nouveau ticket</button></a></div>
                 <div class="col boutons"><button type="button" class="btn btn-warning btn-lg btn-block">Tickets Archivés</button></div>
             </div>
 
@@ -70,7 +70,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <th scope="row">1</th>
                             <td>12/1/2020</td>
                             <td>Faction</td>
-                            <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sagittis feugiat condimentum. Nulla facilisi. Phasellus elit magna, cursus ac vehicula vitae, malesuada eget neque. Duis ac nulla eu dolor cursus pretium. Pellentesque vitae tincidunt dui. Aenean eget ultricies elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc dapibus ante vel lectus bibendum porttitor. Aliquam convallis congue fringilla.</td>
+                            <td><h4>Permisions</h4><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sagittis feugiat condimentum. Nulla facilisi. Phasellus elit magna, cursus ac vehicula vitae, malesuada eget neque. Duis ac nulla eu dolor cursus pretium. Pellentesque vitae tincidunt dui. Aenean eget ultricies elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc dapibus ante vel lectus bibendum porttitor. Aliquam convallis congue fringilla.</td>
                             <td>Non-Traité</td>
                             <td>
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -83,7 +83,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <th scope="row">2</th>
                             <td>13/1/2020</td>
                             <td>Minage</td>
-                            <td>Nunc diam dolor, commodo nec arcu non, facilisis luctus tortor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Mauris purus massa, consectetur et fermentum id, semper ut erat. Vivamus risus nunc, semper convallis rutrum a, imperdiet vitae ipsum. Aliquam luctus erat vitae efficitur iaculis. Proin egestas tristique libero et dignissim. Cras hendrerit lorem ut purus pretium, vel fringilla quam commodo. Praesent non blandit urna. Etiam venenatis elit vel velit varius posuere.</td>
+                            <td><h4>Permisions</h4><br>Nunc diam dolor, commodo nec arcu non, facilisis luctus tortor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Mauris purus massa, consectetur et fermentum id, semper ut erat. Vivamus risus nunc, semper convallis rutrum a, imperdiet vitae ipsum. Aliquam luctus erat vitae efficitur iaculis. Proin egestas tristique libero et dignissim. Cras hendrerit lorem ut purus pretium, vel fringilla quam commodo. Praesent non blandit urna. Etiam venenatis elit vel velit varius posuere.</td>
                             <td>Non-Traité</td>
                             <td>
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -96,7 +96,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <th scope="row">3</th>
                             <td>14/1/2020</td>
                             <td>Opprison</td>
-                            <td>Mauris vel nibh pharetra, tempus sapien vitae, pretium mi. Sed at aliquam augue. Sed in justo nec turpis interdum feugiat. Nunc tincidunt pretium urna varius gravida. Cras nulla quam, pretium finibus sem eu, commodo porttitor sem. Quisque blandit efficitur dolor a sodales. Pellentesque cursus metus at mi malesuada vehicula. Donec quis sollicitudin sapien. Quisque id eros sem. Praesent dignissim ac ex nec euismod. Fusce eleifend augue eget turpis porta luctus. Phasellus dictum ligula mi, quis consequat leo sagittis in.</td>
+                            <td><h4>Permisions</h4><br>Mauris vel nibh pharetra, tempus sapien vitae, pretium mi. Sed at aliquam augue. Sed in justo nec turpis interdum feugiat. Nunc tincidunt pretium urna varius gravida. Cras nulla quam, pretium finibus sem eu, commodo porttitor sem. Quisque blandit efficitur dolor a sodales. Pellentesque cursus metus at mi malesuada vehicula. Donec quis sollicitudin sapien. Quisque id eros sem. Praesent dignissim ac ex nec euismod. Fusce eleifend augue eget turpis porta luctus. Phasellus dictum ligula mi, quis consequat leo sagittis in.</td>
                             <td>En-cours</td>
                             <td>
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
