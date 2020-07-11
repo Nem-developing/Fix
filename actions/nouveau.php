@@ -49,6 +49,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $date = strftime("%d/%m/%y");       // On entre la date dans la variable $date.
             $ip = $_SERVER['REMOTE_ADDR'];      // On récupère l'addresse IP du client. | Note : Cette IP est stoqué sur la base de donné client uniquement.
 
+            (int) $erreur = 0;
             
             if (!$ip) {
                 $ip = "0.0.0.0";    // Si l'utilisateur utilise un proxy ; La fonction Remote addr peut dysfonctionner ; C'est une mesure de sécurité.
