@@ -32,7 +32,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         <a class="nav-link" href="#">À propos</a>
                     </li>
                 </ul>
-                <a class="version" href="https://github.com/nem-developing/">Nix 1.0 - Nem-Developing</a>
+                <a class="version" href="https://github.com/nem-developing/">Fix 1.0 - Nem-Developing</a>
             </div>
         </nav>  
 
