@@ -51,6 +51,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <th scope="col">Date</th>
                             <th scope="col">Serveur</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Technicien</th>
                             <th scope="col">Urgence</th>
                             <th scope="col">État</th>
                             <th scope="col">Détails</th>
@@ -107,6 +108,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <td>$ligne->date</td>
                             <td>$ligne->serveur</td>
                             <td><h4>$ligne->sujetprincipal</h4><br>$ligne->description</td>
+                            <td>$ligne->technicien</td>
                             <td>$urgence</td>
                             <td>$etat</td>
                             <td><a href='pages/ticket.php?id=$ligne->id'>
