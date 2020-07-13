@@ -2,8 +2,8 @@
 session_start();
 
 if(!isset($_SESSION['utilisateur'])) {
-  include('../connexion.html');
-  exit;
+  header('Location: ../connexion.php');
+  exit();
 }
 ?> 
 <!DOCTYPE html>
