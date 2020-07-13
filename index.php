@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['utilisateur'])) {
+  include('connexion.html');
+  exit;
+}
+?> 
 <!DOCTYPE html>
 <!--
 Projet réalisé par Nem-developing, tout droits réservés.
