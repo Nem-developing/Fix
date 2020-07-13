@@ -99,7 +99,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 <div class='input-group-prepend'>
                     <div class='input-group-text'>Nom / Pseudo</div>
                 </div>
-                <input type='text' class='form-control' id='inlineFormInputGroupUsername2' name='technicien' placeholder='Exemple : Nexo'>
+                <input type='text' class='form-control' id='inlineFormInputGroupUsername2' name='technicien' placeholder='Exemple : Nexo' required>
             </div>
             <button type='submit' class='btn btn-primary mb-2'>Prendre en charge le ticket</button>
         </form>
