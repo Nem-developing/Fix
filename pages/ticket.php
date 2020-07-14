@@ -137,13 +137,13 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 echo "
                 <div class='card bg-dark text-white'>
                     <div class='card-header'>
-                        Ticket N° $lignedeux->id - Ouvert le : $lignedeux->date - Pris en charge le : $lignedeux->datepec - Fermé le : $lignedeux->datefin
+                        Ticket N° $lignedeux->id - Ouvert le : <span class='bg-success'>$lignedeux->date</span> - Pris en charge le : <span class='bg-warning'>$lignedeux->datepec</span> - Fermé le : <span class='bg-success'>$lignedeux->datefin</span>
                     </div>
                     <div class='card-body'>
                         <h5 class='card-title'>$lignedeux->sujetprincipal</h5>
                         <p class='card- text'>$lignedeux->description</p>
-                        <h6 class='card-title'>Serveur : $lignedeux->serveur | Niveau d'urgence : $urgence | Statut : $etat</h6>
-                        <h6 class='card-title'>Personne s'occupant du ticket : $lignedeux->technicien</h6>
+                        <h6 class='card-title'>Serveur : <span class="bg-primary">$lignedeux->serveur</span> | Niveau d'urgence : $urgence | Statut : $etat</h6>
+                        <h6 class='card-title'>Personne s'occupant du ticket : <span class="bg-info">$lignedeux->technicien</span></h6>
                     </div>
                     $bouton
                 </div>
