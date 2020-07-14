@@ -141,7 +141,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     </div>
                     <div class='card-body'>
                         <h5 class='card-title'>$lignedeux->sujetprincipal</h5>
-                        <p class='card- text'>$lignedeux->description</p>
+                        <p class='card- text text-primary'>$lignedeux->description</p>
                         <h6 class='card-title'>Serveur : <span class='bg-primary'>$lignedeux->serveur</span> | Niveau d'urgence : $urgence | Statut : $etat</h6>
                         <h6 class='card-title'>Personne s'occupant du ticket : <span class='bg-info'>$lignedeux->technicien</span></h6>
                     </div>
