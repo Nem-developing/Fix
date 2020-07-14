@@ -62,7 +62,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $erreur = $erreur + 1;
             }
             // Mise à jour de la la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("UPDATE `tickets` SET `etat` = '0', `technicien` = 'N/A'  WHERE `id` = '$id'")) {
+            if (!$mysqli->query("UPDATE `tickets` SET `etat` = '0', `datepec` = 'N/A', `datefin` = 'N/A', `technicien` = 'N/A'  WHERE `id` = '$id'")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
