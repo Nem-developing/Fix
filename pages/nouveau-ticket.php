@@ -69,7 +69,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlSelect1">Urgence du ticket</label>
-                        <select class="form-control" id="exampleFormControlSelect1" name="urgence" required>
+                        <select class="form-control bg-dark" id="exampleFormControlSelect1" name="urgence" required>
                             <option>Faible</option>
                             <option>Normal</option>
                             <option>Urgent</option>
