@@ -56,7 +56,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     <thead>
                         <tr>
                             <th scope="col">Ticket</th>
-                            <th scope="col">Date</th>
+                            <th scope="col">Création</th>
                             <th scope="col">Serveur</th>
                             <th scope="col">Description</th>
                             <th scope="col">Technicien</th>
