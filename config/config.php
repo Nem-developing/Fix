@@ -33,8 +33,22 @@
      * =========================================================================
      */
 
-
     
+    /* =========================================================================
+     * Voici comment fonctionne les utilisateurs dans la base de donnée : 
+     * 
+     * Niveau de permission :
+     * 
+     * 0 -> Lecture seulement
+     * 1 -> Prise en charge de tickets et leurs archivage.
+     * 2 -> Archivage de nimporte quel tickets.
+     * 
+     * 
+     * =========================================================================
+     */
+
+
+
     // Tentative de connexion au seveur de bases de données.
     $connexion = mysqli_connect($hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
     
