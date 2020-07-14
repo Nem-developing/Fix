@@ -115,7 +115,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         break;
                     case 1:
                         if ($lignedeux->technicien == "N/A") {
-                            $bouton = "<a href='prendre-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                            $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->technicien == $utilisateurconnecte) {
                             $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
                         } else {
@@ -124,7 +124,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         break;
                     case 2:
                         if ($lignedeux->technicien == "N/A") {
-                            $bouton = "<a href='prendre-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                            $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else {
                             $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
                         }
