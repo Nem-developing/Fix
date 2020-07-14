@@ -57,7 +57,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 <form action="../actions/nouveau.php" method="post">
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Serveur concerné</label>
-                        <input class="form-control form-control-lg" type="text" name="srv" placeholder="Exemple : OP-Prison" required>
+                        <input class="form-control form-control-lg bg-dark" type="text" name="srv" placeholder="Exemple : OP-Prison" required>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1 ">Sujet principal</label>
