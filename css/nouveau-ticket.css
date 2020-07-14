@@ -7,3 +7,7 @@
     background-color: rgb(50, 48, 44);
     color: white !important;
 }
+
+::placeholder {
+  color: yellow !important;
+}
