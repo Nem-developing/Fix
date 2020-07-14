@@ -50,7 +50,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             <?php
             include "../config/config.php"; // Import des données de connexion.
             $id = $_GET['id'];  // On récupère l'ID.
-            $technicien = $_POST['technicien'];       // On récupère les informations du formulaire précédent.
+            $technicien = $_SESSION['utilisateur'];       // On récupère l'utilisateur dans le cookie.
             
             (int) $erreur = 0;
             
