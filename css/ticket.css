@@ -3,6 +3,10 @@
     Author     : Nem-devloping
 */
 
+* {
+    background-color: rgb(50, 48, 44);
+}
+
 
 .boutons {
     padding-left: 0px;
