@@ -1,15 +1,15 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['utilisateur'])) {
-  header('Location: ../connexion.php');
-  exit();
-  
-if (!$id) {
-    echo 'Erreur, vous de devez pas être là !';
-    header('Location: ../index.php');   // redireciton vers la page d'acceuil.
+if (!isset($_SESSION['utilisateur'])) {
+    header('Location: ../connexion.php');
     exit();
-}
+
+    if (!$id) {
+        echo 'Erreur, vous de devez pas être là !';
+        header('Location: ../index.php');   // redireciton vers la page d'acceuil.
+        exit();
+    }
 }
 ?> 
 <!DOCTYPE html>
@@ -63,62 +63,78 @@ Projet réalisé par Nem-developing, tout droits réservés.
         $id = $_GET['id'];
         $utilisateurconnecte = $_SESSION['utilisateur'];
 
-        
+
         // Commande récupérant l'utilisateur connecté.
         $requn = 'SELECT * FROM connexion WHERE utilisateur = "' . $utilisateurconnecte . '";';
         // Envoie au serveur la commande via le biais des informations de connexion.
         $resun = $cnx->query($requn);
-        
-        
+
+
         $reqdeux = 'SELECT * FROM tickets where id = "' . $id . '"';
         // Envoie au serveur la commande via le biais des informations de connexion.
         $resdeux = $cnx->query($reqdeux);
-        
-        
+
+
         // Boucle tant qu'il y a de lignes corespondantes à la requette une.
         while ($ligneune = $resun->fetch(PDO::FETCH_OBJ)) {
-        // Boucle tant qu'il y a de lignes corespondantes à la requette deux.
-        while ($lignedeux = $resdeux->fetch(PDO::FETCH_OBJ)) {
+            // Boucle tant qu'il y a de lignes corespondantes à la requette deux.
+            while ($lignedeux = $resdeux->fetch(PDO::FETCH_OBJ)) {
 
 
 
-            // Changement de l'INT en texte.
-            switch ($lignedeux->urgence) {
-                case 0:
-                    $urgence = "<span class='bg-success'>Faible</span>";
-                    break;
-                case 1:
-                    $urgence = "<span class='bg-warning'>Normal</span>";
-                    break;
-                case 2:
-                    $urgence = "<span class='bg-danger'>Urgent</span>";
-                    break;
-            }
+                // Changement de l'INT en texte.
+                switch ($lignedeux->urgence) {
+                    case 0:
+                        $urgence = "<span class='bg-success'>Faible</span>";
+                        break;
+                    case 1:
+                        $urgence = "<span class='bg-warning'>Normal</span>";
+                        break;
+                    case 2:
+                        $urgence = "<span class='bg-danger'>Urgent</span>";
+                        break;
+                }
 
-            // Changement de l'INT en texte.
-            switch ($lignedeux->etat) {
-                case 0:
-                    $etat = "<span class='bg-danger'>Non-Traité</span>";
-                    break;
-                case 1:
-                    $etat = "<span class='bg-success'>En-cours</span>";
-                    break;
-                case 2:
-                    $etat = "<span class='bg-info'>Archivé</span>";
-                    break;
-            }
-            
-            
-            if ($lignedeux->technicien =="N/A"){
-                $bouton = "<a href='prendre-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
-            } else {
-                $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
-            }
-            
-            
-            
-            // Affichage des différents serveurs (Dans des éléments de type card.)
-            echo "
+                // Changement de l'INT en texte.
+                switch ($lignedeux->etat) {
+                    case 0:
+                        $etat = "<span class='bg-danger'>Non-Traité</span>";
+                        break;
+                    case 1:
+                        $etat = "<span class='bg-success'>En-cours</span>";
+                        break;
+                    case 2:
+                        $etat = "<span class='bg-info'>Archivé</span>";
+                        break;
+                }
+
+
+                switch ($ligneune->permissions) {
+                    case 0:
+                        $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
+                        break;
+                    case 1:
+                        if ($lignedeux->technicien == "N/A") {
+                            $bouton = "<a href='prendre-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                        } else if ($lignedeux->technicien == $utilisateurconnecte) {
+                            $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                        } else {
+                            $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez qu'archiver vos propres tickets !</button>";                           
+                        }
+                        break;
+                    case 2:
+                        if ($lignedeux->technicien == "N/A") {
+                            $bouton = "<a href='prendre-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                        } else {
+                            $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                        }
+                        break;
+                }
+
+
+
+                // Affichage des différents serveurs (Dans des éléments de type card.)
+                echo "
                 <div class='card bg-dark text-white'>
                     <div class='card-header'>
                         Ticket N° $lignedeux->id - $lignedeux->date
@@ -132,7 +148,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     $bouton
                 </div>
                 ";
-        }
+            }
         }
         ?>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
