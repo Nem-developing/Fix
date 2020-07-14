@@ -60,12 +60,12 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         <input class="form-control form-control-lg" type="text" name="srv" placeholder="Exemple : OP-Prison" required>
                     </div>
                     <div class="form-group">
-                        <label for="exampleFormControlInput1">Sujet principal</label>
-                        <input class="form-control form-control-lg" type="text" name="sujetprincipal" placeholder="Exemple : Problème de permitions." required>
+                        <label for="exampleFormControlInput1 ">Sujet principal</label>
+                        <input class="form-control form-control-lg bg-dark" type="text" name="sujetprincipal" placeholder="Exemple : Problème de permitions." required>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Description précise du ticket :</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="12" placeholder="Exemple : Problème de permitions sur le spawn, les joueurs peuvent prendre des dégats." name="description" required></textarea>
+                        <textarea class="form-control bg-dark" id="exampleFormControlTextarea1" rows="12" placeholder="Exemple : Problème de permitions sur le spawn, les joueurs peuvent prendre des dégats." name="description" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlSelect1">Urgence du ticket</label>
