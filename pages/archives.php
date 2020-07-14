@@ -52,7 +52,9 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     <thead>
                         <tr>
                             <th scope="col">Ticket</th>
-                            <th scope="col">Date</th>
+                            <th scope="col">Création</th>
+                            <th scope="col">Prise en Charge</th>
+                            <th scope="col">Fermeture</th>
                             <th scope="col">Serveur</th>
                             <th scope="col">Description</th>
                             <th scope="col">Technicien</th>
@@ -110,6 +112,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             
                             <th scope='row'>$ligne->id</th>
                             <td>$ligne->date</td>
+                            <td>$ligne->datepec</td>
+                            <td>$ligne->datefin</td>
                             <td>$ligne->serveur</td>
                             <td><h4>$ligne->sujetprincipal</h4><br>$ligne->description</td>
                             <td>$ligne->technicien</td>
