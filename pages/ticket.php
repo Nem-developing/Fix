@@ -137,7 +137,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 echo "
                 <div class='card bg-dark text-white'>
                     <div class='card-header'>
-                        Ticket N° $lignedeux->id - Ouvert le : $lignedeux->date - Fermé le : $lignedeux->datefin
+                        Ticket N° $lignedeux->id - Ouvert le : $lignedeux->date - Pris en charge le : $lignedeux->datepec - Fermé le : $lignedeux->datefin
                     </div>
                     <div class='card-body'>
                         <h5 class='card-title'>$lignedeux->sujetprincipal</h5>
