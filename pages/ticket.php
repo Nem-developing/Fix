@@ -4,6 +4,12 @@ session_start();
 if(!isset($_SESSION['utilisateur'])) {
   header('Location: ../connexion.php');
   exit();
+  
+if (!$id) {
+    echo 'Erreur, vous de devez pas être là !';
+    header('Location: ../index.php');   // redireciton vers la page d'acceuil.
+    exit();
+}
 }
 ?> 
 <!DOCTYPE html>
@@ -55,23 +61,29 @@ Projet réalisé par Nem-developing, tout droits réservés.
         // Commande SQL permetant de récupérer la liste des serveurs actifs.
 
         $id = $_GET['id'];
+        $utilisateurconnecte = $_SESSION['utilisateur'];
 
-        $req = 'SELECT * FROM tickets where id = "' . $id . '"';
-        // Envoie au serveur la commande via le biais des informations de connexion.
-        $res = $cnx->query($req);
         
-        if (!$id) {
-            echo 'Erreur, vous de devez pas être là !';
-            header('Location: ../index.php');   // redireciton vers la page d'acceuil.
-            exit();
-        }
-        // Boucle tant qu'il y a de lignes corespondantes à la requettes
-        while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
+        // Commande récupérant l'utilisateur connecté.
+        $requn = 'SELECT * FROM connexion WHERE utilisateur = "' . $utilisateurconnecte . '";';
+        // Envoie au serveur la commande via le biais des informations de connexion.
+        $resun = $cnx->query($requn);
+        
+        
+        $reqdeux = 'SELECT * FROM tickets where id = "' . $id . '"';
+        // Envoie au serveur la commande via le biais des informations de connexion.
+        $resdeux = $cnx->query($reqdeux);
+        
+        
+        // Boucle tant qu'il y a de lignes corespondantes à la requette une.
+        while ($ligneune = $resun->fetch(PDO::FETCH_OBJ)) {
+        // Boucle tant qu'il y a de lignes corespondantes à la requette deux.
+        while ($lignedeux = $resdeux->fetch(PDO::FETCH_OBJ)) {
 
 
 
             // Changement de l'INT en texte.
-            switch ($ligne->urgence) {
+            switch ($lignedeux->urgence) {
                 case 0:
                     $urgence = "<span class='bg-success'>Faible</span>";
                     break;
@@ -84,7 +96,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             }
 
             // Changement de l'INT en texte.
-            switch ($ligne->etat) {
+            switch ($lignedeux->etat) {
                 case 0:
                     $etat = "<span class='bg-danger'>Non-Traité</span>";
                     break;
@@ -95,12 +107,12 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     $etat = "<span class='bg-info'>Archivé</span>";
                     break;
             }
-
-
-            if ($ligne->technicien =="N/A"){
-                $bouton = "<a href='prendre-en-charge.php?id=$ligne->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+            
+            
+            if ($lignedeux->technicien =="N/A"){
+                $bouton = "<a href='prendre-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
             } else {
-                $bouton = "<a href='../actions/archiver.php?id=$ligne->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
             }
             
             
@@ -109,17 +121,18 @@ Projet réalisé par Nem-developing, tout droits réservés.
             echo "
                 <div class='card bg-dark text-white'>
                     <div class='card-header'>
-                        Ticket N° $ligne->id - $ligne->date
+                        Ticket N° $lignedeux->id - $lignedeux->date
                     </div>
                     <div class='card-body'>
-                        <h5 class='card-title'>$ligne->sujetprincipal</h5>
-                        <p class='card- text'>$ligne->description</p>
-                        <h6 class='card-title'>Serveur : $ligne->serveur | Niveau d'urgence : $urgence | Statut : $etat</h6>
-                        <h6 class='card-title'>Personne s'occupant du ticket : $ligne->technicien</h6>
+                        <h5 class='card-title'>$lignedeux->sujetprincipal</h5>
+                        <p class='card- text'>$lignedeux->description</p>
+                        <h6 class='card-title'>Serveur : $lignedeux->serveur | Niveau d'urgence : $urgence | Statut : $etat</h6>
+                        <h6 class='card-title'>Personne s'occupant du ticket : $lignedeux->technicien</h6>
                     </div>
                     $bouton
                 </div>
                 ";
+        }
         }
         ?>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
