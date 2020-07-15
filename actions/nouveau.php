@@ -64,6 +64,21 @@ Projet réalisé par Nem-developing, tout droits réservés.
             }
             
             
+            // Rechercher remplacer dans les chaines comportant du texte. 
+            // --> Suite aux erreurs quand nous rentrons un apostrophe.
+            // --> Donc nous remplaçons les apostrophes en apostrophes-antislash.
+            // = ' devien '\
+            
+            
+            $rechercher = "'"; 
+            $remplacer = "\'"; 
+            
+            $serveurok = str_replace($rechercher,$remplacer,$serveur);
+            $sujetprincipalok = str_replace($rechercher,$remplacer,$sujetprincipal);
+            $descriptionok = str_replace($rechercher,$remplacer,$description);
+            
+            
+            
             //  Connexion à la base de donnée.
             $mysqli = new mysqli("$hotedeconnexion", "$utilisateur", "$motdepasse", "$basededonnee");
             if ($mysqli->connect_errno) {
@@ -95,7 +110,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             
             // Envoie des informations du formulaire dans la table.
-            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `sujetprincipal`, `description`, `date`, `datepec`, `datefin`, `urgence`, `etat`, `ip`, `technicien`) VALUES ('$serveur', '$sujetprincipal', '$description', '$date', 'N/A', 'N/A', '$urgence', '0', '$ip', 'N/A');")) {
+            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `sujetprincipal`, `description`, `date`, `datepec`, `datefin`, `urgence`, `etat`, `ip`, `technicien`) VALUES ('$serveurok', '$sujetprincipalok', '$descriptionok', '$date', 'N/A', 'N/A', '$urgence', '0', '$ip', 'N/A');")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors l'inssertion des éléments dans la table 'tickets' ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
