@@ -116,17 +116,21 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     case 1:
                         if ($lignedeux->technicien == "N/A") {
                             $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
-                        } else if ($lignedeux->technicien == $utilisateurconnecte) {
+                        } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 1) {
                             $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                        } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2){
+                            $bouton = "<a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";                           
                         } else {
-                            $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez qu'archiver vos propres tickets !</button>";                           
+                            $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";                           
                         }
                         break;
                     case 2:
                         if ($lignedeux->technicien == "N/A") {
                             $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
-                        } else {
+                        } else if($lignedeux->etat == 1){
                             $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                        } else if ($lignedeux->etat == 2){
+                            $bouton = "<a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";                           
                         }
                         break;
                 }
