@@ -113,7 +113,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         <tr>
                             
                             <th scope='row'>$ligne->id</th>
-                            <td>$ligne->date</td>
+                            <td>$ligne->date - $ligne->heure</td>
                             <td>$ligne->serveur</td>
                             <td><h4>$ligne->sujetprincipal</h4><br>$ligne->description</td>
                             <td>$ligne->technicien</td>
