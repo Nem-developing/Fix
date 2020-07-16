@@ -112,8 +112,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             
                             <th scope='row'>$ligne->id</th>
                             <td>$ligne->date</td>
-                            <td>$ligne->datepec</td>
-                            <td>$ligne->datefin</td>
+                            <td>$ligne->date $ligne->heure</td>
+                            <td>$ligne->datefin $ligne->heurefin</td>
                             <td>$ligne->serveur</td>
                             <td><h4>$ligne->sujetprincipal</h4><br>$ligne->description</td>
                             <td>$ligne->technicien</td>
