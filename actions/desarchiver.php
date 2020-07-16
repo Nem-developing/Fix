@@ -50,7 +50,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
             <?php
             include "../config/config.php"; // Import des données de connexion.
             $id = $_GET['id'];  // On récupère l'ID.
-            
+            $date = strftime("%d/%m/%y");       // On entre la date dans la variable $date.
+            $heure = strftime("%Hh%M");       // On entre l'heure dans la variable $heure.
             (int) $erreur = 0;
             
             
@@ -62,7 +63,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $erreur = $erreur + 1;
             }
             // Mise à jour de la la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("UPDATE `tickets` SET `etat` = '0', `datepec` = 'N/A', `datefin` = 'N/A', `technicien` = 'N/A'  WHERE `id` = '$id'")) {
+            if (!$mysqli->query("UPDATE `tickets` SET `etat` = '0', `heure` = '$heure',`date` = '$date',`datepec` = 'N/A', `datefin` = 'N/A',`heurepec` = 'N/A', `heurefin` = 'N/A', `technicien` = 'N/A'  WHERE `id` = '$id'")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
