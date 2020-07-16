@@ -95,16 +95,19 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         break;
                 }
 
-                // Changement de l'INT en texte.
+                // Changement de l'INT lié à l'état dans la base de données en texte + Atibution du texte lié au technicien.
                 switch ($lignedeux->etat) {
                     case 0:
                         $etat = "<span class='bg-danger'>Non-Traité</span>";
+                        $textetechnicien = "Personne ne s'occupe du ticket actuellement..."; 
                         break;
                     case 1:
                         $etat = "<span class='bg-success'>En-cours</span>";
+                        $textetechnicien = "Personne s'occupant actuellement du ticket : <span class='bg-info'>$lignedeux->technicien</span>"; 
                         break;
                     case 2:
                         $etat = "<span class='bg-info'>Archivé</span>";
+                        $textetechnicien = "Personne s'étant occupé du ticket : <span class='bg-info'>$lignedeux->technicien</span>"; 
                         break;
                 }
 
@@ -148,7 +151,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         <h5 class='card-title'>$lignedeux->sujetprincipal</h5>
                         <p class='card- text text-primary'>$lignedeux->description</p>
                         <h6 class='card-title'>Serveur : <span class='bg-primary'>$lignedeux->serveur</span> | Niveau d'urgence : $urgence | Statut : $etat</h6>
-                        <h6 class='card-title'>Personne s'occupant du ticket : <span class='bg-info'>$lignedeux->technicien</span></h6>
+                        <h6 class='card-title'>$textetechnicien</h6>
                     </div>
                     $bouton
                 </div>
