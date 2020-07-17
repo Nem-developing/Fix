@@ -41,7 +41,7 @@ if(isset($_POST['submit'])){
     </head>
     <body>
         <div id="formulaire" class="bg-dark text-white">
-            <div class="p-3 mb-2 bg-info text-white" id="titre">NEMIXCRAFT</div>
+            <div class="p-3 mb-2 bg-info text-white" id="titre">Fix - Gestionnaire de tickets - Nem-developing</div>
             <form method="post">
                 <div class="form-group">
                     <label for="exampleInputEmail1" name="utilisateur" id="id">Identifiant</label>
