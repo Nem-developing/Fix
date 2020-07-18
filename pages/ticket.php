@@ -111,7 +111,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         break;
                 }
 
-
+                // Selon la permission de l'utilisateur actif, le bouton change !
+                // Donc Toutes ces condtions établissent le bouton qui sera affiché en desous du ticket.
+                // Est pris en compte également l'état du ticket pour une entière cohérence !
+                // Donc, si un ticket est actif et qu'il y a un technicien qui l'a pris en charge, alors le technicien aura le bouton "Archiver le ticket".
                 switch ($ligneune->permissions) {
                     case 0:
                         $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
