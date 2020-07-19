@@ -126,7 +126,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             $bouton = "<form action='../actions/archiver.php?id=$id' method='post'>
                                             <div class='form-group'>
                                                 <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
-                                                <textarea class='form-control bg-dark text-white' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande. name='commentaire' required></textarea>
+                                                <textarea class='form-control bg-dark text-white' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' name='commentaire' required></textarea>
                                             </div>
                                             <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                         </form>";
