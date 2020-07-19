@@ -83,26 +83,26 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             // Changement de l'INT en texte.
                             switch ($ligne->urgence) {
                                 case 0:
-                                    $urgence = "<span class='bg-success'>Faible</span>";
+                                    $urgence = "<strong><span class='text-success'>Faible</span></strong>";
                                     break;
                                 case 1:
-                                    $urgence = "<span class='bg-warning'>Normal</span>";
+                                    $urgence = "<strong><span class='text-warning'>Normal</span></strong>";
                                     break;
                                 case 2:
-                                    $urgence = "<span class='bg-danger'>Urgent</span>";
+                                    $urgence = "<strong><span class='text-danger'>Urgent</span></strong>";
                                     break;
                             }
 
                             // Changement de l'INT en texte.
                             switch ($ligne->etat) {
                                 case 0:
-                                    $etat = "<span class='bg-danger'>Non-Traité</span>";
+                                    $etat = "<strong><span class='text-danger'>Non-Traité</span></strong>";
                                     break;
                                 case 1:
-                                    $etat = "<span class='bg-success'>En-cours</span>";
+                                    $etat = "<strong><span class='text-success'>En-cours</span></strong>";
                                     break;
                                 case 2:
-                                    $etat= "<span class='bg-info'>Archivé</span>";
+                                    $etat= "<strong><span class='text-info'>Archivé</span></strong>";
                                     break;
                             }
 
