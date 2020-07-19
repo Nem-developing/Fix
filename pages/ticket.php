@@ -133,6 +133,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2) {
                             $bouton = "
                                   <div class='card-body'>
+                                    <h6 class='card-title'>Ticket archivé par  :</h6>                                    
+                                    <p class='card-text'>$lignedeux->technicienquiarchive</p>
                                     <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
                                     <p class='card-text'>$lignedeux->commentaire</p>
                                   </div>
@@ -155,8 +157,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->etat == 2) {
                             $bouton = "
                                   <div class='card-body'>
-                                    <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
-                                    <p class='card-text'>$lignedeux->commentaire</p>
+                                      <h6 class='card-title'>Ticket archivé par  :</h6>                                    
+                                      <p class='card-text'>$lignedeux->technicienquiarchive</p>
+                                      <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
+                                      <p class='card-text'>$lignedeux->commentaire</p>
                                   </div>
                                 <a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         }
