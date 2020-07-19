@@ -114,13 +114,13 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 // Donc, si un ticket est actif et qu'il y a un technicien qui l'a pris en charge, alors le technicien aura le bouton "Archiver le ticket" avec un formulaire lui permetant de noter des informations concernant le ticket.
                 switch ($ligneune->permissions) {
                     case 0:
-                        $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
+                        $textedynamique = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
                         break;
                     case 1:
                         if ($lignedeux->technicien == "N/A") {
-                            $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                            $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 1) {
-                            $bouton = "<form action='../actions/archiver.php?id=$id' method='post'>
+                            $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
                                                 <div class='form-group'>
                                                     <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
                                                     <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
@@ -128,23 +128,23 @@ Projet réalisé par Nem-developing, tout droits réservés.
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2) {
-                            $bouton = "
+                            $textedynamique = "
                                   <div class='card-body'>
                                       <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicienquiarchive</strong></span></h6>                                                                
-                                      <p class='card-text'></p>
+                                      <br>
                                       <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
                                       <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
                                   </div>
                                 <a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         } else {
-                            $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";
+                            $textedynamique = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";
                         }
                         break;
                     case 2:
                         if ($lignedeux->technicien == "N/A") {
-                            $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                            $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->etat == 1) {
-                            $bouton = "<form action='../actions/archiver.php?id=$id' method='post'>
+                            $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
                                                 <div class='form-group'>
                                                     <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
                                                     <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
@@ -152,10 +152,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
                         } else if ($lignedeux->etat == 2) {
-                            $bouton = "
+                            $textedynamique = "
                                   <div class='card-body'>
                                       <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicienquiarchive</strong></span></h6>                                                                
-                                      <p class='card-text'></p>
+                                      <br>
                                       <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
                                       <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
                                   </div>
@@ -173,12 +173,16 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         <div class='card-header'>
                             Ticket N° $lignedeux->id - Ouvert le : <strong><span class='text-success'>$lignedeux->date à $lignedeux->heure</span></strong>  - Pris en charge le : <strong><span class='text-warning'>$lignedeux->datepec à $lignedeux->heurepec</span></strong> - Fermé le : <strong><span class='text-danger'>$lignedeux->datefin à $lignedeux->heurefin</span></strong>
                         </div>
+                        <div class='card-header'>
+                            Serveur : <strong><span class='text-primary'>$lignedeux->serveur</span></strong> | Niveau d'urgence : $urgence | Statut : $etat
+                        </div>
                         <div class='card-body'>
                             <h5 class='card-title'>Sujet : $lignedeux->sujetprincipal</h5>
                             <p class='card- text'>Description : <span class='text-primary'>$lignedeux->description</span></p>
-                            <h6 class='card-title'>Serveur : <strong><span class='text-primary'>$lignedeux->serveur</span></strong> | Niveau d'urgence : $urgence | Statut : $etat</h6>
                         </div>
-                        $bouton
+                        $textedynamique
+                        <br>
+                        
                     </div>
                     ";
             }
