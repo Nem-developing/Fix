@@ -86,7 +86,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                                     $urgence = "<strong><span class='text-success'>Faible</span></strong>";
                                     break;
                                 case 1:
-                                    $urgence = "<strong><span class='text-warning'>Normal</span></strong>";
+                                    $urgence = "<strong><span class='text-primary'>Normal</span></strong>";
                                     break;
                                 case 2:
                                     $urgence = "<strong><span class='text-danger'>Urgent</span></strong>";
@@ -105,6 +105,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                                     $etat= "<strong><span class='text-info'>Archivé</span></strong>";
                                     break;
                             }
+
 
                             // Affichage des différents serveurs (Dans des éléments de type card.)
                             echo "
