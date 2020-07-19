@@ -133,10 +133,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2) {
                             $bouton = "
                                   <div class='card-body'>
-                                    <h6 class='card-title'>Ticket archivé par  :</h6>                                    
-                                    <p class='card-text'>$lignedeux->technicienquiarchive</p>
-                                    <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
-                                    <p class='card-text'>$lignedeux->commentaire</p>
+                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicienquiarchive</strong></span></h6>                                                                
+                                      <p class='card-text'></p>
+                                      <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
+                                      <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
                                   </div>
                                 <a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         } else {
@@ -157,10 +157,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->etat == 2) {
                             $bouton = "
                                   <div class='card-body'>
-                                      <h6 class='card-title'>Ticket archivé par  :</h6>                                    
-                                      <p class='card-text'>$lignedeux->technicienquiarchive</p>
+                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicienquiarchive</strong></span></h6>                                                                
+                                      <p class='card-text'></p>
                                       <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
-                                      <p class='card-text'>$lignedeux->commentaire</p>
+                                      <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
                                   </div>
                                 <a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         }
@@ -174,13 +174,12 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     <a href='../index.php'><button type='button' class='btn btn-primary btn-lg btn-block'>Retour aux tickets actifs</button></a>
                     <div class='card bg-dark text-white'>
                         <div class='card-header'>
-                            Ticket N° $lignedeux->id - Ouvert le : <strong><span class='bg-success'>$lignedeux->date à $lignedeux->heure</span></strong>  - Pris en charge le : <strong><span class='text-warning'>$lignedeux->datepec à $lignedeux->heurepec</span></strong> - Fermé le : <strong><span class='text-danger'>$lignedeux->datefin à $lignedeux->heurefin</span></strong>
+                            Ticket N° $lignedeux->id - Ouvert le : <strong><span class='text-success'>$lignedeux->date à $lignedeux->heure</span></strong>  - Pris en charge le : <strong><span class='text-warning'>$lignedeux->datepec à $lignedeux->heurepec</span></strong> - Fermé le : <strong><span class='text-danger'>$lignedeux->datefin à $lignedeux->heurefin</span></strong>
                         </div>
                         <div class='card-body'>
                             <h5 class='card-title'>Sujet : $lignedeux->sujetprincipal</h5>
                             <p class='card- text'>Description : <span class='text-primary'>$lignedeux->description</span></p>
                             <h6 class='card-title'>Serveur : <strong><span class='text-primary'>$lignedeux->serveur</span></strong> | Niveau d'urgence : $urgence | Statut : $etat</h6>
-                            <h6 class='card-title'>$textetechnicien</h6>
                         </div>
                         $bouton
                     </div>
