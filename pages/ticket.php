@@ -174,12 +174,12 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     <a href='../index.php'><button type='button' class='btn btn-primary btn-lg btn-block'>Retour aux tickets actifs</button></a>
                     <div class='card bg-dark text-white'>
                         <div class='card-header'>
-                            Ticket N° $lignedeux->id - Ouvert le : <span class='bg-success'>$lignedeux->date à $lignedeux->heure</span>  - Pris en charge le : <span class='bg-warning'>$lignedeux->datepec à $lignedeux->heurepec</span> - Fermé le : <span class='bg-danger'>$lignedeux->datefin à $lignedeux->heurefin</span>
+                            Ticket N° $lignedeux->id - Ouvert le : <strong><span class='bg-success'>$lignedeux->date à $lignedeux->heure</span></strong>  - Pris en charge le : <strong><span class='text-warning'>$lignedeux->datepec à $lignedeux->heurepec</span></strong> - Fermé le : <strong><span class='text-danger'>$lignedeux->datefin à $lignedeux->heurefin</span></strong>
                         </div>
                         <div class='card-body'>
                             <h5 class='card-title'>Sujet : $lignedeux->sujetprincipal</h5>
                             <p class='card- text'>Description : <span class='text-primary'>$lignedeux->description</span></p>
-                            <h6 class='card-title'>Serveur : <span class='bg-primary'>$lignedeux->serveur</span> | Niveau d'urgence : $urgence | Statut : $etat</h6>
+                            <h6 class='card-title'>Serveur : <strong><span class='text-primary'>$lignedeux->serveur</span></strong> | Niveau d'urgence : $urgence | Statut : $etat</h6>
                             <h6 class='card-title'>$textetechnicien</h6>
                         </div>
                         $bouton
