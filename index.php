@@ -85,13 +85,13 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             // Changement de l'INT en texte.
                             switch ($ligne->urgence) {
                                 case 0:
-                                    $urgence = "<span class='bg-success'>Faible</span>";
+                                    $urgence = "<strong><span class='bg-success'>Faible</span></strong>";
                                     break;
                                 case 1:
-                                    $urgence = "<span class='bg-warning'>Normal</span>";
+                                    $urgence = "<strong><span class='bg-warning'>Normal</span></strong>";
                                     break;
                                 case 2:
-                                    $urgence = "<span class='bg-danger'>Urgent</span>";
+                                    $urgence = "<strong><span class='bg-danger'>Urgent</span></strong>";
                                     break;
                             }
 
