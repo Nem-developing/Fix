@@ -54,9 +54,20 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $heurefin = strftime("%Hh%M");       // On entre l'heure dans la variable $finpec.
             $commentaire = $_POST['commentaire'];       // On récupère les informations du formulaire précédent.
             $technicienquiarchive = $_SESSION['utilisateur'];       // On récupère l'utilisateur dans le cookie.
-
-          
             (int) $erreur = 0;
+            
+            
+            // Rechercher remplacer dans les chaines comportant du texte. 
+            // --> Suite aux erreurs quand nous rentrons un apostrophe.
+            // --> Donc nous remplaçons les apostrophes en apostrophes-antislash.
+            // = ' devien '\
+            
+            
+            $rechercher = "'"; 
+            $remplacer = "\'"; 
+            
+            $commentaireok = str_replace($rechercher,$remplacer,$commentaire);
+            
             
             
             //  Connexion à la base de donnée.
@@ -67,7 +78,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $erreur = $erreur + 1;
             }
             // Mise à jour de la la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("UPDATE `tickets` SET `datefin` = '$datefin', `heurefin` = '$heurefin', `etat` = '2', `commentaire` = '$commentaire', `technicienquiarchive` = '$technicienquiarchive'  WHERE `id` = '$id'")) {
+            if (!$mysqli->query("UPDATE `tickets` SET `datefin` = '$datefin', `heurefin` = '$heurefin', `etat` = '2', `commentaire` = '$commentaireok', `technicienquiarchive` = '$technicienquiarchive'  WHERE `id` = '$id'")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
