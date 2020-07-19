@@ -114,7 +114,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 // Selon la permission de l'utilisateur actif, le bouton change !
                 // Donc Toutes ces condtions établissent le bouton qui sera affiché en desous du ticket.
                 // Est pris en compte également l'état du ticket pour une entière cohérence !
-                // Donc, si un ticket est actif et qu'il y a un technicien qui l'a pris en charge, alors le technicien aura le bouton "Archiver le ticket".
+                // Donc, si un ticket est actif et qu'il y a un technicien qui l'a pris en charge, alors le technicien aura le bouton "Archiver le ticket" avec un formulaire lui permetant de noter des informations concernant le ticket.
                 switch ($ligneune->permissions) {
                     case 0:
                         $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
@@ -123,7 +123,13 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         if ($lignedeux->technicien == "N/A") {
                             $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 1) {
-                            $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                            $bouton = "<form action='../actions/archiver.php' method='post'>
+                                            <div class='form-group'>
+                                                <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
+                                                <textarea class='form-control bg-dark text-white' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande. name='commentaire' required></textarea>
+                                            </div>
+                                            <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
+                                        </form>";
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2){
                             $bouton = "<a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";                           
                         } else {
