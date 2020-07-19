@@ -123,7 +123,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         if ($lignedeux->technicien == "N/A") {
                             $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 1) {
-                            $bouton = "<form action='../actions/archiver.php' method='post'>
+                            $bouton = "<form action='../actions/archiver.php?id=$id' method='post'>
                                             <div class='form-group'>
                                                 <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
                                                 <textarea class='form-control bg-dark text-white' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande. name='commentaire' required></textarea>
