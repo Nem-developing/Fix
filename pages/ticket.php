@@ -99,15 +99,15 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 switch ($lignedeux->etat) {
                     case 0:
                         $etat = "<span class='bg-danger'>Non-Traité</span>";
-                        $textetechnicien = "Personne ne s'occupe du ticket actuellement..."; 
+                        $textetechnicien = "Personne ne s'occupe du ticket actuellement...";
                         break;
                     case 1:
                         $etat = "<span class='bg-success'>En-cours</span>";
-                        $textetechnicien = "Personne s'occupant actuellement du ticket : <span class='bg-info'>$lignedeux->technicien</span>"; 
+                        $textetechnicien = "Personne s'occupant actuellement du ticket : <span class='bg-info'>$lignedeux->technicien</span>";
                         break;
                     case 2:
                         $etat = "<span class='bg-info'>Archivé</span>";
-                        $textetechnicien = "Personne s'étant occupé du ticket : <span class='bg-info'>$lignedeux->technicien</span>"; 
+                        $textetechnicien = "Personne s'étant occupé du ticket : <span class='bg-info'>$lignedeux->technicien</span>";
                         break;
                 }
 
@@ -124,25 +124,30 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 1) {
                             $bouton = "<form action='../actions/archiver.php?id=$id' method='post'>
-                                            <div class='form-group'>
-                                                <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
-                                                <textarea class='form-control bg-dark text-white' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' name='commentaire' required></textarea>
-                                            </div>
-                                            <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
-                                        </form>";
-                        } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2){
-                            $bouton = "<a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";                           
+                                                <div class='form-group'>
+                                                    <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
+                                                    <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
+                                                </div>
+                                                <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
+                                            </form>";
+                        } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2) {
+                            $bouton = "
+                                  <div class='card-body'>
+                                    <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
+                                    <p class='card-text'>$lignedeux->commentaire</p>
+                                  </div>
+                                <a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         } else {
-                            $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";                           
+                            $bouton = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";
                         }
                         break;
                     case 2:
                         if ($lignedeux->technicien == "N/A") {
                             $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
-                        } else if($lignedeux->etat == 1){
+                        } else if ($lignedeux->etat == 1) {
                             $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
-                        } else if ($lignedeux->etat == 2){
-                            $bouton = "<a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";                           
+                        } else if ($lignedeux->etat == 2) {
+                            $bouton = "<a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         }
                         break;
                 }
@@ -151,20 +156,20 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
                 // Affichage des différents serveurs (Dans des éléments de type card.)
                 echo "
-                <a href='../index.php'><button type='button' class='btn btn-primary btn-lg btn-block'>Retour aux tickets actifs</button></a>
-                <div class='card bg-dark text-white'>
-                    <div class='card-header'>
-                        Ticket N° $lignedeux->id - Ouvert le : <span class='bg-success'>$lignedeux->date à $lignedeux->heure</span>  - Pris en charge le : <span class='bg-warning'>$lignedeux->datepec à $lignedeux->heurepec</span> - Fermé le : <span class='bg-danger'>$lignedeux->datefin à $lignedeux->heurefin</span>
+                    <a href='../index.php'><button type='button' class='btn btn-primary btn-lg btn-block'>Retour aux tickets actifs</button></a>
+                    <div class='card bg-dark text-white'>
+                        <div class='card-header'>
+                            Ticket N° $lignedeux->id - Ouvert le : <span class='bg-success'>$lignedeux->date à $lignedeux->heure</span>  - Pris en charge le : <span class='bg-warning'>$lignedeux->datepec à $lignedeux->heurepec</span> - Fermé le : <span class='bg-danger'>$lignedeux->datefin à $lignedeux->heurefin</span>
+                        </div>
+                        <div class='card-body'>
+                            <h5 class='card-title'>Sujet : $lignedeux->sujetprincipal</h5>
+                            <p class='card- text'>Description : <span class='text-primary'>$lignedeux->description</span></p>
+                            <h6 class='card-title'>Serveur : <span class='bg-primary'>$lignedeux->serveur</span> | Niveau d'urgence : $urgence | Statut : $etat</h6>
+                            <h6 class='card-title'>$textetechnicien</h6>
+                        </div>
+                        $bouton
                     </div>
-                    <div class='card-body'>
-                        <h5 class='card-title'>$lignedeux->sujetprincipal</h5>
-                        <p class='card- text text-primary'>$lignedeux->description</p>
-                        <h6 class='card-title'>Serveur : <span class='bg-primary'>$lignedeux->serveur</span> | Niveau d'urgence : $urgence | Statut : $etat</h6>
-                        <h6 class='card-title'>$textetechnicien</h6>
-                    </div>
-                    $bouton
-                </div>
-                ";
+                    ";
             }
         }
         ?>
