@@ -99,15 +99,12 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 switch ($lignedeux->etat) {
                     case 0:
                         $etat = "<strong><span class='text-danger'>Non-Traité</span></strong>";
-                        $textetechnicien = "Personne ne s'occupe du ticket actuellement...";
                         break;
                     case 1:
                         $etat = "<strong><span class='text-success'>En-cours</span></strong>";
-                        $textetechnicien = "Personne s'occupant actuellement du ticket : <span class='bg-info'>$lignedeux->technicien</span>";
                         break;
                     case 2:
                         $etat= "<strong><span class='text-info'>Archivé</span></strong>";
-                        $textetechnicien = "Personne s'étant occupé du ticket : <span class='bg-info'>$lignedeux->technicien</span>";
                         break;
                 }
 
