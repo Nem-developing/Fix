@@ -125,8 +125,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 1) {
                             $bouton = "<form action='../actions/archiver.php?id=$id' method='post'>
                                                 <div class='form-group'>
-                                                    <label for='exampleFormControlInput1' id='titrecommentaire'>Commentaire d'archivage du ticket :</label>
-                                                    <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1 commentaire' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
+                                                    <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
+                                                    <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
                                                 </div>
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
