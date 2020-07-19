@@ -145,9 +145,20 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         if ($lignedeux->technicien == "N/A") {
                             $bouton = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->etat == 1) {
-                            $bouton = "<a href='../actions/archiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Archiver le ticket</button></a>";
+                            $bouton = "<form action='../actions/archiver.php?id=$id' method='post'>
+                                                <div class='form-group'>
+                                                    <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
+                                                    <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
+                                                </div>
+                                                <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
+                                            </form>";
                         } else if ($lignedeux->etat == 2) {
-                            $bouton = "<a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
+                            $bouton = "
+                                  <div class='card-body'>
+                                    <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
+                                    <p class='card-text'>$lignedeux->commentaire</p>
+                                  </div>
+                                <a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         }
                         break;
                 }
