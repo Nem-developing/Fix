@@ -52,6 +52,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $id = $_GET['id'];  // On récupère l'ID.
             $datefin = strftime("%d/%m/%y");       // On entre la date dans la variable $datepec.
             $heurefin = strftime("%Hh%M");       // On entre l'heure dans la variable $finpec.
+            $commentaire = $_POST['commentaire'];       // On récupère les informations du formulaire précédent.
 
           
             (int) $erreur = 0;
@@ -65,7 +66,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $erreur = $erreur + 1;
             }
             // Mise à jour de la la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("UPDATE `tickets` SET `datefin` = '$datefin', `heurefin` = '$heurefin', `etat` = '2'  WHERE `id` = '$id'")) {
+            if (!$mysqli->query("UPDATE `tickets` SET `datefin` = '$datefin', `heurefin` = '$heurefin', `etat` = '2', `commentaire` = '$commentaire'  WHERE `id` = '$id'")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
