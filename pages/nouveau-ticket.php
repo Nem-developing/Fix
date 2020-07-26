@@ -61,7 +61,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1 ">Sujet principal</label>
-                        <input class="form-control form-control-lg bg-dark" type="text" name="sujetprincipal" placeholder="Exemple : Problème de permitions." required>
+                        <input class="form-control form-control-lg bg-dark" type="text" name="sujetprincipal" placeholder="Exemple : Problème de permitions." maxlength="50" required>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Description précise du ticket :</label>
