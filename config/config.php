@@ -9,9 +9,9 @@
      */ 
 
     $hotedeconnexion = "127.0.0.1"; // 127.0.0.1 = Localhost
-    $basededonnee = "Fix";
-    $utilisateur = "Fix-USER";
-    $motdepasse = "Fix-PASSWORD";
+    $basededonnee = "tickets_nemixcraft";
+    $utilisateur = "tickets_nemixcraft_user";
+    $motdepasse = "ENKi9S5iLrrAmB6yWQSI";
 
 
     /* =========================================================================

@@ -20,28 +20,9 @@ Projet réalisé par Nem-developing, tout droits réservés.
     </head>
     <body>
 
-        <!-- Menu -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="../index.php">Fix</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarColor01">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="../index.php">Accueil <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/Nem-developing/fix/">Source code</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">À propos</a>
-                    </li>
-                </ul>
-                <a class="version" href="https://github.com/nem-developing/">Fix 1.0 - Nem-Developing</a>
-            </div>
-        </nav>  
+        <?php
+        include '../includes/menu-enfants.html';
+        ?>
 
 
  

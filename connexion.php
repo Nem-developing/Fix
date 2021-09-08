@@ -7,26 +7,38 @@ if($_SESSION['utilisateur']){
 
 
 if(isset($_POST['submit'])){
+    // On récupère les valleurs du form.    
     $utilisateurconnexion = $_POST['utilisateur'];
-    $mdpconnexion = $_POST['mdp'];
-    
+    $mdp = $_POST['mdp'];
+        
     include './config/config.php';  // Import des informations de connexion à la base de données.
     // Établissement de la connexion au serveur mysql.
     $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
     // Commande SQL permetant de récupérer la liste des tickets archivés..
-    $req = 'SELECT * FROM connexion WHERE utilisateur = "' . $utilisateurconnexion . '" and motdepasse = "' . $mdpconnexion . '";';
+    $req = 'SELECT * FROM connexion WHERE utilisateur = "' . $utilisateurconnexion . '";';
     // Envoie au serveur la commande via le biais des informations de connexion.
     $res = $cnx->query($req);
 
     // Boucle tant qu'il y a de lignes corespondantes à la requettes
     while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
-        $utilisateurconnecte = $ligne->utilisateur;
-        $_SESSION['utilisateur'] = $utilisateurconnecte;
+        
+        if (password_verify($_POST['mdp'], $ligne->motdepasse)){
+                      
+            $utilisateurconnecte = $ligne->utilisateur;
+            $_SESSION['utilisateur'] = $utilisateurconnecte;
+            $utilisateurperms = $ligne->permissions;
+            $_SESSION['permissions'] = $utilisateurperms;
+            $utilisateurid = $ligne->id;
+            $_SESSION['utilisateurid'] = $utilisateurid;
+        }      
+        
     }    
     
     if ($_SESSION['utilisateur']){
         header('Location: index.php');
         exit();
+    } else {
+        $erreurmdpoupass = True;
     }
 }
 ?>
@@ -38,6 +50,7 @@ if(isset($_POST['submit'])){
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link href="css/connexion.css" rel="stylesheet" type="text/css"/>
         <title>Fix - Tickets</title>
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" />
     </head>
     <body>
         <div id="formulaire" class="bg-dark text-white">
@@ -51,6 +64,13 @@ if(isset($_POST['submit'])){
                     <label for="exampleInputPassword1" name="mdp" class="text-white">Mot de passe</label>
                     <input type="password" name="mdp" class="form-control" id="exampleInputPassword1" placeholder="Mot de passe sécurisé">
                 </div>
+                <?php
+                if ($erreurmdpoupass == True){
+                    echo '<div class="form-group">
+                                <div class="text-danger">Votre identifiant ou votre mot de passe est faux.</div>
+                          </div>';
+                }
+                ?>
                 <button type="submit" name="submit" class="btn btn-primary btn-lg btn-block">Connexion</button>
             </form>
         </div>

@@ -23,7 +23,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
     <body>
 
         <?php
-        include '../includes/menu-enfants.html';
+        include '../includes/menu.php?type=niveau-enfants';
         ?>
         
         <div class="bg-dark">

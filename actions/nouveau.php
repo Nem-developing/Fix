@@ -20,28 +20,9 @@ Projet réalisé par Nem-developing, tout droits réservés.
     </head>
     <body>
 
-        <!-- Menu -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="../index.php">Fix</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarColor01">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="../index.php">Accueil <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/Nem-developing/fix/">Source code</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">À propos</a>
-                    </li>
-                </ul>
-                <a class="version" href="https://github.com/nem-developing/">Fix 1.0 - Nem-Developing</a>
-            </div>
-        </nav>  
+        <?php
+        include '../includes/menu-enfants.html';
+        ?>
 
 
  
@@ -77,7 +58,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $serveurok = str_replace($rechercher,$remplacer,$serveur);
             $sujetprincipalok = str_replace($rechercher,$remplacer,$sujetprincipal);
             $descriptionok = str_replace($rechercher,$remplacer,$description);
-            
+            $utilisateuremmeteurduticket = $_SESSION['utilisateur'];
             
             
             //  Connexion à la base de donnée.
@@ -88,7 +69,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $erreur = $erreur + 1;
             }
             // Création de la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("CREATE TABLE IF NOT EXISTS `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `sujetprincipal` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `datepec` varchar(10) NOT NULL, `heurepec` varchar(10) NOT NULL, `datefin` varchar(10) NOT NULL, `heurefin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `ip` varchar(19) NOT NULL , `technicien` varchar(25) NOT NULL, `commentaire` longtext NOT NULL, `technicienquiarchive` varchar(25) NOT NULL);")) {
+            if (!$mysqli->query("CREATE TABLE IF NOT EXISTS `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `sujetprincipal` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateuremmeteurduticket` varchar(25) NOT NULL, `datepec` varchar(10) NOT NULL, `heurepec` varchar(10) NOT NULL, `datefin` varchar(10) NOT NULL, `heurefin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `ip` varchar(19) NOT NULL , `technicien` varchar(25) NOT NULL, `commentaire` longtext NOT NULL, `technicienquiarchive` varchar(25) NOT NULL);")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
@@ -111,7 +92,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             
             // Envoie des informations du formulaire dans la table.
-            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `sujetprincipal`, `description`, `date`, `heure`, `datepec`, `heurepec`,  `datefin`, `heurefin`,  `urgence`, `etat`, `ip`, `technicien`, `commentaire`, `technicienquiarchive`) VALUES ('$serveurok', '$sujetprincipalok', '$descriptionok', '$date', '$heure', 'N/A', 'N/A','N/A','N/A', '$urgence', '0', '$ip', 'N/A', 'N/A', 'N/A');")) {
+            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `sujetprincipal`, `description`, `date`, `heure`, `utilisateuremmeteurduticket`, `datepec`, `heurepec`,  `datefin`, `heurefin`,  `urgence`, `etat`, `ip`, `technicien`, `commentaire`, `technicienquiarchive`) VALUES ('$serveurok', '$sujetprincipalok', '$descriptionok', '$date', '$heure', '$utilisateuremmeteurduticket', 'N/A', 'N/A','N/A','N/A', '$urgence', '0', '$ip', 'N/A', 'N/A', 'N/A');")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors l'inssertion des éléments dans la table 'tickets' ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
