@@ -5,6 +5,37 @@ if(!isset($_SESSION['utilisateur'])) {
   header('Location: ../connexion.php');
   exit();
 }
+
+
+
+
+// Données GRAPH TICKETS
+include '../config/config.php';  // Import des informations de connexion à la base de données.
+// Établissement de la connexion au serveur mysql.
+$conn = new mysqli($hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
+
+// Données GRAPH UTILISATEURS
+$sql4 = "SELECT * FROM `connexion` where `permissions` = '0';";
+if ($result=mysqli_query($conn,$sql4)) {
+     $utilisateursfaibles=mysqli_num_rows($result);
+}
+
+
+$sql5 = "SELECT * FROM `connexion` where `permissions` = '1';";
+if ($result=mysqli_query($conn,$sql5)) {
+    $utilisateursnormaux=mysqli_num_rows($result);
+}
+
+
+$sql6 = "SELECT * FROM `connexion` where `permissions` = '2';";
+if ($result=mysqli_query($conn,$sql6)) {
+    $utilisateurseleves=mysqli_num_rows($result);
+}
+
+
+
+
+
 ?> 
 <!DOCTYPE html>
 <!--
@@ -20,6 +51,43 @@ Projet réalisé par Nem-developing, tout droits réservés.
         <link href="../css/nouveau-ticket.css" rel="stylesheet" type="text/css"/>
         <title>Fix - Tickets</title>
         <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" />
+        <!--
+        Graphiques 
+        -->
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+          google.charts.load('current', {'packages':['corechart']});
+          google.charts.setOnLoadCallback(drawChart);
+
+          function drawChart() {
+
+            
+            var datautilisateurs = google.visualization.arrayToDataTable([
+              ['Task', 'Utilisateurs'],
+              ['Privilèges Élevés',     <?php echo $utilisateurseleves;?>],
+              ['Privilèges Normaux',      <?php echo $utilisateursnormaux;?>],
+              ['Privilèges Faible',    <?php echo $utilisateursfaibles;?>]
+            ]);
+
+
+              
+            
+                    
+            var optionsutilisateurs = {
+              title: 'États des utilisateurs',
+              backgroundColor: '#343a40',
+              titleTextStyle: { color: "white", fontSize: 16},
+              legend: {textStyle: {color: 'white'}}
+
+              
+            };
+
+            var chartutilisateurs = new google.visualization.PieChart(document.getElementById('piechart-utilisateurs'));
+
+            chartutilisateurs.draw(datautilisateurs, optionsutilisateurs);
+          }
+        </script>
+    </body>
     </head>
     <body>
         
@@ -46,12 +114,26 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     
         
         ?>
+      
+        
+        
+        
+        
+        
+        
+        
+        
         <!--
               Liste des utilisateurs
         -->
         <div class="bg-dark">
             
-            
+        
+        <div style="align-content: center; border: solid; border-color: grey; height: 250px; background-color: #343a40 !important;" >
+            <div id="piechart-utilisateurs" style="width: 50%; height: 100%; float: left;"></div>
+
+            <div style="width: 50%; height: 100%; float: left; background-color: #343a40 !important;"></div>
+        </div>
             
         <table class="table table-dark table-striped">
             <thead>
@@ -131,6 +213,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
              
          }
          ?>  
+            
+            
           </tbody>
 </table>
         
@@ -142,13 +226,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
         <a href="nouvel-utilisateur.php"><button type="button" class="btn btn-primary btn-lg btn-block">Créer un nouvel utilisateur</button></a>
         
        
+
        
        
-       
-       
-       
-       
-       
+        
        
        
        
@@ -165,5 +246,5 @@ Projet réalisé par Nem-developing, tout droits réservés.
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-    </body>
+        
 </html>
