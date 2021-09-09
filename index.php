@@ -5,6 +5,51 @@ if(!isset($_SESSION['utilisateur'])) {
   header('Location: ./connexion.php');
   exit();
 }
+
+
+// Données GRAPH TICKETS
+include './config/config.php';  // Import des informations de connexion à la base de données.
+// Établissement de la connexion au serveur mysql.
+$conn = new mysqli($hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
+$sql = "SELECT * FROM `tickets` where `etat` = '0';";
+if ($result=mysqli_query($conn,$sql)) {
+    $ticketsnontraitees=mysqli_num_rows($result);
+}
+
+
+$sql2 = "SELECT * FROM `tickets` where `etat` = '1';";
+if ($result=mysqli_query($conn,$sql2)) {
+    $ticketsencours=mysqli_num_rows($result);
+}
+
+
+$sql3 = "SELECT * FROM `tickets` where `etat` = '2';";
+if ($result=mysqli_query($conn,$sql3)) {
+    $ticketsarchives=mysqli_num_rows($result);
+}
+
+
+// Données GRAPH UTILISATEURS
+$sql4 = "SELECT * FROM `connexion` where `permissions` = '0';";
+if ($result=mysqli_query($conn,$sql4)) {
+     $utilisateursbasiques=mysqli_num_rows($result);
+}
+
+
+$sql5 = "SELECT * FROM `connexion` where `permissions` = '1';";
+if ($result=mysqli_query($conn,$sql5)) {
+    $utilisateursnormaux=mysqli_num_rows($result);
+}
+
+
+$sql6 = "SELECT * FROM `connexion` where `permissions` = '2';";
+if ($result=mysqli_query($conn,$sql6)) {
+    $utilisateurseleves=mysqli_num_rows($result);
+}
+
+
+
+
 ?> 
 <!DOCTYPE html>
 <!--
@@ -19,6 +64,55 @@ Projet réalisé par Nem-developing, tout droits réservés.
         <link href="css/index.css" rel="stylesheet" type="text/css"/>
         <title>Fix - Tickets</title>
         <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" />
+        <!--
+        Graphiques
+        -->
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+          google.charts.load('current', {'packages':['corechart']});
+          google.charts.setOnLoadCallback(drawChart);
+
+          function drawChart() {
+
+            var datatickets = google.visualization.arrayToDataTable([
+              ['Task', 'Tickets'],
+              ['Tickets non-traités',     <?php echo $ticketsnontraitees;?>],
+              ['Tickets en cours',      <?php echo $ticketsencours;?>],
+              ['Tickets archivés',    <?php echo $ticketsarchives;?>]
+            ]);
+
+            var datautilisateurs = google.visualization.arrayToDataTable([
+              ['Task', 'Utilisateurs'],
+              ['Privilèges Élevés',     <?php echo $utilisateurseleves;?>],
+              ['Privilèges Normaux',      <?php echo $utilisateursnormaux;?>],
+              ['Privilèges Faible',    <?php echo $utilisateursbasiques;?>]
+            ]);
+
+            var optionstickets = {
+              title: 'États des tickets',
+              backgroundColor: '#343a40',
+              titleTextStyle: { color: "white", fontSize: 16},
+              legend: {textStyle: {color: 'white'}}
+
+              
+            };
+                    
+            var optionsutilisateurs = {
+              title: 'États des utilisateurs',
+              backgroundColor: '#343a40',
+              titleTextStyle: { color: "white", fontSize: 16},
+              legend: {textStyle: {color: 'white'}}
+
+              
+            };
+
+            var charttickets = new google.visualization.PieChart(document.getElementById('piechart-tickets'));
+            var chartutilisateurs = new google.visualization.PieChart(document.getElementById('piechart-utilisateurs'));
+
+            charttickets.draw(datatickets, optionstickets);
+            chartutilisateurs.draw(datautilisateurs, optionsutilisateurs);
+          }
+        </script>
     </head>
     <body>
 
@@ -27,10 +121,14 @@ Projet réalisé par Nem-developing, tout droits réservés.
         ?>
 
         <div class="bg-dark">
-
+            <div style="align-content: center; border: solid; border-color: grey; height: 250px;" >
+                <div id="piechart-tickets" style="width: 50%; height: 100%; float: left;"></div>
+              
+                <div id="piechart-utilisateurs" style="width: 50%; height: 100%; float: left;"></div>
+            </div>
             <div id="boutons">
-                 <div class="col boutons"><a href="pages/nouveau-ticket.php"><button type="button" class="btn btn-primary btn-lg btn-block">Nouveau ticket</button></a></div>
-                <div class="col boutons"><a href="pages/archives.php"><button type="button" class="btn btn-warning btn-lg btn-block">Tickets Archivés</button></a></div>
+                 <div class="boutons"><a href="pages/nouveau-ticket.php"><button type="button" class="btn btn-primary btn-lg btn-block">Nouveau ticket</button></a></div>
+                <div class="boutons"><a href="pages/archives.php"><button type="button" class="btn btn-warning btn-lg btn-block">Tickets Archivés</button></a></div>
             </div>
 
             <div class="table-responsive">

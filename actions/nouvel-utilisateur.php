@@ -80,7 +80,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $privileges = 99;
             
             switch ($choix) {
-                case "Basiques":
+                case "Faibles":
                     $privileges = 0;
 
                     break;

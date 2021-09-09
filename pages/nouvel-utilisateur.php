@@ -54,21 +54,21 @@
               <label class="form-check-label" for="choix">
                 Élevés
               </label>
-              <div class="text-muted fst-italic">Un utilisateur possédant les perivilèges élevés peut créer, prendre en charge et archiver n'importe quel ticket. Il ou elle peut également modifier le mot de passe des utilisateurs.</div>
+              <div class="text-muted fst-italic">Un utilisateur possédant les privilèges élevés peut créer, prendre en charge et archiver n'importe quel ticket. Il ou elle peut également modifier le mot de passe des utilisateurs.</div>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="choix" value="Normaux" checked> 
               <label class="form-check-label" for="choix">
                 Normaux
               </label>
-              <div class="text-muted fst-italic">Un utilisateur possédant les perivilèges normaux peut créer de nouveaux tickets et prendre en charge d'autre tickets. Mais il ou elle ne peux pas archiver d'autres tickets que les siens.</div>
+              <div class="text-muted fst-italic">Un utilisateur possédant les privilèges normaux peut créer de nouveaux tickets et prendre en charge d'autre tickets. Mais il ou elle ne peux pas archiver d'autres tickets que les siens.</div>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="choix" value="Basiques">
+                <input class="form-check-input" type="radio" name="choix" value="Faibles">
               <label class="form-check-label" for="choix">
-                Basiques
+                Faibles
               </label>
-              <div class="text-muted fst-italic">Un utilisateur possédant les perivilèges basiques peut créer de nouveaux tickets, consulter tous les tickets, mais ne peut pas prendre en charge de tickets.</div>
+              <div class="text-muted fst-italic">Un utilisateur possédant les privilèges faibles peut créer de nouveaux tickets et consulter tous les tickets. Cependant, il ne pourra pas prendre en charge de tickets.</div>
             </div>
           </div>
         </fieldset>
