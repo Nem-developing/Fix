@@ -29,22 +29,22 @@ if ($result=mysqli_query($conn,$sql3)) {
 }
 
 
-// Données GRAPH UTILISATEURS
-$sql4 = "SELECT * FROM `connexion` where `permissions` = '0';";
+// Données GRAPH URGENCE DES TICKETS
+$sql4 = "SELECT * FROM `tickets` where `urgence` = '0';";
 if ($result=mysqli_query($conn,$sql4)) {
-     $utilisateursbasiques=mysqli_num_rows($result);
+     $urgencefaible=mysqli_num_rows($result);
 }
 
 
-$sql5 = "SELECT * FROM `connexion` where `permissions` = '1';";
+$sql5 = "SELECT * FROM `tickets` where `urgence` = '1';";
 if ($result=mysqli_query($conn,$sql5)) {
-    $utilisateursnormaux=mysqli_num_rows($result);
+    $urgencenormale=mysqli_num_rows($result);
 }
 
 
-$sql6 = "SELECT * FROM `connexion` where `permissions` = '2';";
+$sql6 = "SELECT * FROM `tickets` where `urgence` = '2';";
 if ($result=mysqli_query($conn,$sql6)) {
-    $utilisateurseleves=mysqli_num_rows($result);
+    $ticketsurgents=mysqli_num_rows($result);
 }
 
 
@@ -81,36 +81,38 @@ Projet réalisé par Nem-developing, tout droits réservés.
               ['Tickets archivés',    <?php echo $ticketsarchives;?>]
             ]);
 
-            var datautilisateurs = google.visualization.arrayToDataTable([
-              ['Task', 'Utilisateurs'],
-              ['Privilèges Élevés',     <?php echo $utilisateurseleves;?>],
-              ['Privilèges Normaux',      <?php echo $utilisateursnormaux;?>],
-              ['Privilèges Faible',    <?php echo $utilisateursbasiques;?>]
+            var dataurgence = google.visualization.arrayToDataTable([
+              ['Task', 'Urgence'],
+              ['Urgence Élevée',     <?php echo $ticketsurgents;?>],
+              ['Urgence Normale',      <?php echo $urgencenormale;?>],
+              ['Urgence Faible',    <?php echo $urgencefaible;?>]
             ]);
 
             var optionstickets = {
               title: 'États des tickets',
               backgroundColor: '#343a40',
+              colors: ['red', 'green', 'orange'],
               titleTextStyle: { color: "white", fontSize: 16},
               legend: {textStyle: {color: 'white'}}
 
               
             };
                     
-            var optionsutilisateurs = {
-              title: 'États des utilisateurs',
+            var optionsurgence = {
+              title: 'Urgence des tickets',
               backgroundColor: '#343a40',
+              colors: ['red', 'blue', 'green'],
               titleTextStyle: { color: "white", fontSize: 16},
               legend: {textStyle: {color: 'white'}}
-
+              
               
             };
 
             var charttickets = new google.visualization.PieChart(document.getElementById('piechart-tickets'));
-            var chartutilisateurs = new google.visualization.PieChart(document.getElementById('piechart-utilisateurs'));
+            var charturgence = new google.visualization.PieChart(document.getElementById('piechart-urgent'));
 
             charttickets.draw(datatickets, optionstickets);
-            chartutilisateurs.draw(datautilisateurs, optionsutilisateurs);
+            charturgence.draw(dataurgence, optionsurgence);
           }
         </script>
     </head>
@@ -124,7 +126,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             <div style="align-content: center; border: solid; border-color: grey; height: 250px;" >
                 <div id="piechart-tickets" style="width: 50%; height: 100%; float: left;"></div>
               
-                <div id="piechart-utilisateurs" style="width: 50%; height: 100%; float: left;"></div>
+                <div id="piechart-urgent" style="width: 50%; height: 100%; float: left;"></div>
             </div>
             <div id="boutons">
                  <div class="boutons"><a href="pages/nouveau-ticket.php"><button type="button" class="btn btn-primary btn-lg btn-block">Nouveau ticket</button></a></div>
