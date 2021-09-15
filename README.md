@@ -1,6 +1,4 @@
 # Fix - Application web de gestion de tickets
-![LOGO]()
-
 <img src="https://github.com/Nem-developing/Fix/blob/master/favicon.ico?raw=true" style="width: 50px;"></img>       
 
 Image d'illustration :
