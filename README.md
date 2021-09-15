@@ -2,7 +2,7 @@
 
 <div float="left">
   <img src="https://github.com/Nem-developing/Fix/blob/master/favicon.ico?raw=true" style="width: 50px;"></img>       
-  <h5 style="top: 50%;">Ceci est un test</h5>
+  <h5>Ceci est un test</h5>
 </div>
 
 Image d'illustration :
