@@ -57,7 +57,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <option>Urgent</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg btn-block" value="ok" onclick="javascript=this.disabled = true; form.submit();">Créer le ticket</button>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" value="ok">Créer le ticket</button>
                 </form>
             </center>
 
