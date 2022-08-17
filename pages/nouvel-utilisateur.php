@@ -15,7 +15,8 @@
 
 
     <?php
-        include '../includes/menu-enfants.html';
+        include '../includes/menu-enfants.php';
+        include '../includes/verif_licence_enfants.php';  
     ?>
 
                

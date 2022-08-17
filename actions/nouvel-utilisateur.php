@@ -21,7 +21,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
     <body>
 
         <?php
-        include '../includes/menu-enfants.html';
+        include '../includes/menu-enfants.php';
         ?>
         <div id="page">
             
@@ -43,7 +43,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             // On récupère les valleurs du formulaire.
             $compte = $_POST['utilisateur']; 
-            $motdepasse = $_POST['motdepasse']; 
+            $motdepassecompte = $_POST['motdepasse']; 
             $choix = $_POST['choix']; 
             
             
@@ -63,7 +63,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $compteur = 1;
             }
             if ($compteur === 1) {
-                header("Location: ../pages/parametres.php?erreur=1");
+                header("Location: ../pages/gestion-utilisateurs.php?erreur=1");
                 exit();
             }
             
@@ -73,7 +73,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $rechercher = "'"; 
             $remplacer = "\'"; 
             
-            $utilisateurok = str_replace($rechercher,$remplacer,$utilisateur);
+            $utilisateurok = str_replace($rechercher,$remplacer,$compte);
             
             
             // On initialise une valleur.
@@ -85,7 +85,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
                     break;
                 
-                case "Normauxs":
+                case "Normaux":
                     $privileges = 1;
 
                     break;
@@ -97,7 +97,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             }
             
                        
-            $motdepasseHASH = password_hash($motdepasse, PASSWORD_DEFAULT);
+            $motdepasseHASH = password_hash($motdepassecompte, PASSWORD_DEFAULT);
           
             
             
@@ -107,11 +107,11 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $date = strftime("%d/%m/%y"); 
 
             if (!$mysqli->query("INSERT INTO `connexion` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('$utilisateurok', '$motdepasseHASH', '$privileges', '$date');")) {
-                echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
+                echo "<div class='alert alert-danger' role='alert'> Echec lors de l'insertion des données ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
             }
-            
+            echo "INSERT INTO `connexion` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('$utilisateurok', '$motdepasseHASH', '$privileges', '$date');";
             if ($erreur === 0) {    // test de la présence d'erreurs ou non.
                 header("Location: ../pages/parametres.php");
                 exit();

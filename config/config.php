@@ -12,7 +12,7 @@
     $basededonnee = "tickets_nemixcraft";
     $utilisateur = "tickets_nemixcraft_user";
     $motdepasse = "ENKi9S5iLrrAmB6yWQSI";
-
+    $versiondefix = 2.2;        // NE PAS TOUCHER
 
     /* =========================================================================
      * Voici comment fonctionne les tickets dans la base de donnée : 

@@ -5,6 +5,7 @@ if(!isset($_SESSION['utilisateur'])) {
   header('Location: ../connexion.php');
   exit();
 }
+include '../includes/verif_licence_enfants.php';  
 ?> 
 <!DOCTYPE html>
 <!--
@@ -23,7 +24,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
     <body>
 
         <?php
-        include '../includes/menu-enfants.html';
+        include '../includes/menu-enfants.php';
         ?>
 
 

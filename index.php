@@ -6,6 +6,8 @@ if(!isset($_SESSION['utilisateur'])) {
   exit();
 }
 
+include './includes/verif_licence_parents.php';  
+
 
 // Données GRAPH TICKETS
 include './config/config.php';  // Import des informations de connexion à la base de données.
@@ -113,13 +115,27 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
             charttickets.draw(datatickets, optionstickets);
             charturgence.draw(dataurgence, optionsurgence);
-          }
+            
+            function masquernotification()
+            {
+              $("#notif").fadeOut().empty();
+            }
+             window.setTimeout(masquernotification, 4000);
+                      }
         </script>
     </head>
     <body>
 
         <?php
-        include './includes/menu-parents.html';
+        include './includes/menu-parents.php';
+        
+        // Affichage enregistrement de la licence :
+        if ($_GET['licence'] === "succes"){
+             echo "<div id='notif' class='d-block p-2 bg-success text-light' href='https://github.com/Nem-developing/API/releases/latest' role='alert'>
+                    Félicitations, votre clef de licence a fonctionnée ! 
+                  </div>";
+        }
+       
         ?>
 
         <div class="bg-dark">

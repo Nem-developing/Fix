@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['utilisateur'])) {
+  header('Location: ../connexion.php');
+  exit();
+}
+include '../includes/verif_licence_enfants.php';  
+
+?> 
 <!doctype html>
 <html lang="en">
     <head>
@@ -15,7 +25,7 @@
 
 
     <?php
-        include '../includes/menu-enfants.html';
+        include '../includes/menu-enfants.php';
         
         // Récupération du compte a supprimer
         $compte = $_GET['compte'];
