@@ -9,10 +9,10 @@
      */ 
 
     $hotedeconnexion = "127.0.0.1"; // 127.0.0.1 = Localhost
-    $basededonnee = "tickets_nemixcraft";
-    $utilisateur = "tickets_nemixcraft_user";
-    $motdepasse = "ENKi9S5iLrrAmB6yWQSI";
-    $versiondefix = 2.2;        // NE PAS TOUCHER
+    $basededonnee = "Fix";
+    $utilisateur = "Fix-user";
+    $motdepasse = "Fix-MDP";
+    $versiondefix = 2.3;        // NE PAS TOUCHER
 
     /* =========================================================================
      * Voici comment fonctionne les tickets dans la base de donnée : 
