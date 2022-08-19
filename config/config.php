@@ -8,10 +8,17 @@
      *  =========================================================================
      */ 
 
-    $hotedeconnexion = "127.0.0.1"; // 127.0.0.1 = Localhost
-    $basededonnee = "Fix";
-    $utilisateur = "Fix-user";
-    $motdepasse = "Fix-MDP";
+    /*  
+     *  =========================================================================
+     *  Décommentez les variables liés à la base de donnée ! 
+     *  =========================================================================
+     */ 
+
+
+    //$hotedeconnexion = "127.0.0.1"; // 127.0.0.1 = Localhost
+    //$basededonnee = "Fix";
+    //$utilisateur = "Fix-user";
+    //$motdepasse = "Fix-MDP";
     $versiondefix = 2.3;        // NE PAS TOUCHER
 
     /* =========================================================================
@@ -47,13 +54,4 @@
      * =========================================================================
      */
 
-
-
-    // Tentative de connexion au seveur de bases de données.
-    $connexion = mysqli_connect($hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
-    
-    // Affichage d'un message d'erreur si il y a un soucis avec l'établissement du lien entre PHP et MYSQL - MARIADB
-    if(!$connexion) {
-        echo("Problème de connexion à la base de données ! Vérifiez les informations saisies dans la configuration.");
-    }
 ?>
