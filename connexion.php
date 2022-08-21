@@ -8,6 +8,7 @@ if($_SESSION['utilisateur']){
 include './config/config.php';  // Import des informations de connexion à la base de données.
 // Établissement de la connexion au serveur mysql.
 $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
+echo "mysql:host=$hotedeconnexion;dbname=$basededonnee $utilisateur $motdepasse";
 // Commande SQL permetant de récupérer la liste des tickets archivés..
 $req = 'CREATE TABLE IF NOT EXISTS `connexion` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(60) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );';
 // Envoie au serveur la commande via le biais des informations de connexion.
@@ -20,9 +21,16 @@ $res = $cnx->query($req);
 
 $compteur = 0;
 
-while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
+
+try {
+    while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
     $compteur += 1;
+    }
+} catch (Exception $exc) {
+    echo $exc->getTraceAsString();
 }
+
+
 
 if ($compteur === 0){
     $date = strftime("%d/%m/%y");
