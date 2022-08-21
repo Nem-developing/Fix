@@ -1,4 +1,6 @@
 <?php
+
+try {
     include '../config/config.php';  // Import des informations de connexion à la base de données.
     // Établissement de la connexion au serveur mysql.
     $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
@@ -27,5 +29,6 @@
         header('Location: ./pages/parametres.php?erreur=licencemanquante');
         exit();
     }
-    
-    
+} catch (Exception $exc) {
+    echo $exc->getTraceAsString();
+}
