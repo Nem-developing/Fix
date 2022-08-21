@@ -1,5 +1,5 @@
 <?php
-    include './config/config.php';  // Import des informations de connexion à la base de données.
+    include '../config/config.php';  // Import des informations de connexion à la base de données.
     // Établissement de la connexion au serveur mysql.
     $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
     // Commande récupérant l'utilisateur connecté.
