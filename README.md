@@ -21,7 +21,7 @@ version: '3.1'
 services:
 
   fix:
-    image: nemdeveloping/fix:1.6
+    image: nemdeveloping/fix:1.13
     restart: always
     ports:
       - 80:80
