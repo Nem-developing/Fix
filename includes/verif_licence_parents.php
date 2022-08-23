@@ -6,7 +6,7 @@
     $res = $cnx->query($req);
     $cpt = 0;
         
-    if (!$ligne){
+    if (!$res){
         header('Location: ./pages/parametres.php?erreur=licencemanquante');
         exit();
     } else {
