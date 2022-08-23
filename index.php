@@ -6,11 +6,12 @@ if(!isset($_SESSION['utilisateur'])) {
   exit();
 }
 
-include './includes/verif_licence_parents.php';  
 
 
 // Données GRAPH TICKETS
 include './config/config.php';  // Import des informations de connexion à la base de données.
+include './includes/verif_licence_parents.php';  
+
 // Établissement de la connexion au serveur mysql.
 $conn = new mysqli($hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
 $sql = "SELECT * FROM `tickets` where `etat` = '0';";
@@ -51,7 +52,23 @@ if ($result=mysqli_query($conn,$sql6)) {
 
 
 
+// SI 0 TICKETS --> Tout nouvelle 
+$req10 = 'SELECT * FROM `tickets` LIMIT 1;';
+$res10 = $cnx->query($req10);
+// Création de la table des tickets
+$date_tick = strftime("%d/%m/%y");  
+$heure_tick = strftime("%Hh%M"); 
+$req11 = 'CREATE TABLE IF NOT EXISTS `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `sujetprincipal` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateuremmeteurduticket` varchar(25) NOT NULL, `datepec` varchar(10) NOT NULL, `heurepec` varchar(10) NOT NULL, `datefin` varchar(10) NOT NULL, `heurefin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `ip` varchar(19) NOT NULL , `technicien` varchar(25) NOT NULL, `commentaire` longtext NOT NULL, `technicienquiarchive` varchar(25) NOT NULL);';
+$req12 = "INSERT INTO `tickets` (`serveur`, `sujetprincipal`, `description`, `date`, `heure`, `utilisateuremmeteurduticket`, `datepec`, `heurepec`,  `datefin`, `heurefin`,  `urgence`, `etat`, `ip`, `technicien`, `commentaire`, `technicienquiarchive`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix $versiondefix !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '$date_tick', '$heure_tick', 'Néhémie', 'N/A', 'N/A','N/A','N/A', '0', '0', 'N/A', 'N/A', 'N/A', 'N/A');";
 
+
+
+if (!$res10){
+    $cnx->query($req11);
+    $cnx->query($req12);
+    header('Location: ./index.php');
+    exit();
+}
 ?> 
 <!DOCTYPE html>
 <!--
@@ -177,7 +194,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
                         // Boucle tant qu'il y a de lignes corespondantes à la requettes
                         while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
-
+                            $cpt += 1;
 
 
                             // Changement de l'INT en texte.
@@ -232,9 +249,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
 
                     </tbody>
-                </table>
+                </table>               
             </div>
-
         </div>
 
 
