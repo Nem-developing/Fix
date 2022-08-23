@@ -68,13 +68,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
             }
-            // Création de la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("CREATE TABLE IF NOT EXISTS `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `sujetprincipal` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateuremmeteurduticket` varchar(25) NOT NULL, `datepec` varchar(10) NOT NULL, `heurepec` varchar(10) NOT NULL, `datefin` varchar(10) NOT NULL, `heurefin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `ip` varchar(19) NOT NULL , `technicien` varchar(25) NOT NULL, `commentaire` longtext NOT NULL, `technicienquiarchive` varchar(25) NOT NULL);")) {
-                echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
-                echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
-                $erreur = $erreur + 1;
-            }
-            
+           
             
             // Changement du texte en INT.
             switch ($urgence) {
