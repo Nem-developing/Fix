@@ -19,7 +19,7 @@
         exit();
     }
     
-    // Vérification si à jour
+    // Vérification update
     $response = file_get_contents("https://api.nehemiebarkia.fr/fix/?verify=$licenceactuelle");
     $obj = json_decode($response);
     $licence_statut = $obj->{'Statut'};
