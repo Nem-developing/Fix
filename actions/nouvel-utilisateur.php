@@ -39,8 +39,6 @@ Projet réalisé par Nem-developing, tout droits réservés.
             // On initialise la variable de recherche d'erreurs.
             $erreur = 0;
             
-            
-            
             // On récupère les valleurs du formulaire.
             $compte = $_POST['utilisateur']; 
             $motdepassecompte = $_POST['motdepasse']; 
@@ -113,7 +111,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             }
             echo "INSERT INTO `connexion` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('$utilisateurok', '$motdepasseHASH', '$privileges', '$date');";
             if ($erreur === 0) {    // test de la présence d'erreurs ou non.
-                header("Location: ../pages/parametres.php");
+                header("Location: ../pages/gestion-utilisateurs.php");
                 exit();
             } else {
                 echo "<h1>Il semble y avoir une erreur, veuillez vous référer à l'alerte au dessus !</h1>";
@@ -122,10 +120,6 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             ?>
         </div>
-
-
-
-
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
