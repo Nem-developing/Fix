@@ -99,7 +99,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
         //   Différentes erreurs :
         //
         //   N°1 : On ne peut pas créer un utilisateur déjà existant
-        //
+        //   N°2 : On ne peut pas changer le mdp de quelqu'un si on en as pas le droit !
         
         ?>
         
@@ -112,7 +112,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             <a class="nav-link active text-white bg-success" href="#">Gestion des Utilisateurs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled" href="#">Statistiques</a>
+            <a class="nav-link disabled" href="#">Logs (Comming Soon)</a>
           </li>
         </ul>
         
@@ -123,8 +123,13 @@ Projet réalisé par Nem-developing, tout droits réservés.
         if (!isset($_GET['erreur'])) {} else {
             if ($_GET['erreur'] === "1"){
                       
-                  echo "<center><a class='h3 alertefix text-danger'>Vous ne pouvez pas créer d'utilisateur déjà existant !</a></center>"; 
+                  echo "<center><a class='h3 alertefix bg-white text-danger'>Vous ne pouvez pas créer d'utilisateur déjà existant !</a></center>"; 
             }
+            if ($_GET['erreur'] === "2"){
+                      
+                  echo "<center><a class='h3 alertefix bg-white text-danger'>Vous ne pouvez pas changer le mot de passe de cet utilisateur avec les permissions que vous avez actuellement !</a></center>"; 
+            }
+            
         }                         
         ?>
         
