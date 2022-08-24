@@ -62,10 +62,14 @@ Projet réalisé par Nem-developing, tout droits réservés.
                  } 
                  
                  if (($_SESSION['permissions'] != 2) && ($_SESSION['utilisateurid'] == $ligne->id)) {
-                     // Si pas superadmin et moi --> Je peut supprimer
-                     echo "pas superadmin et moi";
-                     suppressionutilisateur($compte, $hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
-                     sortir($erreur);
+                    // Si pas superadmin et moi --> Je peut supprimer
+                    echo "pas superadmin et moi";
+                    suppressionutilisateur($compte, $hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
+                    unset($_SESSION['utilisateur']);
+                    unset($_SESSION['utilisateurid']);
+                    unset($_SESSION['permissions']);
+                    
+                    sortir($erreur);
                  } 
                  
                  if (($_SESSION['permissions'] != 2) && ($_SESSION['utilisateurid'] != $ligne->id)){
@@ -107,7 +111,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             function sortir($e){
                 if ($e === 0) {    // test de la présence d'erreurs ou non.
                       echo "pas d'erreurs";
-                      header("Location: ../pages/parametres.php");
+                      header("Location: ../pages/gestion-utilisateurs.php");
                       exit();
                   } else {
                       echo "<h1>Il semble y avoir une erreur, veuillez vous référer à l'alerte au dessus !</h1>";
@@ -118,9 +122,6 @@ Projet réalisé par Nem-developing, tout droits réservés.
         
             ?>
         </div>
-
-
-
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
