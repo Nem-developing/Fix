@@ -41,7 +41,7 @@ include '../includes/verif_licence_enfants.php';
        
         <h1>Modification du mot de passe de l'utilisateur <a class="text-warning"><?php echo"$compte";?></a> :</h1>   
 
-        <form id="formulaire" action="../actions/nouveau-mdp.php" method="post">
+        <form id="formulaire" action="../actions/nouveau-mdp.php?compte=<?php echo "$compte";?>" method="post">
           <div class="col-sm-10">
               <label class="form-label text-primary bold">Nouveau mot de passe</label>
               <input type="password" id="motdepasse" class="form-control bg-dark text-white bold" name="motdepasse" placeholder="Mon mot de passe" pattern="[0-9a-zA-Z!%&@#$^*?_~-|]{4,128}" required>
