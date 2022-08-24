@@ -39,14 +39,14 @@ Projet réalisé par Nem-developing, tout droits réservés.
               <a class="nav-link" href="gestion-utilisateurs.php">Gestion des Utilisateurs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled" href="#">Statistiques</a>
+            <a class="nav-link disabled" href="#">Logs (Comming Soon)</a>
           </li>
         </ul>
         
    
         
         <?php
-                // Vérification si à jour
+        // Vérification si à jour
         $response = file_get_contents('https://api.nehemiebarkia.fr/fix/?latest=ask');
         $obj = json_decode($response);
         $newversion = $obj->{'Version'};
