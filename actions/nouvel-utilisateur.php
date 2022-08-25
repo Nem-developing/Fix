@@ -109,7 +109,9 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
             }
-            if ($erreur === 0) {    // test de la présence d'erreurs ou non.
+            if ($erreur === 0) {    
+                include '../includes/logs.php';
+                SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,6,$compte);
                 header("Location: ../pages/gestion-utilisateurs.php");
                 exit();
             } else {

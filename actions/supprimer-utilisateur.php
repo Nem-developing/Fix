@@ -103,7 +103,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                     $erreur = $erreur + 1;
                 }
-
+                include '../includes/logs.php';
+                SEND_LOGS($hote,$dbutil,$dbmdp,$db,7,$utilisateurasupprimer);
                 sortir($erreur);
  
             }                   

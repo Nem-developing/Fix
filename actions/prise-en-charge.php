@@ -54,6 +54,8 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             if ($erreur === 0) {    // test de la présence d'erreurs ou non.
                 echo "pas d'erreurs";
+                include '../includes/logs.php';
+                SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,3,$id);
                 header("Location: ../pages/ticket.php?id=$id");
                 exit();
             } else {

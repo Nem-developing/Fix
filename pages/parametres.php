@@ -149,6 +149,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $cpt = $cpt + 1;
             }
             
+            SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,9,$licence);
             
             $mysqli = new mysqli("$hotedeconnexion", "$utilisateur", "$motdepasse", "$basededonnee");
 

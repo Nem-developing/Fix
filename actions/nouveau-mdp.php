@@ -33,11 +33,13 @@ Projet réalisé par Nem-developing, tout droits réservés.
         $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
         $req = "UPDATE `users` SET `motdepasse` = '$motdepasseHASH' WHERE `utilisateur` = '$compte';";
        
-        
+        include '../includes/logs.php';
         if ($_SESSION['permissions'] == 2){
             $cnx->query($req);
+            SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,8,$compte);
         } elseif ($_SESSION['utilisateur'] == $compte) {
             $cnx->query($req);
+            SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,8,$compte);
         } else {
             header("Location: ../pages/gestion-utilisateurs.php?erreur=2");
             exit(); 
