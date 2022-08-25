@@ -46,7 +46,7 @@ if(isset($_POST['submit'])){
     // Établissement de la connexion au serveur mysql.
     $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
     // Commande SQL permetant de récupérer la liste des tickets archivés..
-    $req = 'SELECT * FROM connexion WHERE utilisateur = "' . $utilisateurconnexion . '";';
+    $req = 'SELECT * FROM users WHERE utilisateur = "' . $utilisateurconnexion . '";';
     // Envoie au serveur la commande via le biais des informations de connexion.
     $res = $cnx->query($req);
 
