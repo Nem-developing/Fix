@@ -42,7 +42,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             // Établissement de la connexion au serveur mysql.
             $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
             // Requette SQL.
-            $req = "SELECT * FROM `connexion` where utilisateur = '$compte';";
+            $req = "SELECT * FROM `users` where utilisateur = '$compte';";
             // Envoie au serveur la commande via le biais des informations de connexion.
             $res = $cnx->query($req);
             
@@ -98,7 +98,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     $erreur = $erreur + 1;
                 }
                 // Suppresion de l'utilisateur
-                if (!$mysqli->query("DELETE FROM `connexion` WHERE ((`utilisateur` = '$utilisateurasupprimer'));")) {
+                if (!$mysqli->query("DELETE FROM `users` WHERE ((`utilisateur` = '$utilisateurasupprimer'));")) {
                     echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                     echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                     $erreur = $erreur + 1;

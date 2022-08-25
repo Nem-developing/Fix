@@ -52,7 +52,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             // Établissement de la connexion au serveur mysql.
             $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
             // Requette SQL.
-            $req = "SELECT * FROM `connexion` where utilisateur = '$compte';";
+            $req = "SELECT * FROM `users` where utilisateur = '$compte';";
             // Envoie au serveur la commande via le biais des informations de connexion.
             $res = $cnx->query($req);
             
@@ -104,12 +104,11 @@ Projet réalisé par Nem-developing, tout droits réservés.
             // On entre la date dans une variable.
             $date = strftime("%d/%m/%y"); 
 
-            if (!$mysqli->query("INSERT INTO `connexion` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('$utilisateurok', '$motdepasseHASH', '$privileges', '$date');")) {
+            if (!$mysqli->query("INSERT INTO `users` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('$utilisateurok', '$motdepasseHASH', '$privileges', '$date');")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de l'insertion des données ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
             }
-            echo "INSERT INTO `connexion` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('$utilisateurok', '$motdepasseHASH', '$privileges', '$date');";
             if ($erreur === 0) {    // test de la présence d'erreurs ou non.
                 header("Location: ../pages/gestion-utilisateurs.php");
                 exit();

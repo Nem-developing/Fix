@@ -16,19 +16,19 @@ include '../config/config.php';  // Import des informations de connexion à la b
 $conn = new mysqli($hotedeconnexion, $utilisateur, $motdepasse, $basededonnee);
 
 // Données GRAPH UTILISATEURS
-$sql4 = "SELECT * FROM `connexion` where `permissions` = '0';";
+$sql4 = "SELECT * FROM `users` where `permissions` = '0';";
 if ($result=mysqli_query($conn,$sql4)) {
      $utilisateursfaibles=mysqli_num_rows($result);
 }
 
 
-$sql5 = "SELECT * FROM `connexion` where `permissions` = '1';";
+$sql5 = "SELECT * FROM `users` where `permissions` = '1';";
 if ($result=mysqli_query($conn,$sql5)) {
     $utilisateursnormaux=mysqli_num_rows($result);
 }
 
 
-$sql6 = "SELECT * FROM `connexion` where `permissions` = '2';";
+$sql6 = "SELECT * FROM `users` where `permissions` = '2';";
 if ($result=mysqli_query($conn,$sql6)) {
     $utilisateurseleves=mysqli_num_rows($result);
 }
@@ -182,7 +182,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
         // Établissement de la connexion au serveur mysql.
         $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
         // Requette SQL.
-        $req = 'SELECT * FROM `connexion`';
+        $req = 'SELECT * FROM `users`';
         // Envoie au serveur la commande via le biais des informations de connexion.
         $res = $cnx->query($req);
         

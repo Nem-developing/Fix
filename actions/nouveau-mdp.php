@@ -31,7 +31,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
         include '../config/config.php';  
 
         $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
-        $req = "UPDATE `connexion` SET `motdepasse` = '$motdepasseHASH' WHERE `utilisateur` = '$compte';";
+        $req = "UPDATE `users` SET `motdepasse` = '$motdepasseHASH' WHERE `utilisateur` = '$compte';";
        
         
         if ($_SESSION['permissions'] == 2){

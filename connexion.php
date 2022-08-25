@@ -5,17 +5,15 @@ if($_SESSION['utilisateur']){
     exit();
 }
 
-include './config/config.php';  // Import des informations de connexion à la base de données.
-// Établissement de la connexion au serveur mysql.
+include './config/config.php';  
 $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
-// Commande SQL permetant de récupérer la liste des tickets archivés..
-$req = 'CREATE TABLE IF NOT EXISTS `connexion` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(60) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );';
-// Envoie au serveur la commande via le biais des informations de connexion.
-$cnx->query($req);
+$req1 = 'CREATE TABLE IF NOT EXISTS `users` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(60) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );';
+$req2 = 'CREATE TABLE IF NOT EXISTS `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );';
+$cnx->query($req1);
+$cnx->query($req2);
 
 
-$req = 'SELECT * FROM `connexion`;';
-// Envoie au serveur la commande via le biais des informations de connexion.
+$req = 'SELECT * FROM `users`;';
 $res = $cnx->query($req);
 
 $compteur = 0;
@@ -33,7 +31,7 @@ try {
 
 if ($compteur === 0){
     $date = strftime("%d/%m/%y");
-    $req3 = "INSERT INTO `connexion` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('admin', '$2y$10\$Grw2AV0A4bhQlNRyqrHna.cklEAFd8npxoiBy.ng/mxd78Zm059pK', '2', '$date');";
+    $req3 = "INSERT INTO `users` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('admin', '$2y$10\$Grw2AV0A4bhQlNRyqrHna.cklEAFd8npxoiBy.ng/mxd78Zm059pK', '2', '$date');";
     $res = $cnx->query($req3);
 }
 

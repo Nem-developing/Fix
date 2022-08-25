@@ -49,7 +49,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
 
         // Commande récupérant l'utilisateur connecté.
-        $requn = 'SELECT * FROM connexion WHERE utilisateur = "' . $utilisateurconnecte . '";';
+        $requn = 'SELECT * FROM users WHERE utilisateur = "' . $utilisateurconnecte . '";';
         // Envoie au serveur la commande via le biais des informations de connexion.
         $resun = $cnx->query($requn);
 
