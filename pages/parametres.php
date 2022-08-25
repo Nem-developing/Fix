@@ -148,7 +148,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
                 $cpt = $cpt + 1;
             }
-            
+            include '../includes/logs.php';
             SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,9,$licence);
             
             $mysqli = new mysqli("$hotedeconnexion", "$utilisateur", "$motdepasse", "$basededonnee");
