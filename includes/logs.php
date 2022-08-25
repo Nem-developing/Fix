@@ -37,27 +37,13 @@ Options à enregistrer :
     - 8 : Quel utilisateur
     - 9 : Quelle licence
 
-
-Table nécessaire :
-
-CREATE TABLE IF NOT EXISTS `logs` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-  `utilisateur` VARCHAR(16) NOT NULL,
-  `action` int NOT NULL,
-  `date` VARCHAR(10) NOT NULL,
-  `heure` VARCHAR(8) NOT NULL,
-  `cible` VARCHAR(256) NOT NULL
-);
-
-
-
 */
 
 function SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,$action,$cible)
 {
     // On récupére les variables
     $user = $_SESSION['utilisateur'];
-    $date = strftime("%d/%m/%y");
+    $date = strftime("%d/%m/%Y");
     $heure = strftime("%H:%M:%S");
    
     // Envoie à la DB
@@ -66,6 +52,3 @@ function SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,$acti
     $cnx->query($req);
     return;
 }
-
-
-
