@@ -12,16 +12,16 @@ Une cible (ticket, utilisateur ou licence en question) VARCHAR 256
 
 Liste des différentes actions possibles :
     # LES TICKETS 
-    - 1 : Créer un ticket 
-    - 2 : Afficher les détails d'un ticket
-    - 3 : Prendre en charge un ticket
-    - 4 : Archiver un ticket
-    - 5 : Désarchiver un ticket
+    - 1 : Créer un ticket           --> INFO
+    - 2 : Afficher les détails d'un ticket           --> INFO
+    - 3 : Prendre en charge un ticket           --> INFO
+    - 4 : Archiver un ticket           --> INFO
+    - 5 : Désarchiver un ticket           --> INFO
     # Paramettres
-    - 6 : Créer un utilisateur 
-    - 7 : Supprimer un utilisateur
-    - 8 : Changer le mdp d'un utilisateur
-    - 9 : Enregistrer une licence
+    - 6 : Créer un utilisateur           --> Warning 
+    - 7 : Supprimer un utilisateur           --> Warning
+    - 8 : Changer le mdp d'un utilisateur           --> Warning
+    - 9 : Enregistrer une licence           --> INFO
 
 
 Options à enregistrer : 

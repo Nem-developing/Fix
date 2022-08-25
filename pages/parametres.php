@@ -39,7 +39,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
               <a class="nav-link" href="gestion-utilisateurs.php">Gestion des Utilisateurs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled" href="#">Logs (Comming Soon)</a>
+              <a class="nav-link" href="logs.php">Logs</a>
           </li>
         </ul>
         
