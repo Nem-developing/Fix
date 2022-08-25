@@ -94,7 +94,19 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             
             if ($erreur === 0) {    // test de la présence d'erreurs ou non.
-                echo "pas d'erreurs";
+
+                $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
+                $req = "SELECT * FROM `tickets` WHERE (serveur = '$serveurok') AND (sujetprincipal = '$sujetprincipalok') AND (description = '$descriptionok') AND (date = '$date') AND (heure = '$heure');";
+                $res = $cnx->query($req);
+
+                while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
+                    $idticket = $ligne->id;
+                }    
+                if (!$idticket){
+                    $idticket = 999;
+                }
+                include '../includes/logs.php';
+                SEND_LOGS($hotedeconnexion,$utilisateur,$motdepasse,$basededonnee,1,$idticket);
                 header('Location: ../index.php');
                 exit();
             } else {
