@@ -57,7 +57,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $offset = $_GET['offset'];
         }
         
-        
+        if ($_GET['offset']){
+            $offsettemp= $offset-50;
+            echo "<a href='?offset=$offsettemp'><button type='button' class='btn btn-warning btn-lg btn-block'>Afficher les Journeaux plus récents</button></a>";
+        }
         
         
         ?>
