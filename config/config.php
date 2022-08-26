@@ -19,7 +19,7 @@
     //$basededonnee = "Fix";
     //$utilisateur = "Fix-user";
     //$motdepasse = "Fix-MDP";
-    $versiondefix = 2.7;        // NE PAS TOUCHER
+    $versiondefix = 2.8;        // NE PAS TOUCHER
 
     /* =========================================================================
      * Voici comment fonctionne les tickets dans la base de donnée : 
