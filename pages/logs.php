@@ -36,10 +36,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
               <a class="nav-link text-white" aria-current="page" href="parametres.php">À Propos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Gestion des Utilisateurs</a>
+            <a class="nav-link text-white" href="gestion-utilisateurs.php">Gestion des Utilisateurs</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link active text-white bg-success" href="logs.php">Logs</a>
+              <a class="nav-link active text-white bg-success" href="#">Logs</a>
           </li>
         </ul>
         
