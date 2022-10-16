@@ -82,7 +82,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             
             // Envoie des informations du formulaire dans la table.
-            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `commentaire`, `technicien_qui_archive`) VALUES ('$serveurok', '$objetok', '$descriptionok', '$date', '$heure', '$utilisateur_emmeteur_du_ticket', 'N/A', 'N/A','N/A','N/A', '$urgence', '0', 'N/A', 'N/A', 'N/A');")) {
+            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('$serveurok', '$objetok', '$descriptionok', '$date', '$heure', '$utilisateur_emmeteur_du_ticket', 'N/A', 'N/A','N/A','N/A', '$urgence', '0', 'N/A', 'N/A', 'N/A');")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors l'inssertion des éléments dans la table 'tickets' ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
