@@ -96,20 +96,20 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 // Est pris en compte également l'état du ticket pour une entière cohérence !
                 // Donc, si un ticket est actif et qu'il y a un technicien_affecte qui l'a pris en charge, alors le technicien_affecte aura le bouton "Archiver le ticket" avec un formulaire lui permetant de noter des informations concernant le ticket.
                 switch ($ligneune->permissions) {
+
+                    // Lecteur
                     case 0:
                         $textedynamique = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
                         break;
+                    // Utilisateur
                     case 1:
                         if ($lignedeux->technicien_affecte == "N/A") {
                             $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->technicien_affecte == $utilisateurconnecte && $lignedeux->etat == 1) {
                             $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
-                                                <div class='form-group'>
-                                                    <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
-                                                    <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
-                                                </div>
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
+
                         } else if ($lignedeux->technicien_affecte == $utilisateurconnecte && $lignedeux->etat == 2) {
                             $textedynamique = "
                                   <div class='card-body'>
@@ -123,17 +123,17 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             $textedynamique = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";
                         }
                         break;
+
+                    // Admin
                     case 2:
                         if ($lignedeux->technicien_affecte == "N/A") {
                             $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->etat == 1) {
                             $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
-                                                <div class='form-group'>
-                                                    <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
-                                                    <textarea class='form-control bg-dark text-white' name='commentaire' id='exampleFormControlTextarea1' rows='12' placeholder='Exemple : Problème résolu ! | Commandes bien ajoutées : /unecommande ; /unedeuxièmecommande.' required></textarea>
-                                                </div>
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
+
+
                         } else if ($lignedeux->etat == 2) {
                             $textedynamique = "
                                   <div class='card-body'>
@@ -163,7 +163,22 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <h5 class='card-title'>Sujet : $lignedeux->objet</h5>
                             <p class='card- text'>Description : <span class='text-primary'>$lignedeux->description</span></p>
                         </div>
+                        <div class='card-body'>
+                            <h5 class='card-title'>Commentaires</h5>
+                            <p class='card- text'></p>
+                        </div>";
+                        
+                        
+                // Bouclage sur les commentaires du ticket
+                // $req = 'SELECT * FROM commentaires WHERE id_ticlet = "' . $id . '";';
+                // $res = $cnx->query($requn);
+
+
+
+                echo "
                         $textedynamique
+
+
                         <br>
                         
                     </div>
