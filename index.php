@@ -60,7 +60,7 @@ $date_tick = strftime("%d/%m/%y");
 $heure_tick = strftime("%Hh%M"); 
 $req11 = 'CREATE TABLE IF NOT EXISTS `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL);';
 $req12 = "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix $versiondefix !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '$date_tick', '$heure_tick', 'Néhémie Barkia',  'N/A','N/A','N/A','N/A', '0', '0',  'N/A', 'N/A');";
-$req13 = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );";
+$req13 = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );";
 
 
 if (!$res10){

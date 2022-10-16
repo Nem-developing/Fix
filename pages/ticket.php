@@ -99,43 +99,41 @@ Projet réalisé par Nem-developing, tout droits réservés.
 
                     // Lecteur
                     case 0:
-                        $textedynamique = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
+                        $textedynamique_1 = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
                         break;
                     // Utilisateur
                     case 1:
                         if ($lignedeux->technicien_affecte == "N/A") {
-                            $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                            $textedynamique_1 = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->technicien_affecte == $utilisateurconnecte && $lignedeux->etat == 1) {
-                            $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
+                            $textedynamique_1 = "<form action='../actions/archiver.php?id=$id' method='post'>
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
 
                         } else if ($lignedeux->technicien_affecte == $utilisateurconnecte && $lignedeux->etat == 2) {
-                            $textedynamique = "
+                            $textedynamique_1 = "
                                   <div class='card-body'>
                                       <h6 class='card-title'>Ticket pris en charge par le technicien_affecte <span class='text-warning'><strong>$lignedeux->technicien_affecte</strong></span> - Ticket archivé par le technicien_affecte : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
                                       <br>
-                                      <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
-                                      <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
                                   </div>
                                 <a href='../actions/desarchiver.php?id=$lignedeux->id'><button type='button' class='btn btn-warning btn-lg btn-block'>Désarchiver le ticket</button></a>";
                         } else {
-                            $textedynamique = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";
+                            $textedynamique_1 = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que modifier vos propres tickets !</button>";
                         }
                         break;
 
                     // Admin
                     case 2:
                         if ($lignedeux->technicien_affecte == "N/A") {
-                            $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
+                            $textedynamique_1 = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->etat == 1) {
-                            $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
+                            $textedynamique_1 = "<form action='../actions/archiver.php?id=$id' method='post'>
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
 
 
                         } else if ($lignedeux->etat == 2) {
-                            $textedynamique = "
+                            $textedynamique_1 = "
                                   <div class='card-body'>
                                       <h6 class='card-title'>Ticket pris en charge par le technicien_affecte <span class='text-warning'><strong>$lignedeux->technicien_affecte</strong></span> - Ticket archivé par le technicien_affecte : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
                                       <br>
@@ -167,24 +165,45 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <h5 class='card-title'>Commentaires</h5>
                             <p class='card- text'></p>
                         </div>";
+
+                        echo"</div>";
                         
-                        
-                // Bouclage sur les commentaires du ticket
-                // $req = 'SELECT * FROM commentaires WHERE id_ticlet = "' . $id . '";';
-                // $res = $cnx->query($requn);
-
-
-
-                echo "
-                        $textedynamique
-
-
-                        <br>
-                        
-                    </div>
-                    ";
+                    }
             }
-        }
+                
+                
+                // Bouclage sur les commentaires du ticket
+                $req = 'SELECT * FROM commentaires INNER JOIN users ON commentaires.id_user = users.id where commentaires.id_ticket = "' . $id . '";';
+                $res = $cnx->query($requn);
+                
+               
+                
+
+
+
+
+
+                while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {
+
+                    echo"<div class='d-flex position-relative'>
+                    <div>
+                        <h5 class='mt-0'>$ligne->utilisateur</h5>
+                        <a class='stretched-link'>DATE : $ligne->date</a>
+                        <a class='stretched-link'>DATE : $ligne->heure</a>
+                        <p>$ligne->commentaire</p>
+                    </div>
+                    </div>"
+
+
+                };
+
+                
+
+
+
+                echo $textedynamique_1
+                
+
         
         
         
