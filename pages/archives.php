@@ -101,7 +101,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <td>$ligne->date_fin $ligne->heure_fin</td>
                             <td>$ligne->serveur</td>
                             <td><h4>$ligne->objet</h4><br>$ligne->description</td>
-                            <td>$ligne->technicien</td>
+                            <td>$ligne->technicien_affecte</td>
                             <td>$urgence</td>
                             <td>$etat</td>
                             <td><a href='ticket.php?id=$ligne->id'>

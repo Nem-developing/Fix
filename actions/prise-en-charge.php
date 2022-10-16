@@ -31,7 +31,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             <?php
             include "../config/config.php"; // Import des données de connexion.
             $id = $_GET['id'];  // On récupère l'ID.
-            $technicien = $_SESSION['utilisateur'];       // On récupère l'utilisateur dans le cookie.
+            $technicien_affecte = $_SESSION['utilisateur'];       // On récupère l'utilisateur dans le cookie.
             $date_pec = strftime("%d/%m/%y");       // On entre la date dans la variable $date_pec.
             $heure_pec = strftime("%Hh%M");       // On entre l'heure dans la variable $heure_pec.
             (int) $erreur = 0;
@@ -45,7 +45,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $erreur = $erreur + 1;
             }
             // Mise à jour de la la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("UPDATE `tickets` SET `date_pec` = '$date_pec', `heure_pec` = '$heure_pec', `etat` = '1', `technicien` = '$technicien'  WHERE `id` = '$id'")) {
+            if (!$mysqli->query("UPDATE `tickets` SET `date_pec` = '$date_pec', `heure_pec` = '$heure_pec', `etat` = '1', `technicien_affecte` = '$technicien_affecte'  WHERE `id` = '$id'")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;

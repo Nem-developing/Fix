@@ -78,7 +78,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         break;
                 }
 
-                // Changement de l'INT lié à l'état dans la base de données en texte + Atibution du texte lié au technicien.
+                // Changement de l'INT lié à l'état dans la base de données en texte + Atibution du texte lié au technicien_affecte.
                 switch ($lignedeux->etat) {
                     case 0:
                         $etat = "<strong><span class='text-danger'>Non-Traité</span></strong>";
@@ -94,15 +94,15 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 // Selon la permission de l'utilisateur actif, le bouton change !
                 // Donc Toutes ces condtions établissent le bouton qui sera affiché en desous du ticket.
                 // Est pris en compte également l'état du ticket pour une entière cohérence !
-                // Donc, si un ticket est actif et qu'il y a un technicien qui l'a pris en charge, alors le technicien aura le bouton "Archiver le ticket" avec un formulaire lui permetant de noter des informations concernant le ticket.
+                // Donc, si un ticket est actif et qu'il y a un technicien_affecte qui l'a pris en charge, alors le technicien_affecte aura le bouton "Archiver le ticket" avec un formulaire lui permetant de noter des informations concernant le ticket.
                 switch ($ligneune->permissions) {
                     case 0:
                         $textedynamique = "<button type='button' class='btn btn-danger btn-lg btn-block'>Vous n'avez pas les permissions suffisantes ! Vous ne pouvez que lire les tickets !</button>";
                         break;
                     case 1:
-                        if ($lignedeux->technicien == "N/A") {
+                        if ($lignedeux->technicien_affecte == "N/A") {
                             $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
-                        } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 1) {
+                        } else if ($lignedeux->technicien_affecte == $utilisateurconnecte && $lignedeux->etat == 1) {
                             $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
                                                 <div class='form-group'>
                                                     <label for='exampleFormControlInput1'>Commentaire d'archivage du ticket :</label>
@@ -110,10 +110,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
                                                 </div>
                                                 <button type='submit' class='btn btn-warning btn-lg btn-block' value='ok'>Archiver le ticket</button>
                                             </form>";
-                        } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2) {
+                        } else if ($lignedeux->technicien_affecte == $utilisateurconnecte && $lignedeux->etat == 2) {
                             $textedynamique = "
                                   <div class='card-body'>
-                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
+                                      <h6 class='card-title'>Ticket pris en charge par le technicien_affecte <span class='text-warning'><strong>$lignedeux->technicien_affecte</strong></span> - Ticket archivé par le technicien_affecte : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
                                       <br>
                                       <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
                                       <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
@@ -124,7 +124,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         }
                         break;
                     case 2:
-                        if ($lignedeux->technicien == "N/A") {
+                        if ($lignedeux->technicien_affecte == "N/A") {
                             $textedynamique = "<a href='../actions/prise-en-charge.php?id=$lignedeux->id'><button type='button' class='btn btn-success btn-lg btn-block'>Prendre en charge le ticket</button></a>";
                         } else if ($lignedeux->etat == 1) {
                             $textedynamique = "<form action='../actions/archiver.php?id=$id' method='post'>
@@ -137,7 +137,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->etat == 2) {
                             $textedynamique = "
                                   <div class='card-body'>
-                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
+                                      <h6 class='card-title'>Ticket pris en charge par le technicien_affecte <span class='text-warning'><strong>$lignedeux->technicien_affecte</strong></span> - Ticket archivé par le technicien_affecte : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
                                       <br>
                                       <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
                                       <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
