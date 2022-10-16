@@ -32,19 +32,15 @@ Projet réalisé par Nem-developing, tout droits réservés.
             include "../config/config.php"; // Import des données de connexion.
             date_default_timezone_set('UTC');   // On informe mysql de la zone temporelle souhaitée.
             $serveur = $_POST['srv'];       // On récupère les informations du formulaire précédent.
-            $sujetprincipal = $_POST['sujetprincipal'];       // On récupère les informations du formulaire précédent.
+            $objet = $_POST['objet'];       // On récupère les informations du formulaire précédent.
             $description = $_POST['description'];       // On récupère les informations du formulaire précédent.
             $urgence = $_POST['urgence'];       // On récupère les informations du formulaire précédent.
             $date = strftime("%d/%m/%y");       // On entre la date dans la variable $date.
             $heure = strftime("%Hh%M");       // On entre l'heure dans la variable $heure.
-            $ip = $_SERVER['REMOTE_ADDR'];      // On récupère l'addresse IP du client. | Note : Cette IP est stoqué sur la base de donné client uniquement.
 
             (int) $erreur = 0;
             
-            if (!$ip) {
-                $ip = "0.0.0.0";    // Si l'utilisateur utilise un proxy ; La fonction Remote addr peut dysfonctionner ; C'est une mesure de sécurité.
-            }
-            
+         
             
             // Rechercher remplacer dans les chaines comportant du texte. 
             // --> Suite aux erreurs quand nous rentrons un apostrophe.
@@ -56,9 +52,9 @@ Projet réalisé par Nem-developing, tout droits réservés.
             $remplacer = "\'"; 
             
             $serveurok = str_replace($rechercher,$remplacer,$serveur);
-            $sujetprincipalok = str_replace($rechercher,$remplacer,$sujetprincipal);
+            $objetok = str_replace($rechercher,$remplacer,$objet);
             $descriptionok = str_replace($rechercher,$remplacer,$description);
-            $utilisateuremmeteurduticket = $_SESSION['utilisateur'];
+            $utilisateur_emmeteur_du_ticket = $_SESSION['utilisateur'];
             
             
             //  Connexion à la base de donnée.
@@ -86,7 +82,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             
             
             // Envoie des informations du formulaire dans la table.
-            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `sujetprincipal`, `description`, `date`, `heure`, `utilisateuremmeteurduticket`, `datepec`, `heurepec`,  `datefin`, `heurefin`,  `urgence`, `etat`, `ip`, `technicien`, `commentaire`, `technicienquiarchive`) VALUES ('$serveurok', '$sujetprincipalok', '$descriptionok', '$date', '$heure', '$utilisateuremmeteurduticket', 'N/A', 'N/A','N/A','N/A', '$urgence', '0', '$ip', 'N/A', 'N/A', 'N/A');")) {
+            if (!$mysqli->query("INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien`, `commentaire`, `technicien_qui_archive`) VALUES ('$serveurok', '$objetok', '$descriptionok', '$date', '$heure', '$utilisateur_emmeteur_du_ticket', 'N/A', 'N/A','N/A','N/A', '$urgence', '0', 'N/A', 'N/A', 'N/A');")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors l'inssertion des éléments dans la table 'tickets' ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
@@ -96,7 +92,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
             if ($erreur === 0) {    // test de la présence d'erreurs ou non.
 
                 $cnx = new PDO("mysql:host=$hotedeconnexion;dbname=$basededonnee", "$utilisateur", "$motdepasse");
-                $req = "SELECT * FROM `tickets` WHERE (serveur = '$serveurok') AND (sujetprincipal = '$sujetprincipalok') AND (description = '$descriptionok') AND (date = '$date') AND (heure = '$heure');";
+                $req = "SELECT * FROM `tickets` WHERE (serveur = '$serveurok') AND (objet = '$objetok') AND (description = '$descriptionok') AND (date = '$date') AND (heure = '$heure');";
                 $res = $cnx->query($req);
 
                 while ($ligne = $res->fetch(PDO::FETCH_OBJ)) {

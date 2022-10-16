@@ -113,7 +113,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->technicien == $utilisateurconnecte && $lignedeux->etat == 2) {
                             $textedynamique = "
                                   <div class='card-body'>
-                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicienquiarchive</strong></span></h6>                                                                
+                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
                                       <br>
                                       <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
                                       <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
@@ -137,7 +137,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                         } else if ($lignedeux->etat == 2) {
                             $textedynamique = "
                                   <div class='card-body'>
-                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicienquiarchive</strong></span></h6>                                                                
+                                      <h6 class='card-title'>Ticket pris en charge par le technicien <span class='text-warning'><strong>$lignedeux->technicien</strong></span> - Ticket archivé par le technicien : <span class='text-success'><strong>$lignedeux->technicien_qui_archive</strong></span></h6>                                                                
                                       <br>
                                       <h6 class='card-title'>Commentaire d'archivage :</h6>                                    
                                       <p class='card-text text-success'><strong>$lignedeux->commentaire</strong></p>
@@ -154,13 +154,13 @@ Projet réalisé par Nem-developing, tout droits réservés.
                     <a href='../index.php'><button type='button' class='btn btn-primary btn-lg btn-block'>Retour aux tickets actifs</button></a>
                     <div class='card bg-dark text-white'>
                         <div class='card-header'>
-                            Ticket N° $lignedeux->id - Ouvert <strong><span class='text-info'>par $lignedeux->utilisateuremmeteurduticket </span></strong> le : <strong><span class='text-success'>$lignedeux->date à $lignedeux->heure</span></strong>  - Pris en charge le : <strong><span class='text-warning'>$lignedeux->datepec à $lignedeux->heurepec</span></strong> - Fermé le : <strong><span class='text-danger'>$lignedeux->datefin à $lignedeux->heurefin</span></strong>
+                            Ticket N° $lignedeux->id - Ouvert <strong><span class='text-info'>par $lignedeux->utilisateur_emmeteur_du_ticket </span></strong> le : <strong><span class='text-success'>$lignedeux->date à $lignedeux->heure</span></strong>  - Pris en charge le : <strong><span class='text-warning'>$lignedeux->date_pec à $lignedeux->heure_pec</span></strong> - Fermé le : <strong><span class='text-danger'>$lignedeux->date_fin à $lignedeux->heure_fin</span></strong>
                         </div>
                         <div class='card-header'>
                             Serveur : <strong><span class='text-primary'>$lignedeux->serveur</span></strong> | Niveau d'urgence : $urgence | Statut : $etat
                         </div>
                         <div class='card-body'>
-                            <h5 class='card-title'>Sujet : $lignedeux->sujetprincipal</h5>
+                            <h5 class='card-title'>Sujet : $lignedeux->objet</h5>
                             <p class='card- text'>Description : <span class='text-primary'>$lignedeux->description</span></p>
                         </div>
                         $textedynamique

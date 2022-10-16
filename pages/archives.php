@@ -98,9 +98,9 @@ Projet réalisé par Nem-developing, tout droits réservés.
                             <th scope='row'>$ligne->id</th>
                             <td>$ligne->date</td>
                             <td>$ligne->date $ligne->heure</td>
-                            <td>$ligne->datefin $ligne->heurefin</td>
+                            <td>$ligne->date_fin $ligne->heure_fin</td>
                             <td>$ligne->serveur</td>
-                            <td><h4>$ligne->sujetprincipal</h4><br>$ligne->description</td>
+                            <td><h4>$ligne->objet</h4><br>$ligne->description</td>
                             <td>$ligne->technicien</td>
                             <td>$urgence</td>
                             <td>$etat</td>

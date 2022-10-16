@@ -31,10 +31,10 @@ Projet réalisé par Nem-developing, tout droits réservés.
             <?php
             include "../config/config.php"; // Import des données de connexion.
             $id = $_GET['id'];  // On récupère l'ID.
-            $datefin = strftime("%d/%m/%y");       // On entre la date dans la variable $datepec.
-            $heurefin = strftime("%Hh%M");       // On entre l'heure dans la variable $finpec.
+            $date_fin = strftime("%d/%m/%y");       // On entre la date dans la variable $date_pec.
+            $heure_fin = strftime("%Hh%M");       // On entre l'heure dans la variable $finpec.
             $commentaire = $_POST['commentaire'];       // On récupère les informations du formulaire précédent.
-            $technicienquiarchive = $_SESSION['utilisateur'];       // On récupère l'utilisateur dans le cookie.
+            $technicien_qui_archive = $_SESSION['utilisateur'];       // On récupère l'utilisateur dans le cookie.
             (int) $erreur = 0;
             
             
@@ -59,7 +59,7 @@ Projet réalisé par Nem-developing, tout droits réservés.
                 $erreur = $erreur + 1;
             }
             // Mise à jour de la la table où l'on stoque les informations du ticket.
-            if (!$mysqli->query("UPDATE `tickets` SET `datefin` = '$datefin', `heurefin` = '$heurefin', `etat` = '2', `commentaire` = '$commentaireok', `technicienquiarchive` = '$technicienquiarchive'  WHERE `id` = '$id'")) {
+            if (!$mysqli->query("UPDATE `tickets` SET `date_fin` = '$date_fin', `heure_fin` = '$heure_fin', `etat` = '2', `commentaire` = '$commentaireok', `technicien_qui_archive` = '$technicien_qui_archive'  WHERE `id` = '$id'")) {
                 echo "<div class='alert alert-danger' role='alert'> Echec lors de la création de la table serveurs ! </div>";    // Affichage de l'erreur.
                 echo "<div class='alert alert-danger' role='alert'> Erreur N°$mysqli->errno : $mysqli->error.</div>";    // Affichage de l'erreur.
                 $erreur = $erreur + 1;
