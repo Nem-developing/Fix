@@ -57,7 +57,7 @@ class ticket:
 ########################
 
 
-def db_run(CMD):
+def db_run(CMD, fetch=True, commit=False):
     ERROR = False
     DATA = {}
     try:
@@ -70,7 +70,14 @@ def db_run(CMD):
         cursor = conn.cursor()
 
         cursor.execute(str(CMD))
-        DATA = cursor.fetchall()
+        if (fetch == True):
+            DATA = cursor.fetchall()
+        else: 
+            DATA = cursor.fetchone()
+        
+        if (commit == True):
+            conn.commit()
+    
         cursor.close()
         conn.close()
     except mysql.connector.errors.Programmingerror as error:
@@ -199,7 +206,7 @@ async def web_get_a_tiket(request):
             + ";"
         )
         req = db_run(req_str)
-
+        
         for i in req.CONTENT:
             ticket_temp = ticket(
                 id=i[0],
@@ -250,77 +257,33 @@ async def web_create_tiket(request):
     # GET POST DATA
     post_data = await request.json()
     serveur = post_data.get('serveur')
-    objet = post_data.get('objet')
+    data_objet = post_data.get('objet')
     description = post_data.get('description')
     urgence = post_data.get('urgence')
+    user_create = post_data.get('user_create')
     ## Génération date et heure
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")
     heure = maintenant.strftime("%H:%M:%S")
-    print(date)
-    print(heure)
+    ## Default Values
+    date_pec = 'N/A'
+    heure_pec = 'N/A'
+    date_fin = 'N/A'
+    heure_fin = 'N/A'
+    etat = 0
+    technicien_affecte = 'N/A'
+    technicien_qui_archive = 'N/A'
+
     try:
-        pass
+        STR = "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('"+ str(serveur) +"', '"+ str(data_objet) +"', '"+ str(description) +"', '"+ str(date) +"', '"+ str(heure) +"', '"+ str(user_create) +"', '"+ str(date_pec) +"', '"+ str(heure_pec) +"', '"+ str(date_fin) +"', '"+ str(heure_fin) +"', '"+ str(urgence) +"', '"+ str(etat) +"', '"+ str(technicien_affecte) +"', '"+ str(technicien_qui_archive) +"');"
+        req = db_run(STR,commit=True,fetch=False)
+        req = db_run("SELECT MAX(id) FROM tickets")
+        ID, = (req.CONTENT[0])
+        data = {"ID": ID, "created": True, "error": False}
     except: 
-        data = {"error": True, "DB_error": True, "error_message": "Body is missing"}
+        data = {"error": True, "DB_error": True, "error_message": "Body is missing", "created": False}
         return web.json_response(json.loads(json.dumps(data)))
     
-    try:
-
-        STR = "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('$serveurok', '$objetok', '$descriptionok', '$date', '$heure', '$utilisateur_emmeteur_du_ticket', 'N/A', 'N/A', 'N/A', 'N/A', '$urgence', '0', 'N/A', 'N/A');"
-
-
-
-
-        
-
-        req_str = (
-            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, etat, technicien_affecte, technicien_qui_archive from tickets WHERE id ="
-            + ";"
-        )
-        req = db_run(req_str)
-
-        for i in req.CONTENT:
-            ticket_temp = ticket(
-                id=i[0],
-                serveur=i[1],
-                objet=i[2],
-                description=i[3],
-                date=i[4],
-                heure=i[5],
-                utilisateur_emmeteur_du_ticket=i[6],
-                date_pec=i[7],
-                heure_pec=i[8],
-                date_fin=i[9],
-                heure_fin=i[10],
-                urgence=i[11],
-                etat=i[12],
-                technicien_affecte=i[13],
-                technicien_qui_archive=i[14],
-            )
-
-            TEMP = {
-                "id": ticket_temp.id,
-                "serveur": ticket_temp.serveur,
-                "objet": ticket_temp.objet,
-                "description": ticket_temp.description,
-                "date": ticket_temp.date,
-                "heure": ticket_temp.heure,
-                "utilisateur_emmeteur_du_ticket": ticket_temp.utilisateur_emmeteur_du_ticket,
-                "date_pec": ticket_temp.date_pec,
-                "heure_pec": ticket_temp.heure_pec,
-                "date_fin": ticket_temp.date_fin,
-                "heure_fin": ticket_temp.heure_fin,
-                "urgence": ticket_temp.urgence,
-                "etat": ticket_temp.etat,
-                "technicien_affecte": ticket_temp.technicien_affecte,
-                "technicien_qui_archive": ticket_temp.technicien_qui_archive,
-            }
-
-        data = {"error": False, "Ticket": TEMP}
-
-    except:
-        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return web.json_response(json.loads(json.dumps(data)))
 
 
