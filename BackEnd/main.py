@@ -126,6 +126,95 @@ def check_if_everything_is_ok():
         return False
     return True
 
+def get_a_ticket(id):
+    data = {"error": False}
+    id = int(id)
+    if (check_if_everything_is_ok() != True) or (id < 0):
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        req_str = (
+            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, etat, technicien_affecte, technicien_qui_archive from tickets WHERE id ="
+            + str(id)
+            + ";"
+        )
+        req = db_run(req_str)
+        for i in req.CONTENT:
+            ticket_temp = ticket(
+                id=i[0],
+                serveur=i[1],
+                objet=i[2],
+                description=i[3],
+                date=i[4],
+                heure=i[5],
+                utilisateur_emmeteur_du_ticket=i[6],
+                date_pec=i[7],
+                heure_pec=i[8],
+                date_fin=i[9],
+                heure_fin=i[10],
+                urgence=i[11],
+                etat=i[12],
+                technicien_affecte=i[13],
+                technicien_qui_archive=i[14],
+            )
+
+            TEMP = {
+                "id": ticket_temp.id,
+                "serveur": ticket_temp.serveur,
+                "objet": ticket_temp.objet,
+                "description": ticket_temp.description,
+                "date": ticket_temp.date,
+                "heure": ticket_temp.heure,
+                "utilisateur_emmeteur_du_ticket": ticket_temp.utilisateur_emmeteur_du_ticket,
+                "date_pec": ticket_temp.date_pec,
+                "heure_pec": ticket_temp.heure_pec,
+                "date_fin": ticket_temp.date_fin,
+                "heure_fin": ticket_temp.heure_fin,
+                "urgence": ticket_temp.urgence,
+                "etat": ticket_temp.etat,
+                "technicien_affecte": ticket_temp.technicien_affecte,
+                "technicien_qui_archive": ticket_temp.technicien_qui_archive,
+            }
+
+        data = {"error": False, "Ticket": TEMP}
+        return data
+
+    except:
+        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
+    return data
+
+def get_ticket_status(id):
+    data = {"error": False}
+    id = int(id)
+    if (check_if_everything_is_ok() != True) or (id < 0):
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        data_temp = get_a_ticket(id)
+        if (data_temp["error"] != False):
+            data = {"error": True}
+            return data
+        else:
+            return {"error": False, "status": data_temp["Ticket"]["etat"]}
+    except:
+        pass
+    return data
+
+def change_ticket_status(id,status):
+    try:
+        data_temp = get_a_ticket(id)
+        print(data_temp)
+        if (data_temp["error"] != False):
+            return {"error": True}
+        else:
+            req_str = "UPDATE `tickets` SET `etat` = '" + status + "' WHERE `id` = '" + id + "';"
+            req = db_run(req_str,commit=True)
+            print(req)
+            return {"error": False, "status": get_a_ticket(id)['status']}
+    except:
+        return {"error": False}
+
+
 
 ################
 # Fonctions WEB
@@ -136,7 +225,7 @@ async def index(request):
     return web.json_response(json.loads(display()))
 
 
-async def web_get_all_tikets(request):
+async def get_all_tikets(request):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
         data = {"error": True}
@@ -186,7 +275,7 @@ async def web_get_all_tikets(request):
 
             tickets.append(TEMP)
 
-        data = {"error": False, "Tickets": tickets}
+        data = {"error": False, "total": len(tickets), "Tickets": tickets}
 
     except:
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
@@ -194,64 +283,11 @@ async def web_get_all_tikets(request):
 
 
 async def web_get_a_tiket(request):
-    data = {"error": False}
     id = int(request.match_info["id"])
-    if (check_if_everything_is_ok() != True) or (id < 0):
-        data = {"error": True}
-        return web.json_response(json.loads(json.dumps(data, indent=4)))
-    try:
-        req_str = (
-            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, etat, technicien_affecte, technicien_qui_archive from tickets WHERE id ="
-            + str(id)
-            + ";"
-        )
-        req = db_run(req_str)
-        
-        for i in req.CONTENT:
-            ticket_temp = ticket(
-                id=i[0],
-                serveur=i[1],
-                objet=i[2],
-                description=i[3],
-                date=i[4],
-                heure=i[5],
-                utilisateur_emmeteur_du_ticket=i[6],
-                date_pec=i[7],
-                heure_pec=i[8],
-                date_fin=i[9],
-                heure_fin=i[10],
-                urgence=i[11],
-                etat=i[12],
-                technicien_affecte=i[13],
-                technicien_qui_archive=i[14],
-            )
-
-            TEMP = {
-                "id": ticket_temp.id,
-                "serveur": ticket_temp.serveur,
-                "objet": ticket_temp.objet,
-                "description": ticket_temp.description,
-                "date": ticket_temp.date,
-                "heure": ticket_temp.heure,
-                "utilisateur_emmeteur_du_ticket": ticket_temp.utilisateur_emmeteur_du_ticket,
-                "date_pec": ticket_temp.date_pec,
-                "heure_pec": ticket_temp.heure_pec,
-                "date_fin": ticket_temp.date_fin,
-                "heure_fin": ticket_temp.heure_fin,
-                "urgence": ticket_temp.urgence,
-                "etat": ticket_temp.etat,
-                "technicien_affecte": ticket_temp.technicien_affecte,
-                "technicien_qui_archive": ticket_temp.technicien_qui_archive,
-            }
-
-        data = {"error": False, "Ticket": TEMP}
-
-    except:
-        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
-    return web.json_response(json.loads(json.dumps(data)))
+    return web.json_response(json.loads(json.dumps(get_a_ticket(id))))
 
 
-async def web_create_tiket(request):
+async def create_tiket(request):
     data = {"error": False}
     
     # GET POST DATA
@@ -283,12 +319,24 @@ async def web_create_tiket(request):
     except: 
         data = {"error": True, "DB_error": True, "error_message": "Body is missing", "created": False}
         return web.json_response(json.loads(json.dumps(data)))
-    
     return web.json_response(json.loads(json.dumps(data)))
 
 
-async def ticket_pec(request):
+async def ticket_start(request):
     data = {"error": False}
+    id = int(request.match_info["id"])
+    obj = get_ticket_status(id)
+    if (get_ticket_status(id)['error'] != True):
+        status = obj['status']
+        if (status != 0):
+            data = {"error": True}
+        else:
+            print("test")
+            change_ticket_status(id,1)
+            print("test")
+            return web.json_response(json.loads(json.dumps(get_a_ticket(id))))
+
+
     return web.json_response(json.loads(json.dumps(data)))
 
 async def ticket_archivage(request):
@@ -305,16 +353,18 @@ app = web.Application()
 app.router.add_get("/", index)
 
 # GET ALL & CREATE ONE
-app.router.add_get("/tickets", web_get_all_tikets)
-app.router.add_post("/tickets", web_create_tiket)
+app.router.add_get("/tickets", get_all_tikets)
+app.router.add_post("/tickets", create_tiket)
 
-# GET ON
+# GET ONE
 app.router.add_get("/tickets/{id}", web_get_a_tiket)
 
 # Change State of one Ticket
-app.router.add_post("/tickets/{id}/start", ticket_pec)
+app.router.add_post("/tickets/{id}/start", ticket_start)
 app.router.add_post("/tickets/{id}/archiver", ticket_archivage)
 app.router.add_post("/tickets/{id}/desarchiver", ticket_desarchivage)
+
+
 
 web.run_app(app)
 
