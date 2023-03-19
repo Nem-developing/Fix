@@ -70,14 +70,14 @@ def db_run(CMD, fetch=True, commit=False):
         cursor = conn.cursor()
 
         cursor.execute(str(CMD))
-        if (fetch == True):
+        if fetch == True:
             DATA = cursor.fetchall()
-        else: 
+        else:
             DATA = cursor.fetchone()
-        
-        if (commit == True):
+
+        if commit == True:
             conn.commit()
-    
+
         cursor.close()
         conn.close()
     except mysql.connector.errors.Programmingerror as error:
@@ -125,6 +125,7 @@ def check_if_everything_is_ok():
     if db_error == True:
         return False
     return True
+
 
 def get_a_ticket(id):
     data = {"error": False}
@@ -183,6 +184,7 @@ def get_a_ticket(id):
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
 
+
 def get_ticket_status(id):
     data = {"error": False}
     id = int(id)
@@ -191,7 +193,7 @@ def get_ticket_status(id):
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         data_temp = get_a_ticket(id)
-        if (data_temp["error"] != False):
+        if data_temp["error"] != False:
             data = {"error": True}
             return data
         else:
@@ -200,20 +202,26 @@ def get_ticket_status(id):
         pass
     return data
 
-def change_ticket_status(id,status):
+
+def change_ticket_status(id, status):
     try:
         data_temp = get_a_ticket(id)
         print(data_temp)
-        if (data_temp["error"] != False):
+        if data_temp["error"] != False:
             return {"error": True}
         else:
-            req_str = "UPDATE `tickets` SET `etat` = '" + status + "' WHERE `id` = '" + id + "';"
-            req = db_run(req_str,commit=True)
+            req_str = (
+                "UPDATE `tickets` SET `etat` = '"
+                + status
+                + "' WHERE `id` = '"
+                + id
+                + "';"
+            )
+            req = db_run(req_str, commit=True)
             print(req)
-            return {"error": False, "status": get_a_ticket(id)['status']}
+            return {"error": False, "status": get_a_ticket(id)["status"]}
     except:
         return {"error": False}
-
 
 
 ################
@@ -289,35 +297,70 @@ async def web_get_a_tiket(request):
 
 async def create_tiket(request):
     data = {"error": False}
-    
+
     # GET POST DATA
     post_data = await request.json()
-    serveur = post_data.get('serveur')
-    data_objet = post_data.get('objet')
-    description = post_data.get('description')
-    urgence = post_data.get('urgence')
-    user_create = post_data.get('user_create')
+    serveur = post_data.get("serveur")
+    data_objet = post_data.get("objet")
+    description = post_data.get("description")
+    urgence = post_data.get("urgence")
+    user_create = post_data.get("user_create")
     ## Génération date et heure
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")
     heure = maintenant.strftime("%H:%M:%S")
     ## Default Values
-    date_pec = 'N/A'
-    heure_pec = 'N/A'
-    date_fin = 'N/A'
-    heure_fin = 'N/A'
+    date_pec = "N/A"
+    heure_pec = "N/A"
+    date_fin = "N/A"
+    heure_fin = "N/A"
     etat = 0
-    technicien_affecte = 'N/A'
-    technicien_qui_archive = 'N/A'
+    technicien_affecte = "N/A"
+    technicien_qui_archive = "N/A"
 
     try:
-        STR = "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('"+ str(serveur) +"', '"+ str(data_objet) +"', '"+ str(description) +"', '"+ str(date) +"', '"+ str(heure) +"', '"+ str(user_create) +"', '"+ str(date_pec) +"', '"+ str(heure_pec) +"', '"+ str(date_fin) +"', '"+ str(heure_fin) +"', '"+ str(urgence) +"', '"+ str(etat) +"', '"+ str(technicien_affecte) +"', '"+ str(technicien_qui_archive) +"');"
-        req = db_run(STR,commit=True,fetch=False)
+        STR = (
+            "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('"
+            + str(serveur)
+            + "', '"
+            + str(data_objet)
+            + "', '"
+            + str(description)
+            + "', '"
+            + str(date)
+            + "', '"
+            + str(heure)
+            + "', '"
+            + str(user_create)
+            + "', '"
+            + str(date_pec)
+            + "', '"
+            + str(heure_pec)
+            + "', '"
+            + str(date_fin)
+            + "', '"
+            + str(heure_fin)
+            + "', '"
+            + str(urgence)
+            + "', '"
+            + str(etat)
+            + "', '"
+            + str(technicien_affecte)
+            + "', '"
+            + str(technicien_qui_archive)
+            + "');"
+        )
+        req = db_run(STR, commit=True, fetch=False)
         req = db_run("SELECT MAX(id) FROM tickets")
-        ID, = (req.CONTENT[0])
+        (ID,) = req.CONTENT[0]
         data = {"ID": ID, "created": True, "error": False}
-    except: 
-        data = {"error": True, "DB_error": True, "error_message": "Body is missing", "created": False}
+    except:
+        data = {
+            "error": True,
+            "DB_error": True,
+            "error_message": "Body is missing",
+            "created": False,
+        }
         return web.json_response(json.loads(json.dumps(data)))
     return web.json_response(json.loads(json.dumps(data)))
 
@@ -326,22 +369,23 @@ async def ticket_start(request):
     data = {"error": False}
     id = int(request.match_info["id"])
     obj = get_ticket_status(id)
-    if (get_ticket_status(id)['error'] != True):
-        status = obj['status']
-        if (status != 0):
+    if get_ticket_status(id)["error"] != True:
+        status = obj["status"]
+        if status != 0:
             data = {"error": True}
         else:
             print("test")
-            change_ticket_status(id,1)
+            change_ticket_status(id, 1)
             print("test")
             return web.json_response(json.loads(json.dumps(get_a_ticket(id))))
 
-
     return web.json_response(json.loads(json.dumps(data)))
+
 
 async def ticket_archivage(request):
     data = {"error": False}
     return web.json_response(json.loads(json.dumps(data)))
+
 
 async def ticket_desarchivage(request):
     data = {"error": False}
@@ -363,7 +407,6 @@ app.router.add_get("/tickets/{id}", web_get_a_tiket)
 app.router.add_post("/tickets/{id}/start", ticket_start)
 app.router.add_post("/tickets/{id}/archiver", ticket_archivage)
 app.router.add_post("/tickets/{id}/desarchiver", ticket_desarchivage)
-
 
 
 web.run_app(app)
