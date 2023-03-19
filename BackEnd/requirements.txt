@@ -1,0 +1,3 @@
+###### Requirements ######
+aiohttp
+mysql.connector
