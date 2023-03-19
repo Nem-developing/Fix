@@ -265,10 +265,26 @@ def change_ticket_status(id, status):
         if data_temp["error"] != False:
             return {"error": True}
         else:
+            ## Génération date et heure
+            maintenant = datetime.now()
+            date = maintenant.strftime("%d/%m/%Y")
+            heure = maintenant.strftime("%H:%M:%S")
+
+            if status == 1:
+                var_values = (
+                    ", `date_pec` = '" + date + "', `heure_pec` = '" + str(heure) + "'"
+                )
+            elif status == 2:
+                var_values = (
+                    ", `date_fin` = '" + date + "', `heure_fin` = '" + str(heure) + "'"
+                )
+
             req_str = (
                 "UPDATE `tickets` SET `etat` = '"
                 + str(status)
-                + "' WHERE `id` = '"
+                + "'"
+                + str(var_values)
+                + "WHERE `id` = '"
                 + str(id)
                 + "';"
             )
@@ -344,15 +360,31 @@ def ticket_debut(id):
     obj = get_ticket_status(id)
 
     if obj["error"] != True:
-        status = obj["status"]
-        print(status)
-        if status != 0 or status != 2:
+        if int(obj["status"]) == 1:
             data = {
                 "error": True,
                 "msg": "You can't start a ticket if it's current status is not 0 or 2.",
             }
         else:
             data_try = change_ticket_status(id, 1)
+            if data_try["error"] == False:
+                return get_a_ticket(id)
+
+    return data
+
+
+def ticket_fin(id):
+    data = {"error": False}
+    obj = get_ticket_status(id)
+
+    if obj["error"] != True:
+        if int(obj["status"]) != 1:
+            data = {
+                "error": True,
+                "msg": "You can't start a ticket if it's current status is not 0 or 2.",
+            }
+        else:
+            data_try = change_ticket_status(id, 2)
             if data_try["error"] == False:
                 return get_a_ticket(id)
 
@@ -405,8 +437,8 @@ async def web_ticket_debut(request):
 
 
 async def web_ticket_fin(request):
-    data = {"error": False}
-    return web.json_response(json.loads(json.dumps(data)))
+    id = int(request.match_info["id"])
+    return web.json_response(json.loads(json.dumps(ticket_fin(id))))
 
 
 # Définition des routes
