@@ -27,7 +27,7 @@
      *                      Différentes options du statut :
      * 
      *  0 : Non-Traité
-     *  1 : En-Cour
+     *  1 : En-Cours
      *  2 : Archivé
      * 
      *                      Différentes options de niveau d'urgence :
