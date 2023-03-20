@@ -21,6 +21,45 @@ HEADERS = {"Content-Type": "application/json"}
 
 status = "Green"  # Green = Tout est fonctionnel  Red = Database innacessible
 
+
+########################
+# RECAP DB
+########################
+
+# =========================================================================
+#                               TICKETS
+# Statut :
+#  0 : Non-Traité
+#  1 : En-Cours
+#  2 : Archivé
+#
+# Niveaux d'urgence :
+# 0 : Faible
+# 1 : Normale
+# 2 : Urgent
+# =========================================================================
+
+
+# =========================================================================
+#                               USERS
+# Niveau de permission :
+#
+# 0 -> Lecture seulement
+# 1 -> Prise en charge de tickets et leurs archivage.
+# 2 -> Archivage de nimporte quel tickets.
+# =========================================================================
+
+
+# =========================================================================
+#                               API_KEYS
+# Statut :
+#
+# 0 -> Expire au bout d'une heure
+# 1 -> N'expire pas
+#
+# =========================================================================
+
+
 ########################
 # OBJETS
 ########################
@@ -391,15 +430,107 @@ def ticket_fin(id):
     return data
 
 
-################
-# Fonctions WEB
-################
+# Fonction qui vérifie si une table existe ou non
+def verif_table(table):
+    cnx = mysql.connector.connect(
+        user=DB_USER,
+        password=DB_PASSORD,
+        host=DB_HOST,
+        database=DB_NAME,
+    )
+    cursor = cnx.cursor()
+
+    cursor.execute("SHOW TABLES LIKE '{}'".format(table))
+    result = cursor.fetchone()
+
+    if result:
+        return True
+    else:
+        return False
 
 
+# Retourne Vrais si on arrive à nous connecter à la DB
+def acces_db():
+    try:
+        cnx = mysql.connector.connect(
+            user=DB_USER,
+            password=DB_PASSORD,
+            host=DB_HOST,
+            database=DB_NAME,
+        )
+        cursor = cnx.cursor()
+        return True
+    except:
+        return False
+
+
+# Fonction qui va créer toutes les tables en cas de besoin
+def prepare():
+    print("Initialisation de l'API de FIX " + str(VERSION))
+
+    # Accès à la DB
+    if acces_db() == True:
+        print("--> [OK] : Connexion à la base de données réussie ! \n")
+    else:
+        print("--> [KO] : Connexion à la base de données échouée ! \n")
+
+    # Tables présentes
+    print("Vérifcation des tables")
+    # TICKETS
+    if verif_table("tickets") == False:
+        print("--> [tickets] La table est manquante ! Création en cours ...")
+        req_str = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL);"
+        db_run(req_str, fetch=False, commit=True)
+
+        print("--> [tickets] Création du ticket de bienvenue ...\n")
+        req_str = "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix $versiondefix !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '$date_tick', '$heure_tick', 'Néhémie Barkia',  'N/A','N/A','N/A','N/A', '0', '0',  'N/A', 'N/A');"
+        db_run(req_str, fetch=False, commit=True)
+
+    else:
+        print("--> [tickets] Table présente !\n")
+
+    # USERS
+    if verif_table("users") == False:
+        print("--> [users] La table est manquante ! Création en cours ...")
+        req_str = "CREATE TABLE `users` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(60) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );"
+        db_run(req_str, fetch=False, commit=True)
+    else:
+        print("--> [users] Table présente !\n")
+
+    # LOGS
+    if verif_table("logs") == False:
+        print("--> [logs] La table est manquante ! Création en cours ...")
+        req_str = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
+        db_run(req_str, fetch=False, commit=True)
+    else:
+        print("--> [logs] Table présente !\n")
+
+    # COMMENTAIRES
+    if verif_table("commentaires") == False:
+        print("--> [commentaires] La table est manquante ! Création en cours ...")
+        req_str = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );"
+        db_run(req_str, fetch=False, commit=True)
+    else:
+        print("--> [commentaires] Table présente !\n")
+
+    return
+
+
+###################################################
+################   FONCTIONS WEB   ################
+###################################################
+
+
+########################
+# TOKEN ADMINISTRATION
+########################
 async def web_index(request):
     return web.json_response(json.loads(display()))
 
 
+########################
+# TICKETS ADMINISTRATION
+########################
 async def web_get_all_tikets(request):
     return web.json_response(json.loads(json.dumps(get_all_tickets())))
 
@@ -441,6 +572,44 @@ async def web_ticket_fin(request):
     return web.json_response(json.loads(json.dumps(ticket_fin(id))))
 
 
+########################
+# USERS ADMINISTRATION
+########################
+async def web_get_users(request):
+    data = {}
+    return web.json_response(json.loads(json.dumps(data)))
+
+
+async def web_get_a_users(request):
+    data = {}
+    return web.json_response(json.loads(json.dumps(data)))
+
+
+async def web_post_users(request):
+    data = {}
+    return web.json_response(json.loads(json.dumps(data)))
+
+
+########################
+# TOKEN ADMINISTRATION
+########################
+
+
+async def web_get_tokens(request):
+    data = {}
+    return web.json_response(json.loads(json.dumps(data)))
+
+
+async def web_get_a_tokens(request):
+    data = {}
+    return web.json_response(json.loads(json.dumps(data)))
+
+
+async def web_post_tokens(request):
+    data = {}
+    return web.json_response(json.loads(json.dumps(data)))
+
+
 # Définition des routes
 app = web.Application()
 app.router.add_get("/", web_index)
@@ -457,6 +626,17 @@ app.router.add_get("/tickets/{id}/statut", web_get_a_tiket_status)
 app.router.add_post("/tickets/{id}/debut", web_ticket_debut)
 app.router.add_post("/tickets/{id}/fin", web_ticket_fin)
 
+# USERS
+app.router.add_get("/users", web_get_users)
+app.router.add_get("/users/{id}", web_get_a_users)
+app.router.add_post("/users", web_post_users)
+
+# API TOKEN
+app.router.add_get("/tokens", web_get_tokens)
+app.router.add_get("/tokens/{id}", web_get_a_tokens)
+app.router.add_post("/tokens", web_post_tokens)
+
+prepare()
 
 web.run_app(app)
 
