@@ -308,8 +308,10 @@ def change_ticket_status(id, status):
             maintenant = datetime.now()
             date = maintenant.strftime("%d/%m/%Y")
             heure = maintenant.strftime("%H:%M:%S")
-
-            if status == 1:
+            if status == 0:
+                var_values = ",`date_pec` = 'N/A', `heure_pec` = 'N/A', `date_fin` = 'N/A', `heure_fin`= 'N/A'"
+                pass
+            elif status == 1:
                 var_values = (
                     ", `date_pec` = '" + date + "', `heure_pec` = '" + str(heure) + "'"
                 )
@@ -399,10 +401,13 @@ def ticket_debut(id):
     obj = get_ticket_status(id)
 
     if obj["error"] != True:
-        if int(obj["status"]) == 1:
+        if int(obj["status"]) != 0:
             data = {
                 "error": True,
-                "msg": "You can't start a ticket if it's current status is not 0 or 2.",
+                "msg": "You can't start a ticket if it's current status is not 0."
+                + " Current status = "
+                + str(obj["status"])
+                + ".",
             }
         else:
             data_try = change_ticket_status(id, 1)
@@ -420,10 +425,34 @@ def ticket_fin(id):
         if int(obj["status"]) != 1:
             data = {
                 "error": True,
-                "msg": "You can't start a ticket if it's current status is not 0 or 2.",
+                "msg": "You can't ending a ticket if it's current status is not 1."
+                + " Current status = "
+                + str(obj["status"])
+                + ".",
             }
         else:
             data_try = change_ticket_status(id, 2)
+            if data_try["error"] == False:
+                return get_a_ticket(id)
+
+    return data
+
+
+def ticket_defaut(id):
+    data = {"error": False}
+    obj = get_ticket_status(id)
+
+    if obj["error"] != True:
+        if int(obj["status"]) != 2:
+            data = {
+                "error": True,
+                "msg": "You can't reset a ticket if it's current status is not 2."
+                + " Current status = "
+                + str(obj["status"])
+                + ".",
+            }
+        else:
+            data_try = change_ticket_status(id, 0)
             if data_try["error"] == False:
                 return get_a_ticket(id)
 
@@ -464,55 +493,59 @@ def acces_db():
         return False
 
 
+def check_and_create_db_if_required(db_name, req_to_create_db):
+    if verif_table(str(db_name)) == False:
+        print("[" + str(db_name) + "] La table est manquante ! Création en cours ...")
+        db_run(req_to_create_db, fetch=False, commit=True)
+
+        # Exception pour la table ticket, en plus de la créer, on va y insérer un ticket de bienvenue.
+        if str(db_name) == "tickets":
+            maintenant = datetime.now()
+            date = maintenant.strftime("%d/%m/%Y")
+            heure = maintenant.strftime("%H:%M:%S")
+            print("--> Ajout du ticket de bienvenue.")
+            req_str = (
+                "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix "
+                + str(VERSION)
+                + " !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '"
+                + str(date)
+                + "', '"
+                + str(heure)
+                + "', 'Néhémie Barkia',  'N/A','N/A','N/A','N/A', '0', '0',  'N/A', 'N/A');"
+            )
+            db_run(req_str, fetch=False, commit=True)
+
+    else:
+        print("--> [" + str(db_name) + "] Table présente !")
+    return
+
+
 # Fonction qui va créer toutes les tables en cas de besoin
 def prepare():
     print("Initialisation de l'API de FIX " + str(VERSION))
 
     # Accès à la DB
     if acces_db() == True:
-        print("--> [OK] : Connexion à la base de données réussie ! \n")
+        print("--> [OK] : Connexion à la base de données réussie !\n")
     else:
-        print("--> [KO] : Connexion à la base de données échouée ! \n")
+        print("--> [KO] : Connexion à la base de données échouée !\n")
 
     # Tables présentes
-    print("Vérifcation des tables")
-    # TICKETS
-    if verif_table("tickets") == False:
-        print("--> [tickets] La table est manquante ! Création en cours ...")
-        req_str = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL);"
-        db_run(req_str, fetch=False, commit=True)
+    print("Vérifcation des tables :")
 
-        print("--> [tickets] Création du ticket de bienvenue ...\n")
-        req_str = "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix $versiondefix !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '$date_tick', '$heure_tick', 'Néhémie Barkia',  'N/A','N/A','N/A','N/A', '0', '0',  'N/A', 'N/A');"
-        db_run(req_str, fetch=False, commit=True)
+    # Les requettes de créations de tables
+    req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL);"
+    req_create_users = "CREATE TABLE `users` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(60) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );"
+    req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
+    req_create_commentaires = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );"
 
-    else:
-        print("--> [tickets] Table présente !\n")
-
-    # USERS
-    if verif_table("users") == False:
-        print("--> [users] La table est manquante ! Création en cours ...")
-        req_str = "CREATE TABLE `users` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(60) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );"
-        db_run(req_str, fetch=False, commit=True)
-    else:
-        print("--> [users] Table présente !\n")
-
-    # LOGS
-    if verif_table("logs") == False:
-        print("--> [logs] La table est manquante ! Création en cours ...")
-        req_str = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
-        db_run(req_str, fetch=False, commit=True)
-    else:
-        print("--> [logs] Table présente !\n")
-
-    # COMMENTAIRES
-    if verif_table("commentaires") == False:
-        print("--> [commentaires] La table est manquante ! Création en cours ...")
-        req_str = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );"
-        db_run(req_str, fetch=False, commit=True)
-    else:
-        print("--> [commentaires] Table présente !\n")
-
+    # Création si besoin :
+    check_and_create_db_if_required("tickets", req_create_tickets)
+    check_and_create_db_if_required("users", req_create_users)
+    check_and_create_db_if_required("logs", req_create_logs)
+    check_and_create_db_if_required("commentaires", req_create_commentaires)
+    print("")
+    print("Démarrage du serveur :")
     return
 
 
@@ -572,6 +605,11 @@ async def web_ticket_fin(request):
     return web.json_response(json.loads(json.dumps(ticket_fin(id))))
 
 
+async def web_ticket_defaut(request):
+    id = int(request.match_info["id"])
+    return web.json_response(json.loads(json.dumps(ticket_defaut(id))))
+
+
 ########################
 # USERS ADMINISTRATION
 ########################
@@ -625,6 +663,7 @@ app.router.add_get("/tickets/{id}/statut", web_get_a_tiket_status)
 # Change State of one Ticket
 app.router.add_post("/tickets/{id}/debut", web_ticket_debut)
 app.router.add_post("/tickets/{id}/fin", web_ticket_fin)
+app.router.add_post("/tickets/{id}/defaut", web_ticket_defaut)
 
 # USERS
 app.router.add_get("/users", web_get_users)
