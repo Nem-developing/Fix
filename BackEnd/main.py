@@ -2,10 +2,13 @@ from dataclasses import dataclass
 import datetime
 import json
 from random import randint
+import random
+import string
 from typing import Optional
 from aiohttp import web
 import mysql.connector
 from datetime import datetime
+from hashlib import sha512
 
 # CONST
 VERSION = "3.0"
@@ -52,7 +55,7 @@ status = "Green"  # Green = Tout est fonctionnel  Red = Database innacessible
 
 # =========================================================================
 #                               API_KEYS
-# Statut :
+# Type :
 #
 # 0 -> Expire au bout d'une heure
 # 1 -> N'expire pas
@@ -495,7 +498,7 @@ def acces_db():
 
 def check_and_create_db_if_required(db_name, req_to_create_db):
     if verif_table(str(db_name)) == False:
-        print("[" + str(db_name) + "] La table est manquante ! Création en cours ...")
+        print("--> [" + str(db_name) + "] La table en cours de création ...")
         db_run(req_to_create_db, fetch=False, commit=True)
 
         # Exception pour la table ticket, en plus de la créer, on va y insérer un ticket de bienvenue.
@@ -514,6 +517,20 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
                 + "', 'Néhémie Barkia',  'N/A','N/A','N/A','N/A', '0', '0',  'N/A', 'N/A');"
             )
             db_run(req_str, fetch=False, commit=True)
+        elif str(db_name) == "users":
+            print("--> Ajout de l'utilisateur admin.")
+            maintenant = datetime.now()
+            date = maintenant.strftime("%d/%m/%Y")
+            heure = maintenant.strftime("%H:%M:%S")
+
+            req_str = (
+                "INSERT INTO `users` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('admin', '"
+                + str(chiffrer_password("admin"))
+                + "', '2', '"
+                + str(date)
+                + "');"
+            )
+            db_run(req_str, fetch=False, commit=True)
 
     else:
         print("--> [" + str(db_name) + "] Table présente !")
@@ -525,28 +542,134 @@ def prepare():
     print("Initialisation de l'API de FIX " + str(VERSION))
 
     # Accès à la DB
-    if acces_db() == True:
-        print("--> [OK] : Connexion à la base de données réussie !\n")
-    else:
+    try:
+        if acces_db() == True:
+            print("--> [OK] : Connexion à la base de données réussie !\n")
+        else:
+            print("--> [KO] : Connexion à la base de données échouée !\n")
+    except:
         print("--> [KO] : Connexion à la base de données échouée !\n")
+        exit(1)
 
     # Tables présentes
     print("Vérifcation des tables :")
+    try:
+        # Les requettes de créations de tables
+        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL);"
+        req_create_users = "CREATE TABLE `users` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );"
+        req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
+        req_create_commentaires = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );"
+        req_create_api_keys = "CREATE TABLE `api_keys` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL, `token` varchar(62) NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `type` INT NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) );"
 
-    # Les requettes de créations de tables
-    req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL);"
-    req_create_users = "CREATE TABLE `users` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(60) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );"
-    req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
-    req_create_commentaires = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );"
-
-    # Création si besoin :
-    check_and_create_db_if_required("tickets", req_create_tickets)
-    check_and_create_db_if_required("users", req_create_users)
-    check_and_create_db_if_required("logs", req_create_logs)
-    check_and_create_db_if_required("commentaires", req_create_commentaires)
-    print("")
-    print("Démarrage du serveur :")
+        # Création si besoin :
+        check_and_create_db_if_required("tickets", req_create_tickets)
+        check_and_create_db_if_required("users", req_create_users)
+        check_and_create_db_if_required("logs", req_create_logs)
+        check_and_create_db_if_required("commentaires", req_create_commentaires)
+        check_and_create_db_if_required("api_keys", req_create_api_keys)
+    except:
+        print(
+            "--> [KO] : Une erreur est survenue ! Nous avons pas pû correctement vérifier la base de donnée.\n"
+        )
+    print("\nDémarrage du serveur :")
     return
+
+
+def verif_user_exist(user):
+    CMD = "SELECT * FROM users where utilisateur = '" + str(user) + "';"
+    cpt = 0
+    REQ = db_run(CMD, fetch=True, commit=False)
+    for i in REQ.CONTENT:
+        cpt += 1
+
+    if cpt != 0:
+        return True
+    return False
+
+
+def get_encrypted_user_password(user):
+    CMD = "SELECT * FROM users where utilisateur = '" + str(user) + "';"
+    cpt = 0
+    REQ = db_run(CMD, fetch=True, commit=False)
+    for i in REQ.CONTENT:
+        password = i[2]
+    return password
+
+
+def get_user_id(user):
+    CMD = "SELECT * FROM users where utilisateur = '" + str(user) + "';"
+    REQ = db_run(CMD, fetch=True, commit=False)
+    for i in REQ.CONTENT:
+        id = i[0]
+    return id
+
+
+def chiffrer_password(password):
+    mdp = password.encode()
+    mdp_sign = sha512(mdp).hexdigest()
+    return mdp_sign
+
+
+def verif_user_password(username, password):
+    if get_encrypted_user_password(username) == chiffrer_password(password):
+        return True
+    else:
+        return False
+
+
+def generate_token_value():
+    letters = string.ascii_uppercase
+    numbers = string.digits
+    possible_choice = letters + numbers
+    token = ""
+
+    token += "".join(random.choice(possible_choice) for i in range(20))
+    token += "-"
+    token += "".join(random.choice(possible_choice) for i in range(20))
+    token += "-"
+    token += "".join(random.choice(possible_choice) for i in range(20))
+    return token
+
+
+def verif_token_unique(token):
+    cmd = "SELECT count(*) FROM api_keys where token = '" + str(token) + "';"
+    req = db_run(cmd, fetch=False, commit=False)
+    (count,) = req.CONTENT
+    if count == 0:
+        return True
+    else:
+        return False
+
+
+def token_create(username, type):
+    token = generate_token_value()
+    while verif_token_unique(token) == False:
+        token = generate_token_value()
+
+    maintenant = datetime.now()
+    date = maintenant.strftime("%d/%m/%Y")
+    heure = maintenant.strftime("%H:%M:%S")
+    user_id = get_user_id(username)
+    STR = (
+        "INSERT INTO `api_keys` (`user_id`, `token`, `date`, `heure`, `type`)"
+        + " VALUES ('"
+        + str(user_id)
+        + "', '"
+        + str(token)
+        + "', '"
+        + str(date)
+        + "', '"
+        + str(heure)
+        + "', '"
+        + str(type)
+        + "');"
+    )
+
+    req = db_run(STR, commit=True, fetch=False)
+    req = db_run("SELECT id FROM api_keys where token = '" + str(token) + "';")
+    (ID,) = req.CONTENT[0]
+    data = {"id": ID, "token": str(token), "type": type}
+    return data
 
 
 ###################################################
@@ -634,6 +757,8 @@ async def web_post_users(request):
 
 
 async def web_get_tokens(request):
+    bearer = request.headers.get("Authorization")
+    print(bearer)
     data = {}
     return web.json_response(json.loads(json.dumps(data)))
 
@@ -643,9 +768,40 @@ async def web_get_a_tokens(request):
     return web.json_response(json.loads(json.dumps(data)))
 
 
+# Get a token
 async def web_post_tokens(request):
+    # VARS
+    EX = {"username": "admin", "password": "admin", "type": 1}
+    ERROR_1 = "L'utilisateur n'existe pas."
+    ERROR_2 = "Mot de passe incorrect."
+    ERROR_3 = "Merci de renseigner les informations suivantes : " + str(EX)
     data = {}
-    return web.json_response(json.loads(json.dumps(data)))
+    # GET POST DATA
+    post_data = await request.json()
+    username = post_data.get("username")
+    password = post_data.get("password")
+    type = post_data.get("type")
+
+    if (username is None) or (password is None) or (type is None):
+        return web.json_response(
+            json.loads(json.dumps({"error": True, "msg": ERROR_3, "error_code": 3}))
+        )
+
+    # 1 = Pas d'expiration ; 0 = Expiration
+    if verif_user_exist(username) == False:
+        return web.json_response(
+            json.loads(json.dumps({"error": True, "msg": ERROR_1, "error_code": 1}))
+        )
+
+    if verif_user_password(username, password) == False:
+        return web.json_response(
+            json.loads(json.dumps({"error": True, "msg": ERROR_2, "error_code": 2}))
+        )
+
+    # Création du token
+    token = token_create(username, type)
+
+    return web.json_response(json.loads(json.dumps({"error": False, "token": token})))
 
 
 # Définition des routes
@@ -680,3 +836,5 @@ prepare()
 web.run_app(app)
 
 exit(0)
+
+# OUBLI D'ajouter quel utilisateur affecte ---> Nécessité de se positionner sur la façon de procéder à la vérification des requêttes d'API.
