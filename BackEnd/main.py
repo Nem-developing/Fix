@@ -7,7 +7,7 @@ import string
 from typing import Optional
 from aiohttp import web
 import mysql.connector
-from datetime import datetime
+from datetime import datetime, timedelta
 from hashlib import sha512
 
 # CONST
@@ -571,7 +571,6 @@ def prepare():
         print(
             "--> [KO] : Une erreur est survenue ! Nous avons pas pû correctement vérifier la base de donnée.\n"
         )
-    print("\nDémarrage du serveur :")
     return
 
 
@@ -668,8 +667,78 @@ def token_create(username, type):
     req = db_run(STR, commit=True, fetch=False)
     req = db_run("SELECT id FROM api_keys where token = '" + str(token) + "';")
     (ID,) = req.CONTENT[0]
-    data = {"id": ID, "token": str(token), "type": type}
+    data = {"id": ID, "token": str(token), "type": type, "date": date, "heure": heure}
     return data
+
+
+def verif_token_valid(token):
+    cmd = "SELECT type,date,heure FROM api_keys where token = '" + str(token) + "';"
+    req = db_run(cmd, fetch=False, commit=False)
+
+    if req.CONTENT is None:
+        return False, 1, "Ce token n'existe pas."
+    else:
+        type, date, heure = req.CONTENT
+
+        if type == 0:
+            now = datetime.now()
+            token_timestamp = datetime.strptime(date + " " + heure, "%d/%m/%Y %H:%M:%S")
+            if now > token_timestamp + timedelta(hours=1):
+                # Token plus valide
+                return False, 2, "Token expiré"
+            else:
+                # Token toujours valide
+                return True, 0, ""
+        elif type == 1:
+            # Illimité
+            return True, 0, ""
+        else:
+            # Autre type ?
+            return False, 3, "Le type de token spécifié n'est pas pris en compte."
+
+
+def request_is_valid(request):
+    status = False
+    error_code = 0
+    error_msg = "None"
+
+    try:
+        bearer = request.headers.get("Authorization")
+        token = bearer.split(" ")[1]
+    except:
+        status = False
+        error_code = 1
+        error_msg = "Vous n'avez pas spécifié de bearer en Header"
+        return status, error_code, error_msg
+
+    valid, code, msg = verif_token_valid(token)
+    status = valid
+    error_code = code
+    error_msg = msg
+
+    return status, error_code, error_msg
+
+
+def get_token(request):
+    bearer = request.headers.get("Authorization")
+    token = bearer.split(" ")[1]
+    return token
+
+
+def get_user_permissions(user_id):
+    CMD = "SELECT permissions FROM users where id = '" + str(user_id) + "';"
+    REQ = db_run(CMD, fetch=True, commit=False)
+    for i in REQ.CONTENT:
+        id = i[0]
+    return id
+
+
+def get_user_id_from_token(token):
+    CMD = "SELECT user_id FROM api_keys where token = '" + str(token) + "';"
+    REQ = db_run(CMD, fetch=True, commit=False)
+    for i in REQ.CONTENT:
+        id = i[0]
+    return id
 
 
 ###################################################
@@ -757,8 +826,27 @@ async def web_post_users(request):
 
 
 async def web_get_tokens(request):
-    bearer = request.headers.get("Authorization")
-    print(bearer)
+    status, error_code, error_msg = request_is_valid(request)
+    if status == False:
+        data = {"error": status, "error_code": error_code, "error_msg": error_msg}
+        return web.json_response(json.loads(json.dumps(data)))
+
+    request_is_valid(request)
+
+    user_perms_level = get_user_permissions(get_user_id_from_token(get_token(request)))
+
+    # Un utilisateur en lecture seule ne peut voir que ses propres tokens.
+    if user_perms_level == 0:
+        return
+    # Un utilisateur en normal seule ne peut voir que ses propres tokens.
+    elif user_perms_level == 1:
+        return
+    # Un utilisateur admin peut accéder à tous les tokens.
+    elif user_perms_level == 2:
+        return
+    else:
+        pass
+
     data = {}
     return web.json_response(json.loads(json.dumps(data)))
 
@@ -775,6 +863,8 @@ async def web_post_tokens(request):
     ERROR_1 = "L'utilisateur n'existe pas."
     ERROR_2 = "Mot de passe incorrect."
     ERROR_3 = "Merci de renseigner les informations suivantes : " + str(EX)
+    ERROR_4 = "Données incorectes"
+
     data = {}
     # GET POST DATA
     post_data = await request.json()
@@ -787,7 +877,6 @@ async def web_post_tokens(request):
             json.loads(json.dumps({"error": True, "msg": ERROR_3, "error_code": 3}))
         )
 
-    # 1 = Pas d'expiration ; 0 = Expiration
     if verif_user_exist(username) == False:
         return web.json_response(
             json.loads(json.dumps({"error": True, "msg": ERROR_1, "error_code": 1}))
@@ -796,6 +885,11 @@ async def web_post_tokens(request):
     if verif_user_password(username, password) == False:
         return web.json_response(
             json.loads(json.dumps({"error": True, "msg": ERROR_2, "error_code": 2}))
+        )
+
+    if (type != 0) and (type != 1):
+        return web.json_response(
+            json.loads(json.dumps({"error": True, "msg": ERROR_4, "error_code": 4}))
         )
 
     # Création du token
