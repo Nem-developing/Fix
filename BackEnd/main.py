@@ -741,6 +741,67 @@ def get_user_id_from_token(token):
     return id
 
 
+def get_tocken_dict(user_perms_level, user_id):
+    data = {}
+
+    # Un utilisateur en lecture seule ne peut voir que ses propres tokens.
+    if (user_perms_level == 0) or (user_perms_level == 1):
+        TOKENS = []
+        CMD = (
+            "select api_keys.id, api_keys.user_id, users.utilisateur, api_keys.token, api_keys.date, api_keys.heure, api_keys.type "
+            + "from api_keys "
+            + "inner join users on api_keys.user_id = users.id "
+            + "werre users.id = "
+            + str(user_id)
+            + ";"
+        )
+        REQ = db_run(CMD, fetch=True, commit=False)
+        for i in REQ.CONTENT:
+            TMP = {
+                "id": i[0],
+                "user_id": i[1],
+                "utilisateur": i[2],
+                "token": i[3],
+                "date": i[4],
+                "heure": i[5],
+                "type": i[6],
+            }
+            TOKENS.append(TMP)
+
+        data = {
+            "error": False,
+            "total": len(TOKENS),
+            "Tokens": TOKENS,
+        }
+
+        return data
+
+    # Un utilisateur admin peut accéder à tous les tokens.
+    elif user_perms_level == 2:
+        TOKENS = []
+        CMD = "select api_keys.id, api_keys.user_id, users.utilisateur, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join users on api_keys.user_id = users.id;"
+        REQ = db_run(CMD, fetch=True, commit=False)
+        for i in REQ.CONTENT:
+            TMP = {
+                "id": i[0],
+                "user_id": i[1],
+                "utilisateur": i[2],
+                "token": i[3],
+                "date": i[4],
+                "heure": i[5],
+                "type": i[6],
+            }
+            TOKENS.append(TMP)
+
+        data = {
+            "error": False,
+            "total": len(TOKENS),
+            "Tokens": TOKENS,
+        }
+
+        return data
+
+
 ###################################################
 ################   FONCTIONS WEB   ################
 ###################################################
@@ -831,24 +892,16 @@ async def web_get_tokens(request):
         data = {"error": status, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))
 
-    request_is_valid(request)
-
-    user_perms_level = get_user_permissions(get_user_id_from_token(get_token(request)))
-
-    # Un utilisateur en lecture seule ne peut voir que ses propres tokens.
-    if user_perms_level == 0:
-        return
-    # Un utilisateur en normal seule ne peut voir que ses propres tokens.
-    elif user_perms_level == 1:
-        return
-    # Un utilisateur admin peut accéder à tous les tokens.
-    elif user_perms_level == 2:
-        return
-    else:
-        pass
-
-    data = {}
-    return web.json_response(json.loads(json.dumps(data)))
+    return web.json_response(
+        json.loads(
+            json.dumps(
+                get_tocken_dict(
+                    get_user_permissions(get_user_id_from_token(get_token(request))),
+                    get_user_id_from_token(get_token(request)),
+                )
+            )
+        )
+    )
 
 
 async def web_get_a_tokens(request):
@@ -930,5 +983,3 @@ prepare()
 web.run_app(app)
 
 exit(0)
-
-# OUBLI D'ajouter quel utilisateur affecte ---> Nécessité de se positionner sur la façon de procéder à la vérification des requêttes d'API.
