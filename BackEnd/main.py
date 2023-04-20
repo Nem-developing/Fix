@@ -34,7 +34,10 @@ status = "Green"  # Green = Tout est fonctionnel  Red = Database innacessible
 # Statut :
 #  0 : Non-Traité
 #  1 : En-Cours
-#  2 : Archivé
+#  2 : Bloqués
+#  3 : En-Tests
+#  4 : En-Revue
+#  5 : Archivé
 #
 # Niveaux d'urgence :
 # 0 : Faible
@@ -461,6 +464,116 @@ def ticket_defaut(id):
 
     return data
 
+# PROJETS :
+## Récupérer un projet
+def get_a_projet(id):
+    data = {"error": False}
+    id = int(id)
+    if (check_if_everything_is_ok() != True) or (id < 0):
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        req_str = (
+            "SELECT id, titre, description, date, etat WHERE id ="
+            + str(id)
+            + ";"
+        )
+        req = db_run(req_str)
+        for i in req.CONTENT:
+            projet_temp = ticket(
+                id=i[0],
+                titre=i[1],
+                description=i[2],
+                date=i[3],
+                etat=i[4]
+            )
+
+            TEMP = {
+                "id": projet_temp.id,
+                "titre": projet_temp.titre,
+                "description": projet_temp.description,
+                "date": projet_temp.date,
+                "etat": projet_temp.etat
+            }
+
+        data = {"error": False, "Projet": TEMP}
+        return data
+
+    except:
+        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
+    return data
+
+## Récupération de tous les projets
+def get_all_projets():
+    data = {"error": False}
+    if check_if_everything_is_ok() != True:
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        req = db_run(
+            "SELECT id, titre, description, date, etat from tickets;"
+        )
+        projets = []
+
+        for i in req.CONTENT:
+            projet_temp = ticket(
+                id=i[0],
+                titre=i[1],
+                description=i[2],
+                date=i[3],
+                etat=i[4]
+            )
+
+            TEMP = {
+                "id": projet_temp.id,
+                "titre": projet_temp.titre,
+                "description": projet_temp.description,
+                "date": projet_temp.date,
+                "etat": projet_temp.etat
+            }
+
+            projets.append(TEMP)
+
+        data = {"error": False, "total": len(projets), "Projets": projets}
+    except:
+        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
+    return data
+
+## Création d'un projet
+def create_projet(titre, description):
+    ## Génération de la date
+    maintenant = datetime.now()
+    date = maintenant.strftime("%d/%m/%Y")
+    # Defaut
+    etat = 0
+
+    try:
+        STR = (
+            "INSERT INTO `projets` (`titre`, `description`, `date`, `etat`) VALUES ('"
+            + str(titre)
+            + "', '"
+            + str(description)
+            + "', '"
+            + str(date)
+            + "', '"
+            + str(etat)
+            + "');"
+        )
+        req = db_run(STR, commit=True, fetch=False)
+        req = db_run("SELECT MAX(id) FROM tickets")
+        (ID,) = req.CONTENT[0]
+        data = {"Ticket": get_a_projet(ID), "created": True, "error": False}
+    except:
+        data = {
+            "error": True,
+            "DB_error": True,
+            "error_message": "Body is missing",
+            "created": False,
+        }
+        return data
+    return data
+
+
 
 # Fonction qui vérifie si une table existe ou non
 def verif_table(table):
@@ -501,20 +614,29 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
         print("--> [" + str(db_name) + "] La table en cours de création ...")
         db_run(req_to_create_db, fetch=False, commit=True)
 
+        if str(db_name) == "projets":
+            maintenant = datetime.now()
+            date = maintenant.strftime("%d/%m/%Y")
+            print("--> Ajout du projet initial.")
+            req_str = (
+                "INSERT INTO `projets` (`titre`, `description`, `date`, `etat`) VALUES ('Projet Initial', 'Voici un projet', '"+ str(date) + "', '0');"
+            )
+            db_run(req_str, fetch=False, commit=True)
+
         # Exception pour la table ticket, en plus de la créer, on va y insérer un ticket de bienvenue.
-        if str(db_name) == "tickets":
+        elif str(db_name) == "tickets":
             maintenant = datetime.now()
             date = maintenant.strftime("%d/%m/%Y")
             heure = maintenant.strftime("%H:%M:%S")
             print("--> Ajout du ticket de bienvenue.")
             req_str = (
-                "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix "
+                "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`, `id_projet`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix "
                 + str(VERSION)
                 + " !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '"
                 + str(date)
                 + "', '"
                 + str(heure)
-                + "', 'Néhémie Barkia',  'N/A','N/A','N/A','N/A', '0', '0',  'N/A', 'N/A');"
+                + "', 'Néhémie Barkia',  'N/A','N/A','N/A','N/A', 0, 0,  'N/A', 'N/A', 0);"
             )
             db_run(req_str, fetch=False, commit=True)
         elif str(db_name) == "users":
@@ -555,13 +677,16 @@ def prepare():
     print("Vérifcation des tables :")
     try:
         # Les requettes de créations de tables
-        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL);"
+        req_create_projets = "CREATE TABLE `projets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `titre` varchar(50), `description` varchar(1024), `date` varchar(10) NOT NULL, `etat` int NOT NULL);"
+        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `id_projet` INT , `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (id_projet) REFERENCES projets(id));"
         req_create_users = "CREATE TABLE `users` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );"
         req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
         req_create_commentaires = "CREATE TABLE commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES users(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );"
         req_create_api_keys = "CREATE TABLE `api_keys` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL, `token` varchar(62) NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `type` INT NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) );"
 
+
         # Création si besoin :
+        check_and_create_db_if_required("projets", req_create_projets)
         check_and_create_db_if_required("tickets", req_create_tickets)
         check_and_create_db_if_required("users", req_create_users)
         check_and_create_db_if_required("logs", req_create_logs)
@@ -813,6 +938,29 @@ def get_tocken_dict(user_perms_level, user_id):
 async def web_index(request):
     return web.json_response(json.loads(display()))
 
+########################
+# PROJETS ADMINISTRATION
+########################
+async def web_get_all_projets(request):
+    return web.json_response(json.loads(json.dumps(get_all_projets())))
+
+async def web_get_a_projet(request):
+    id = int(request.match_info["id"])
+    return web.json_response(json.loads(json.dumps(get_a_projet(id))))
+
+async def web_create_projet(request):
+    # GET POST DATA
+    post_data = await request.json()
+    titre = post_data.get("titre")
+    description = post_data.get("description")
+
+    return web.json_response(
+        json.loads(
+            json.dumps(
+                create_projet(titre,description)
+            )
+        )
+    )
 
 ########################
 # TICKETS ADMINISTRATION
@@ -954,6 +1102,11 @@ async def web_post_tokens(request):
 # Définition des routes
 app = web.Application()
 app.router.add_get("/", web_index)
+
+# GESTION DES PROJETS
+app.router.add_get("/projets", web_get_all_projets)
+app.router.add_get("/projets/{id}", web_get_a_projet)
+app.router.add_post("/projets", web_create_projet)
 
 # GET ALL & CREATE ONE
 app.router.add_get("/tickets", web_get_all_tikets)
