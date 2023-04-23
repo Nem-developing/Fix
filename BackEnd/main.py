@@ -22,7 +22,7 @@ HEADERS = {"Content-Type": "application/json"}
 
 # VARS
 
-status = "Green"  # Green = Tout est fonctionnel  Red = Database innacessible
+statut = "Green"  # Green = Tout est fonctionnel  Red = Database innacessible
 
 
 ########################
@@ -92,9 +92,10 @@ class ticket:
     date_fin: str
     heure_fin: str
     urgence: int
-    etat: int
+    statut: int
     technicien_affecte: str
     technicien_qui_archive: str
+    projet_id: int
 
 @dataclass
 class projet:
@@ -102,7 +103,24 @@ class projet:
     titre: str
     description: str
     date: str
-    etat: int
+    statut: int
+
+@dataclass
+class utilisateur:
+    id: int
+    utilisateur: str
+    motdepasse: str
+    creation: str
+
+@dataclass
+class commentaire:
+    id: int
+    user_id: int
+    ticket_id: int
+    projet_id: int
+    commentaire: str
+    date: str
+    heure: str
 
 ########################
 # Fonctions de gestion
@@ -146,25 +164,25 @@ def db_ok():
     OK = False
     try:
         REQ = db_run("SELECT * from tickets LIMIT 0")
-        db_status = "Green"
+        db_statut = "Green"
         db_error = "None"
 
         if REQ.ERROR != False:
-            db_status = "Red"
+            db_statut = "Red"
             db_error = REQ.ERROR_MSG
     except:
-        db_status = "Red"
+        db_statut = "Red"
         db_error = "Cannot establish connexion with the database"
 
-    return db_status, db_error
+    return db_statut, db_error
 
 
 def display():
-    db_status, db_error = db_ok()
+    db_statut, db_error = db_ok()
     data = {
         "version": VERSION,
-        "status": "running",
-        "database": db_status,
+        "statut": "running",
+        "database": db_statut,
         "database_error": db_error,
         "created_by": "Néhémie Barkia",
         "documentation": "https://github.com/Nem-developing/Fix/wiki",
@@ -173,20 +191,20 @@ def display():
 
 
 def check_if_everything_is_ok():
-    db_status, db_error = db_ok()
+    db_statut, db_error = db_ok()
     if db_error == True:
         return False
     return True
 
 
-def get_all_tickets():
+def get_all_tickets(projet_id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req = db_run(
-            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, etat, technicien_affecte, technicien_qui_archive from tickets"
+            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive,projet_id from tickets WHERE projet_id = "+ str(projet_id) + " ;"
         )
         tickets = []
 
@@ -204,13 +222,15 @@ def get_all_tickets():
                 date_fin=i[9],
                 heure_fin=i[10],
                 urgence=i[11],
-                etat=i[12],
+                statut=i[12],
                 technicien_affecte=i[13],
                 technicien_qui_archive=i[14],
+                projet_id=i[15]
             )
 
             TEMP = {
                 "id": ticket_temp.id,
+                "projet_id": ticket_temp.projet_id,
                 "serveur": ticket_temp.serveur,
                 "objet": ticket_temp.objet,
                 "description": ticket_temp.description,
@@ -222,7 +242,7 @@ def get_all_tickets():
                 "date_fin": ticket_temp.date_fin,
                 "heure_fin": ticket_temp.heure_fin,
                 "urgence": ticket_temp.urgence,
-                "etat": ticket_temp.etat,
+                "statut": ticket_temp.statut,
                 "technicien_affecte": ticket_temp.technicien_affecte,
                 "technicien_qui_archive": ticket_temp.technicien_qui_archive,
             }
@@ -235,7 +255,7 @@ def get_all_tickets():
     return data
 
 
-def get_a_ticket(id):
+def get_a_ticket(id,projet_id):
     data = {"error": False}
     id = int(id)
     if (check_if_everything_is_ok() != True) or (id < 0):
@@ -243,9 +263,7 @@ def get_a_ticket(id):
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req_str = (
-            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, etat, technicien_affecte, technicien_qui_archive from tickets WHERE id ="
-            + str(id)
-            + ";"
+            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive, projet_id from tickets WHERE id =" + str(id) + " and projet_id = " + str(projet_id) +  ";"
         )
         req = db_run(req_str)
         for i in req.CONTENT:
@@ -262,13 +280,15 @@ def get_a_ticket(id):
                 date_fin=i[9],
                 heure_fin=i[10],
                 urgence=i[11],
-                etat=i[12],
+                statut=i[12],
                 technicien_affecte=i[13],
                 technicien_qui_archive=i[14],
+                projet_id=i[15]
             )
 
             TEMP = {
                 "id": ticket_temp.id,
+                "projet_id": ticket_temp.projet_id,
                 "serveur": ticket_temp.serveur,
                 "objet": ticket_temp.objet,
                 "description": ticket_temp.description,
@@ -280,7 +300,7 @@ def get_a_ticket(id):
                 "date_fin": ticket_temp.date_fin,
                 "heure_fin": ticket_temp.heure_fin,
                 "urgence": ticket_temp.urgence,
-                "etat": ticket_temp.etat,
+                "statut": ticket_temp.statut,
                 "technicien_affecte": ticket_temp.technicien_affecte,
                 "technicien_qui_archive": ticket_temp.technicien_qui_archive,
             }
@@ -293,27 +313,31 @@ def get_a_ticket(id):
     return data
 
 
-def get_ticket_status(id):
+
+
+
+def get_ticket_statut(id, projet_id):
     data = {"error": False}
     id = int(id)
+    id = int(projet_id)
     if (check_if_everything_is_ok() != True) or (id < 0):
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        data_temp = get_a_ticket(id)
+        data_temp = get_a_ticket(id,projet_id)
         if data_temp["error"] != False:
             data = {"error": True}
             return data
         else:
-            return {"error": False, "status": data_temp["Ticket"]["etat"]}
+            return {"error": False, "statut": data_temp["Ticket"]["statut"]}
     except:
         pass
     return data
 
 
-def change_ticket_status(id, status):
+def change_ticket_statut(id, projet_id, statut):
     try:
-        data_temp = get_a_ticket(id)
+        data_temp = get_a_ticket(id,projet_id)
         if data_temp["error"] != False:
             return {"error": True}
         else:
@@ -321,34 +345,36 @@ def change_ticket_status(id, status):
             maintenant = datetime.now()
             date = maintenant.strftime("%d/%m/%Y")
             heure = maintenant.strftime("%H:%M:%S")
-            if status == 0:
+            var_values = ""
+            if statut == 0:
                 var_values = ",`date_pec` = 'N/A', `heure_pec` = 'N/A', `date_fin` = 'N/A', `heure_fin`= 'N/A'"
-                pass
-            elif status == 1:
+            elif statut == 1:
                 var_values = (
                     ", `date_pec` = '" + date + "', `heure_pec` = '" + str(heure) + "'"
                 )
-            elif status == 2:
+            elif statut == 2:
                 var_values = (
                     ", `date_fin` = '" + date + "', `heure_fin` = '" + str(heure) + "'"
                 )
 
             req_str = (
-                "UPDATE `tickets` SET `etat` = '"
-                + str(status)
+                "UPDATE `tickets` SET `statut` = '"
+                + str(statut)
                 + "'"
                 + str(var_values)
-                + "WHERE `id` = '"
+                + " WHERE `id` = '"
                 + str(id)
+                + "' and `projet_id` = '"
+                + str(projet_id)
                 + "';"
             )
             req = db_run(req_str, fetch=False, commit=True)
-            return {"error": False, "status": get_ticket_status(id)["status"]}
+            return {"error": False, "statut": get_ticket_statut(id,projet_id)["statut"]}
     except:
         return {"error": False}
 
 
-def create_ticket(serveur, objet, description, urgence, user_create):
+def create_ticket(serveur, objet, description, urgence, user_create,projet_id):
     ## Génération date et heure
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")
@@ -358,13 +384,13 @@ def create_ticket(serveur, objet, description, urgence, user_create):
     heure_pec = "N/A"
     date_fin = "N/A"
     heure_fin = "N/A"
-    etat = 0
+    statut = 0
     technicien_affecte = "N/A"
     technicien_qui_archive = "N/A"
 
     try:
         STR = (
-            "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`) VALUES ('"
+            "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('"
             + str(serveur)
             + "', '"
             + str(objet)
@@ -387,17 +413,19 @@ def create_ticket(serveur, objet, description, urgence, user_create):
             + "', '"
             + str(urgence)
             + "', '"
-            + str(etat)
+            + str(statut)
             + "', '"
             + str(technicien_affecte)
             + "', '"
             + str(technicien_qui_archive)
+            + "', '"
+            + str(projet_id)
             + "');"
         )
         req = db_run(STR, commit=True, fetch=False)
         req = db_run("SELECT MAX(id) FROM tickets")
         (ID,) = req.CONTENT[0]
-        data = {"Ticket": get_a_ticket(ID), "created": True, "error": False}
+        data = {"Ticket": get_a_ticket(ID,projet_id), "created": True, "error": False}
     except:
         data = {
             "error": True,
@@ -409,66 +437,54 @@ def create_ticket(serveur, objet, description, urgence, user_create):
     return data
 
 
-def ticket_debut(id):
+def ticket_statut(id,projet_id,new_status):
     data = {"error": False}
-    obj = get_ticket_status(id)
+    current_statut = get_ticket_statut(id,projet_id)
 
-    if obj["error"] != True:
-        if int(obj["status"]) != 0:
+    if current_statut["error"] != True:
+        if (new_status != 0 and new_status < current_statut["statut"]):
             data = {
                 "error": True,
-                "msg": "You can't start a ticket if it's current status is not 0."
-                + " Current status = "
-                + str(obj["status"])
+                "msg": "Vous ne pouvez pas décrémenter le statut du ticket."
+                + " Statut actuel = "
+                + str(current_statut["statut"])
                 + ".",
             }
         else:
-            data_try = change_ticket_status(id, 1)
+            data_try = change_ticket_statut(id, projet_id, new_status)
             if data_try["error"] == False:
-                return get_a_ticket(id)
+                return get_a_ticket(id,projet_id)
 
     return data
 
-
-def ticket_fin(id):
+def get_a_ticket_commentaire(id,projet_id):
     data = {"error": False}
-    obj = get_ticket_status(id)
+    if check_if_everything_is_ok() != True:
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        req = db_run(
+            "SELECT id, user_id, ticket_id, projet_id, commentaire, date, heure FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(id) + " ;"
+        )
+        commentaires = []
+        if req.CONTENT != None:
+            for i in req.CONTENT:
+                commentaire_temp = commentaire(id=i[0],user_id=i[1],ticket_id=i[2],projet_id=i[3],commentaire=i[4],date=i[5],heure=i[6])
 
-    if obj["error"] != True:
-        if int(obj["status"]) != 1:
-            data = {
-                "error": True,
-                "msg": "You can't ending a ticket if it's current status is not 1."
-                + " Current status = "
-                + str(obj["status"])
-                + ".",
-            }
-        else:
-            data_try = change_ticket_status(id, 2)
-            if data_try["error"] == False:
-                return get_a_ticket(id)
+                TEMP = {
+                    "id": commentaire_temp.id,
+                    "user_id": commentaire_temp.user_id,
+                    "ticket_id": commentaire_temp.ticket_id,
+                    "projet_id": commentaire_temp.projet_id,
+                    "commentaire": commentaire_temp.commentaire,
+                    "date": commentaire_temp.date,
+                    "heure": commentaire_temp.heure,
+                }
+                commentaires.append(TEMP)
 
-    return data
-
-
-def ticket_defaut(id):
-    data = {"error": False}
-    obj = get_ticket_status(id)
-
-    if obj["error"] != True:
-        if int(obj["status"]) != 2:
-            data = {
-                "error": True,
-                "msg": "You can't reset a ticket if it's current status is not 2."
-                + " Current status = "
-                + str(obj["status"])
-                + ".",
-            }
-        else:
-            data_try = change_ticket_status(id, 0)
-            if data_try["error"] == False:
-                return get_a_ticket(id)
-
+        data = {"error": False, "total": len(commentaires), "Commentaires": commentaires}
+    except:
+        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
 
 # PROJETS :
@@ -481,7 +497,7 @@ def get_a_projet(id):
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req_str = (
-            "SELECT id, titre, description, date, etat from projets WHERE id ="
+            "SELECT id, titre, description, date, statut from projets WHERE id ="
             + str(id)
             + ";"
         )
@@ -492,7 +508,7 @@ def get_a_projet(id):
                 titre=i[1],
                 description=i[2],
                 date=i[3],
-                etat=i[4]
+                statut=i[4]
             )
 
             TEMP = {
@@ -500,7 +516,7 @@ def get_a_projet(id):
                 "titre": projet_temp.titre,
                 "description": projet_temp.description,
                 "date": projet_temp.date,
-                "etat": projet_temp.etat
+                "statut": projet_temp.statut
             }
 
         data = {"error": False, "Projet": TEMP}
@@ -518,7 +534,7 @@ def get_all_projets():
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req = db_run(
-            "SELECT id, titre, description, date, etat from projets;"
+            "SELECT id, titre, description, date, statut from projets;"
         )
         projets = []
 
@@ -528,7 +544,7 @@ def get_all_projets():
                 titre=i[1],
                 description=i[2],
                 date=i[3],
-                etat=i[4]
+                statut=i[4]
             )
 
             TEMP = {
@@ -536,7 +552,7 @@ def get_all_projets():
                 "titre": projet_temp.titre,
                 "description": projet_temp.description,
                 "date": projet_temp.date,
-                "etat": projet_temp.etat
+                "statut": projet_temp.statut
             }
 
             projets.append(TEMP)
@@ -552,18 +568,18 @@ def create_projet(titre, description):
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")
     # Defaut
-    etat = 0
+    statut = 0
 
     try:
         STR = (
-            "INSERT INTO `projets` (`titre`, `description`, `date`, `etat`) VALUES ('"
+            "INSERT INTO `projets` (`titre`, `description`, `date`, `statut`) VALUES ('"
             + str(titre)
             + "', '"
             + str(description)
             + "', '"
             + str(date)
             + "', '"
-            + str(etat)
+            + str(statut)
             + "');"
         )
         req = db_run(STR, commit=True, fetch=False)
@@ -627,7 +643,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             date = maintenant.strftime("%d/%m/%Y")
             print("\t=> Ajout du projet initial.", end = '')
             req_str = (
-                "INSERT INTO `projets` (`titre`, `description`, `date`, `etat`) VALUES ('Projet Initial', 'Voici un projet', '"+ str(date) + "', '0');"
+                "INSERT INTO `projets` (`titre`, `description`, `date`, `statut`) VALUES ('Projet Initial', 'Voici un projet', '"+ str(date) + "', '0');"
             )
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
@@ -639,7 +655,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             heure = maintenant.strftime("%H:%M:%S")
             print("\t=> Ajout du ticket de bienvenue.", end = '')
             req_str = (
-                "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `etat`, `technicien_affecte`, `technicien_qui_archive`, `id_projet`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix "
+                "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix "
                 + str(VERSION)
                 + " !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '"
                 + str(date)
@@ -661,6 +677,14 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
                 + "', '2', '"
                 + str(date)
                 + "');"
+            )
+            db_run(req_str, fetch=False, commit=True)
+            print(" OK !")
+
+        elif str(db_name) == "utilisateurs_permissions":
+            print("\t=> Ajout des permissions de l'utilisateur admin.", end = '')
+            req_str = (
+                "INSERT INTO `utilisateurs_permissions` (`utilisateur_id`, `projet_id`, `permissions`) VALUES ('1', '1', '2');"
             )
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
@@ -688,11 +712,12 @@ def prepare():
     print("Vérifcation des tables :")
     try:
         # Les requettes de créations de tables
-        req_create_projets = "CREATE TABLE `projets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `titre` varchar(50), `description` varchar(1024), `date` varchar(10) NOT NULL, `etat` int NOT NULL);"
-        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `id_projet` INT NOT NULL , `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `etat` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (id_projet) REFERENCES projets(id) );"
-        req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `permissions` int NOT NULL, `creation` varchar(10) NOT NULL );"
+        req_create_projets = "CREATE TABLE `projets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `titre` varchar(50), `description` varchar(1024), `date` varchar(10) NOT NULL, `statut` int NOT NULL);"
+        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `projet_id` INT NOT NULL , `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `statut` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `creation` varchar(10) NOT NULL );"
+        req_create_utilisateurs_permissions = "CREATE TABLE `utilisateurs_permissions` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur_id` INT NOT NULL, `projet_id` INT NOT NULL , `permissions` INT NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id),  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));"
         req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
-        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, id_user INT, id_ticket INT, commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (id_user) REFERENCES utilisateurs(id), FOREIGN KEY (id_ticket) REFERENCES tickets(id) );"
+        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
         req_create_api_keys = "CREATE TABLE `api_keys` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL, `token` varchar(62) NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `type` INT NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `utilisateurs`(`id`) );"
 
 
@@ -700,6 +725,7 @@ def prepare():
         check_and_create_db_if_required("projets", req_create_projets)
         check_and_create_db_if_required("tickets", req_create_tickets)
         check_and_create_db_if_required("utilisateurs", req_create_utilisateurs)
+        check_and_create_db_if_required("utilisateurs_permissions", req_create_utilisateurs_permissions)
         check_and_create_db_if_required("logs", req_create_logs)
         check_and_create_db_if_required("tickets_commentaires", req_create_commentaires)
         check_and_create_db_if_required("api_keys", req_create_api_keys)
@@ -834,7 +860,7 @@ def verif_token_valid(token):
 
 
 def request_is_valid(request):
-    status = False
+    statut = False
     error_code = 0
     error_msg = "None"
 
@@ -842,17 +868,17 @@ def request_is_valid(request):
         bearer = request.headers.get("Authorization")
         token = bearer.split(" ")[1]
     except:
-        status = False
+        statut = False
         error_code = 1
         error_msg = "Vous n'avez pas spécifié de bearer en Header"
-        return status, error_code, error_msg
+        return statut, error_code, error_msg
 
     valid, code, msg = verif_token_valid(token)
-    status = valid
+    statut = valid
     error_code = code
     error_msg = msg
 
-    return status, error_code, error_msg
+    return statut, error_code, error_msg
 
 
 def get_token(request):
@@ -880,7 +906,6 @@ def get_user_id_from_token(token):
 def get_tocken_dict(user_perms_level, user_id):
     data = {}
 
-    # Un utilisateur en lecture seule ne peut voir que ses propres tokens.
     if (user_perms_level == 0) or (user_perms_level == 1):
         TOKENS = []
         CMD = (
@@ -977,20 +1002,24 @@ async def web_create_projet(request):
 # TICKETS ADMINISTRATION
 ########################
 async def web_get_all_tikets(request):
-    return web.json_response(json.loads(json.dumps(get_all_tickets())))
+    projet_id = int(request.match_info["projet_id"])
+    return web.json_response(json.loads(json.dumps(get_all_tickets(projet_id))))
 
 
 async def web_get_a_tiket(request):
+    projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_a_ticket(id))))
+    return web.json_response(json.loads(json.dumps(get_a_ticket(id,projet_id))))
 
 
-async def web_get_a_tiket_status(request):
+async def web_get_a_tiket_statut(request):
+    projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_ticket_status(id))))
+    return web.json_response(json.loads(json.dumps(get_ticket_statut(id,projet_id))))
 
 
 async def web_create_tiket(request):
+    projet_id = int(request.match_info["projet_id"])
     # GET POST DATA
     post_data = await request.json()
     serveur = post_data.get("serveur")
@@ -1001,25 +1030,26 @@ async def web_create_tiket(request):
     return web.json_response(
         json.loads(
             json.dumps(
-                create_ticket(serveur, data_objet, description, urgence, user_create)
+                create_ticket(serveur, data_objet, description, urgence, user_create,projet_id)
             )
         )
     )
 
 
-async def web_ticket_debut(request):
+async def web_ticket_statut(request):
+    projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(ticket_debut(id))))
+    # GET POST DATA
+    post_data = await request.json()
+    new_statut = post_data.get("statut")
+    return web.json_response(json.loads(json.dumps(ticket_statut(id,projet_id,new_statut))))
 
 
-async def web_ticket_fin(request):
+
+async def web_get_a_tiket_commentaire(request):
+    projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(ticket_fin(id))))
-
-
-async def web_ticket_defaut(request):
-    id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(ticket_defaut(id))))
+    return web.json_response(json.loads(json.dumps(get_a_ticket_commentaire(id,projet_id))))
 
 
 ########################
@@ -1046,9 +1076,9 @@ async def web_post_users(request):
 
 
 async def web_get_tokens(request):
-    status, error_code, error_msg = request_is_valid(request)
-    if status == False:
-        data = {"error": status, "error_code": error_code, "error_msg": error_msg}
+    statut, error_code, error_msg = request_is_valid(request)
+    if statut == False:
+        data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))
 
     return web.json_response(
@@ -1062,10 +1092,6 @@ async def web_get_tokens(request):
         )
     )
 
-
-async def web_get_a_tokens(request):
-    data = {}
-    return web.json_response(json.loads(json.dumps(data)))
 
 
 # Get a token
@@ -1123,15 +1149,12 @@ app.router.add_post("/projets", web_create_projet)
 app.router.add_get("/projets/{projet_id}/tickets", web_get_all_tikets)
 app.router.add_post("/projets/{projet_id}/tickets", web_create_tiket)
 
-# GET A TICKET
+# TICKET
 app.router.add_get("/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
-app.router.add_get("/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_status)
-
-# Change State of one Ticket
-app.router.add_post("/projets/{projet_id}/tickets/{id}/debut", web_ticket_debut)
-app.router.add_post("/projets/{projet_id}/tickets/{id}/fin", web_ticket_fin)
-app.router.add_post("/projets/{projet_id}/tickets/{id}/defaut", web_ticket_defaut)
-
+app.router.add_get("/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
+app.router.add_post("/projets/{projet_id}/tickets/{id}/statut", web_ticket_statut)
+app.router.add_get("/projets/{projet_id}/tickets/{id}/commentaires", web_get_a_tiket_commentaire)
+#app.router.add_post("/projets/{projet_id}/tickets/{id}/commentaire", web_ticket_commentaire)
 # USERS
 app.router.add_get("/utilisateurs", web_get_users)
 app.router.add_get("/utilisateurs/{id}", web_get_a_users)
@@ -1139,7 +1162,6 @@ app.router.add_post("/utilisateurs", web_post_users)
 
 # API TOKEN
 app.router.add_get("/tokens", web_get_tokens)
-app.router.add_get("/tokens/{id}", web_get_a_tokens)
 app.router.add_post("/tokens", web_post_tokens)
 
 prepare()
