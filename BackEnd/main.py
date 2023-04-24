@@ -108,8 +108,9 @@ class projet:
 @dataclass
 class utilisateur:
     id: int
-    utilisateur: str
+    username: str
     motdepasse: str
+    super_admin: bool
     creation: str
 
 @dataclass
@@ -119,6 +120,7 @@ class commentaire:
     ticket_id: int
     projet_id: int
     commentaire: str
+    statut: int
     date: str
     heure: str
 
@@ -457,19 +459,19 @@ def ticket_statut(id,projet_id,new_status):
 
     return data
 
-def get_a_ticket_commentaire(id,projet_id):
+def get_all_ticket_commentaire(id,projet_id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        req = db_run(
-            "SELECT id, user_id, ticket_id, projet_id, commentaire, date, heure FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(id) + " ;"
-        )
+        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(id) + " ;")
+        req = db_run(req_str)
+        
         commentaires = []
         if req.CONTENT != None:
             for i in req.CONTENT:
-                commentaire_temp = commentaire(id=i[0],user_id=i[1],ticket_id=i[2],projet_id=i[3],commentaire=i[4],date=i[5],heure=i[6])
+                commentaire_temp = commentaire(id=i[0],user_id=i[1],ticket_id=i[2],projet_id=i[3],commentaire=i[4],statut=i[5],date=i[6],heure=i[7])
 
                 TEMP = {
                     "id": commentaire_temp.id,
@@ -477,12 +479,54 @@ def get_a_ticket_commentaire(id,projet_id):
                     "ticket_id": commentaire_temp.ticket_id,
                     "projet_id": commentaire_temp.projet_id,
                     "commentaire": commentaire_temp.commentaire,
+                    "statut": commentaire_temp.statut,                    
                     "date": commentaire_temp.date,
                     "heure": commentaire_temp.heure,
                 }
                 commentaires.append(TEMP)
 
         data = {"error": False, "total": len(commentaires), "Commentaires": commentaires}
+    except:
+        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
+    return data
+
+
+def get_a_ticket_commentaire(projet_id,ticket_id,id):
+    data = {"error": False}
+    if check_if_everything_is_ok() != True:
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(ticket_id) + " and id = "+str(id)+";")
+        req = db_run(req_str, fetch=True)
+        TMP = []
+        if req.CONTENT != None:
+            for i in req.CONTENT:
+                commentaire_temp = commentaire(
+                    id=i[0],
+                    user_id=i[1],
+                    ticket_id=i[2],
+                    projet_id=i[3],
+                    commentaire=i[4],
+                    statut=i[5],
+                    date=i[6],
+                    heure=i[7])
+                
+                TEMP = {
+                    "id": commentaire_temp.id,
+                    "user_id": commentaire_temp.user_id,
+                    "ticket_id": commentaire_temp.ticket_id,
+                    "projet_id": commentaire_temp.projet_id,
+                    "commentaire": commentaire_temp.commentaire,
+                    "statut": commentaire_temp.statut,                    
+                    "date": commentaire_temp.date,
+                    "heure": commentaire_temp.heure,
+                }
+                TMP.append(TEMP)
+        if len(TMP) == 0 or len(TMP) == 1: 
+            data = {"error": False,  "Commentaire": TEMP}
+        else:
+            data = {"error": True}
     except:
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
@@ -597,6 +641,145 @@ def create_projet(titre, description):
     return data
 
 
+def post_commentaire(user_id, ticket_id, projet_id, message):
+    ## Génération de la date
+    maintenant = datetime.now()
+    date = maintenant.strftime("%d/%m/%Y")
+    heure = maintenant.strftime("%H:%M:%S")
+    # Defaut
+    statut = 0
+
+    try:
+        db_str = "INSERT INTO `tickets_commentaires` (`user_id`, `ticket_id`, `projet_id`, `commentaire`, `statut`, `date`, `heure`) VALUES ('"+str(user_id)+"', '"+str(ticket_id)+"', '"+str(projet_id)+"', '"+str(message)+"', 0,'"+str(date)+"', '"+str(heure)+"');" 
+        db_run(db_str,commit=True, fetch=False)
+        
+        req = db_run("SELECT MAX(id) FROM tickets_commentaires")
+        
+        (ID,) = req.CONTENT[0]
+
+        data = {"Commentaire": get_a_ticket_commentaire(projet_id,ticket_id,ID), "created": True, "error": False}
+    except:
+        data = {
+            "error": True,
+            "DB_error": True,
+        }
+        return data
+    return data
+
+# USERS
+
+def get_all_users():
+    data = {"error": False}
+    if check_if_everything_is_ok() != True:
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        req = db_run(
+            "SELECT id, username, super_admin, creation from utilisateurs;"
+        )
+        utilisateurs = []
+
+        for i in req.CONTENT:
+            utilisateur_temp = utilisateur(
+                id=i[0],
+                username=i[1],
+                motdepasse="N/A",
+                super_admin=i[2],
+                creation=i[3],
+            )
+
+            TEMP = {
+                "id": utilisateur_temp.id,
+                "username": utilisateur_temp.username,
+                "super_admin": utilisateur_temp.super_admin,
+                "creation": utilisateur_temp.creation,
+            }
+
+            utilisateurs.append(TEMP)
+
+        data = {"error": False, "total": len(utilisateurs), "Utilisateurs": utilisateurs}
+    except:
+        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
+    return data
+
+def get_a_users(id):
+    data = {"error": False}
+    id = int(id)
+    if (check_if_everything_is_ok() != True) or (id < 0):
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+    try:
+        req_str = (
+            "SELECT id, username, super_admin, creation from utilisateurs WHERE id ="
+            + str(id)
+            + ";"
+        )
+        req = db_run(req_str)
+        for i in req.CONTENT:
+            utilisateur_temp = utilisateur(
+                id=i[0],
+                username=i[1],
+                motdepasse="N/A",
+                super_admin=i[2],
+                creation=i[3],
+            )
+
+            TEMP = {
+                "id": utilisateur_temp.id,
+                "username": utilisateur_temp.username,
+                "super_admin": utilisateur_temp.super_admin,
+                "creation": utilisateur_temp.creation,
+            }
+
+        data = {"error": False, "Utilisateur": TEMP}
+        return data
+
+    except:
+        data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
+    return data
+
+
+
+## Création d'un utilisateur
+def create_user(username, mot_de_passe, is_super_admin):
+    ## Génération de la date
+    maintenant = datetime.now()
+    date = maintenant.strftime("%d/%m/%Y")
+    # Defaut
+    if verif_user_exist(username) == True:
+        data = {"error_message": "L'utilisateur existe déjà !", "created": False, "error": True}
+        return data
+    try:
+        STR = (
+            "INSERT INTO `utilisateurs` (`username`, `motdepasse`, `creation`, `super_admin`) VALUES ('"
+            + str(username)
+            + "', '"
+            + str(chiffrer_password(mot_de_passe))
+            + "', '"
+            + str(date)
+            + "', '"
+            + str(is_super_admin)
+            + "');"
+        )
+        req = db_run(STR, commit=True, fetch=False)
+        req = db_run("SELECT MAX(id) FROM utilisateurs")
+        (ID,) = req.CONTENT[0]
+        data = {"Utilisateur": get_a_users(ID), "created": True, "error": False}
+    except:
+        data = {
+            "error": True,
+            "DB_error": True,
+            "created": False,
+        }
+        return data
+    return data
+
+# Change password
+def change_user_mdp(user_id,motdepasse):
+    CMD = "UPDATE utilisateurs set motdepasse = '" + str(chiffrer_password(motdepasse)) + "' where id = '" + str(user_id) + "';"
+    REQ = db_run(CMD, fetch=False, commit=True)
+    return 
+
 
 # Fonction qui vérifie si une table existe ou non
 def verif_table(table):
@@ -672,11 +855,11 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             heure = maintenant.strftime("%H:%M:%S")
 
             req_str = (
-                "INSERT INTO `utilisateurs` (`utilisateur`, `motdepasse`, `permissions`, `creation`) VALUES ('admin', '"
+                "INSERT INTO `utilisateurs` (`username`, `motdepasse`, `creation`, `super_admin`) VALUES ('admin', '"
                 + str(chiffrer_password("admin"))
-                + "', '2', '"
+                + "','"
                 + str(date)
-                + "');"
+                + "', TRUE);"
             )
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
@@ -713,11 +896,11 @@ def prepare():
     try:
         # Les requettes de créations de tables
         req_create_projets = "CREATE TABLE `projets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `titre` varchar(50), `description` varchar(1024), `date` varchar(10) NOT NULL, `statut` int NOT NULL);"
-        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `projet_id` INT NOT NULL , `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` int NOT NULL, `statut` int NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
-        req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `creation` varchar(10) NOT NULL );"
+        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `projet_id` INT NOT NULL , `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` INT NOT NULL, `statut` INT NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `username` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `super_admin` INT NOT NULL, `creation` varchar(10) NOT NULL );"
         req_create_utilisateurs_permissions = "CREATE TABLE `utilisateurs_permissions` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur_id` INT NOT NULL, `projet_id` INT NOT NULL , `permissions` INT NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id),  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));"
-        req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` int NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
-        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` INT NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
+        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `statut` INT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
         req_create_api_keys = "CREATE TABLE `api_keys` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL, `token` varchar(62) NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `type` INT NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `utilisateurs`(`id`) );"
 
 
@@ -737,7 +920,7 @@ def prepare():
 
 
 def verif_user_exist(user):
-    CMD = "SELECT * FROM utilisateurs where utilisateur = '" + str(user) + "';"
+    CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     cpt = 0
     REQ = db_run(CMD, fetch=True, commit=False)
     for i in REQ.CONTENT:
@@ -749,7 +932,7 @@ def verif_user_exist(user):
 
 
 def get_encrypted_user_password(user):
-    CMD = "SELECT * FROM utilisateurs where utilisateur = '" + str(user) + "';"
+    CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     cpt = 0
     REQ = db_run(CMD, fetch=True, commit=False)
     for i in REQ.CONTENT:
@@ -758,7 +941,7 @@ def get_encrypted_user_password(user):
 
 
 def get_user_id(user):
-    CMD = "SELECT * FROM utilisateurs where utilisateur = '" + str(user) + "';"
+    CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
     for i in REQ.CONTENT:
         id = i[0]
@@ -909,7 +1092,7 @@ def get_tocken_dict(user_perms_level, user_id):
     if (user_perms_level == 0) or (user_perms_level == 1):
         TOKENS = []
         CMD = (
-            "select api_keys.id, api_keys.user_id, utilisateurs.utilisateur, api_keys.token, api_keys.date, api_keys.heure, api_keys.type "
+            "select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type "
             + "from api_keys "
             + "inner join utilisateurs on api_keys.user_id = utilisateurs.id "
             + "werre utilisateurs.id = "
@@ -921,7 +1104,7 @@ def get_tocken_dict(user_perms_level, user_id):
             TMP = {
                 "id": i[0],
                 "user_id": i[1],
-                "utilisateur": i[2],
+                "username": i[2],
                 "token": i[3],
                 "date": i[4],
                 "heure": i[5],
@@ -940,13 +1123,13 @@ def get_tocken_dict(user_perms_level, user_id):
     # Un utilisateur admin peut accéder à tous les tokens.
     elif user_perms_level == 2:
         TOKENS = []
-        CMD = "select api_keys.id, api_keys.user_id, utilisateurs.utilisateur, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id;"
+        CMD = "select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id;"
         REQ = db_run(CMD, fetch=True, commit=False)
         for i in REQ.CONTENT:
             TMP = {
                 "id": i[0],
                 "user_id": i[1],
-                "utilisateur": i[2],
+                "username": i[2],
                 "token": i[3],
                 "date": i[4],
                 "heure": i[5],
@@ -1046,28 +1229,56 @@ async def web_ticket_statut(request):
 
 
 
-async def web_get_a_tiket_commentaire(request):
+async def web_get_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
+    ticket_id = int(request.match_info["id"])
+    return web.json_response(json.loads(json.dumps(get_all_ticket_commentaire(ticket_id,projet_id))))
+
+async def web_get_a_tiket_commentaires(request):
+    projet_id = int(request.match_info["projet_id"])
+    ticket_id = int(request.match_info["ticket_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_a_ticket_commentaire(id,projet_id))))
+    return web.json_response(json.loads(json.dumps(get_a_ticket_commentaire(projet_id,ticket_id,id))))
+
+async def web_post_tiket_commentaires(request):
+    projet_id = int(request.match_info["projet_id"])
+    ticket_id = int(request.match_info["id"])
+    # GET POST DATA
+    post_data = await request.json()
+    message = post_data.get("message")
+    user_id = get_user_id_from_token(get_token(request))
+    return web.json_response(json.loads(json.dumps(post_commentaire(user_id, ticket_id, projet_id, message))))
 
 
 ########################
 # USERS ADMINISTRATION
 ########################
 async def web_get_users(request):
-    data = {}
-    return web.json_response(json.loads(json.dumps(data)))
+    return web.json_response(json.loads(json.dumps(get_all_users())))
 
 
 async def web_get_a_users(request):
-    data = {}
-    return web.json_response(json.loads(json.dumps(data)))
+    id = int(request.match_info["id"])
+    return web.json_response(json.loads(json.dumps(get_a_users(id))))
 
 
 async def web_post_users(request):
-    data = {}
-    return web.json_response(json.loads(json.dumps(data)))
+    # GET POST DATA
+    post_data = await request.json()
+    username = post_data.get("username")
+    motdepasse = post_data.get("motdepasse")
+    super_admin = post_data.get("super_admin")
+    return web.json_response(json.loads(json.dumps(create_user(username,motdepasse,super_admin))))
+
+async def web_post_user_mdp(request):
+    id = int(request.match_info["id"])
+    # GET POST DATA
+    post_data = await request.json()
+    motdepasse = post_data.get("motdepasse")
+
+    # CHANGEMENT 
+    change_user_mdp(id,motdepasse)
+    return web.json_response(json.loads(json.dumps(get_a_users(id))))
 
 
 ########################
@@ -1153,12 +1364,14 @@ app.router.add_post("/projets/{projet_id}/tickets", web_create_tiket)
 app.router.add_get("/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
 app.router.add_get("/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
 app.router.add_post("/projets/{projet_id}/tickets/{id}/statut", web_ticket_statut)
-app.router.add_get("/projets/{projet_id}/tickets/{id}/commentaires", web_get_a_tiket_commentaire)
-#app.router.add_post("/projets/{projet_id}/tickets/{id}/commentaire", web_ticket_commentaire)
+app.router.add_get("/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires)
+app.router.add_get("/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}", web_get_a_tiket_commentaires)
+app.router.add_post("/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires)
 # USERS
 app.router.add_get("/utilisateurs", web_get_users)
 app.router.add_get("/utilisateurs/{id}", web_get_a_users)
 app.router.add_post("/utilisateurs", web_post_users)
+app.router.add_post("/utilisateurs/{id}/password", web_post_user_mdp)
 
 # API TOKEN
 app.router.add_get("/tokens", web_get_tokens)
