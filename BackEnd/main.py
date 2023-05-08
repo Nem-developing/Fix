@@ -111,7 +111,7 @@ class projet:
 class utilisateur:
     id: int
     username: str
-    motdepasse: str
+    password: str
     super_admin: bool
     creation: str
 
@@ -756,7 +756,7 @@ def get_all_users():
             utilisateur_temp = utilisateur(
                 id=i[0],
                 username=i[1],
-                motdepasse="N/A",
+                password="N/A",
                 super_admin=i[2],
                 creation=i[3],
             )
@@ -797,7 +797,7 @@ def get_a_users(id):
             utilisateur_temp = utilisateur(
                 id=i[0],
                 username=i[1],
-                motdepasse="N/A",
+                password="N/A",
                 super_admin=i[2],
                 creation=i[3],
             )
@@ -832,7 +832,7 @@ def create_user(username, mot_de_passe, is_super_admin):
         return data
     try:
         STR = (
-            "INSERT INTO `utilisateurs` (`username`, `motdepasse`, `creation`, `super_admin`) VALUES ('"
+            "INSERT INTO `utilisateurs` (`username`, `password`, `creation`, `super_admin`) VALUES ('"
             + str(username)
             + "', '"
             + str(chiffrer_password(mot_de_passe))
@@ -857,10 +857,10 @@ def create_user(username, mot_de_passe, is_super_admin):
 
 
 # Change password
-def change_user_mdp(user_id, motdepasse):
+def change_user_mdp(user_id, password):
     CMD = (
-        "UPDATE utilisateurs set motdepasse = '"
-        + str(chiffrer_password(motdepasse))
+        "UPDATE utilisateurs set password = '"
+        + str(chiffrer_password(password))
         + "' where id = '"
         + str(user_id)
         + "';"
@@ -945,7 +945,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             heure = maintenant.strftime("%H:%M:%S")
 
             req_str = (
-                "INSERT INTO `utilisateurs` (`username`, `motdepasse`, `creation`, `super_admin`) VALUES ('admin', '"
+                "INSERT INTO `utilisateurs` (`username`, `password`, `creation`, `super_admin`) VALUES ('admin', '"
                 + str(chiffrer_password("admin"))
                 + "','"
                 + str(date)
@@ -985,7 +985,7 @@ def prepare():
         # Les requettes de créations de tables
         req_create_projets = "CREATE TABLE `projets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `titre` varchar(50), `description` varchar(1024), `date` varchar(10) NOT NULL, `statut` int NOT NULL);"
         req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `projet_id` INT NOT NULL , `serveur` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` INT NOT NULL, `statut` INT NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
-        req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `username` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `super_admin` INT NOT NULL, `creation` varchar(10) NOT NULL );"
+        req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `username` varchar(16) NOT NULL, `password` varchar(512) NOT NULL, `super_admin` INT NOT NULL, `creation` varchar(10) NOT NULL );"
         req_create_utilisateurs_permissions = "CREATE TABLE `utilisateurs_permissions` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur_id` INT NOT NULL, `projet_id` INT NOT NULL , `permissions` INT NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id),  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));"
         req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` INT NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
         req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `statut` INT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `updated` BOOLEAN DEFAULT FALSE, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
@@ -1379,10 +1379,10 @@ async def web_post_users(request):
     # GET POST DATA
     post_data = await request.json()
     username = post_data.get("username")
-    motdepasse = post_data.get("motdepasse")
+    password = post_data.get("password")
     super_admin = post_data.get("super_admin")
     return web.json_response(
-        json.loads(json.dumps(create_user(username, motdepasse, super_admin)))
+        json.loads(json.dumps(create_user(username, password, super_admin)))
     )
 
 
@@ -1390,10 +1390,10 @@ async def web_post_user_mdp(request):
     id = int(request.match_info["id"])
     # GET POST DATA
     post_data = await request.json()
-    motdepasse = post_data.get("motdepasse")
+    password = post_data.get("password")
 
     # CHANGEMENT
-    change_user_mdp(id, motdepasse)
+    change_user_mdp(id, password)
     return web.json_response(json.loads(json.dumps(get_a_users(id))))
 
 
