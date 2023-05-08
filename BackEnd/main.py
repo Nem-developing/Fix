@@ -97,6 +97,7 @@ class ticket:
     technicien_qui_archive: str
     projet_id: int
 
+
 @dataclass
 class projet:
     id: int
@@ -105,6 +106,7 @@ class projet:
     date: str
     statut: int
 
+
 @dataclass
 class utilisateur:
     id: int
@@ -112,6 +114,7 @@ class utilisateur:
     motdepasse: str
     super_admin: bool
     creation: str
+
 
 @dataclass
 class commentaire:
@@ -124,6 +127,7 @@ class commentaire:
     date: str
     heure: str
     updated: bool
+
 
 ########################
 # Fonctions de gestion
@@ -207,7 +211,9 @@ def get_all_tickets(projet_id):
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req = db_run(
-            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive,projet_id from tickets WHERE projet_id = "+ str(projet_id) + " ;"
+            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive,projet_id from tickets WHERE projet_id = "
+            + str(projet_id)
+            + " ;"
         )
         tickets = []
 
@@ -228,7 +234,7 @@ def get_all_tickets(projet_id):
                 statut=i[12],
                 technicien_affecte=i[13],
                 technicien_qui_archive=i[14],
-                projet_id=i[15]
+                projet_id=i[15],
             )
 
             TEMP = {
@@ -258,7 +264,7 @@ def get_all_tickets(projet_id):
     return data
 
 
-def get_a_ticket(id,projet_id):
+def get_a_ticket(id, projet_id):
     data = {"error": False}
     id = int(id)
     if (check_if_everything_is_ok() != True) or (id < 0):
@@ -266,7 +272,11 @@ def get_a_ticket(id,projet_id):
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req_str = (
-            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive, projet_id from tickets WHERE id =" + str(id) + " and projet_id = " + str(projet_id) +  ";"
+            "SELECT id, serveur, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive, projet_id from tickets WHERE id ="
+            + str(id)
+            + " and projet_id = "
+            + str(projet_id)
+            + ";"
         )
         req = db_run(req_str)
         for i in req.CONTENT:
@@ -286,7 +296,7 @@ def get_a_ticket(id,projet_id):
                 statut=i[12],
                 technicien_affecte=i[13],
                 technicien_qui_archive=i[14],
-                projet_id=i[15]
+                projet_id=i[15],
             )
 
             TEMP = {
@@ -316,9 +326,6 @@ def get_a_ticket(id,projet_id):
     return data
 
 
-
-
-
 def get_ticket_statut(id, projet_id):
     data = {"error": False}
     id = int(id)
@@ -327,7 +334,7 @@ def get_ticket_statut(id, projet_id):
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        data_temp = get_a_ticket(id,projet_id)
+        data_temp = get_a_ticket(id, projet_id)
         if data_temp["error"] != False:
             data = {"error": True}
             return data
@@ -340,7 +347,7 @@ def get_ticket_statut(id, projet_id):
 
 def change_ticket_statut(id, projet_id, statut):
     try:
-        data_temp = get_a_ticket(id,projet_id)
+        data_temp = get_a_ticket(id, projet_id)
         if data_temp["error"] != False:
             return {"error": True}
         else:
@@ -372,12 +379,15 @@ def change_ticket_statut(id, projet_id, statut):
                 + "';"
             )
             req = db_run(req_str, fetch=False, commit=True)
-            return {"error": False, "statut": get_ticket_statut(id,projet_id)["statut"]}
+            return {
+                "error": False,
+                "statut": get_ticket_statut(id, projet_id)["statut"],
+            }
     except:
         return {"error": False}
 
 
-def create_ticket(serveur, objet, description, urgence, user_create,projet_id):
+def create_ticket(serveur, objet, description, urgence, user_create, projet_id):
     ## Génération date et heure
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")
@@ -428,7 +438,7 @@ def create_ticket(serveur, objet, description, urgence, user_create,projet_id):
         req = db_run(STR, commit=True, fetch=False)
         req = db_run("SELECT MAX(id) FROM tickets")
         (ID,) = req.CONTENT[0]
-        data = {"Ticket": get_a_ticket(ID,projet_id), "created": True, "error": False}
+        data = {"Ticket": get_a_ticket(ID, projet_id), "created": True, "error": False}
     except:
         data = {
             "error": True,
@@ -440,12 +450,12 @@ def create_ticket(serveur, objet, description, urgence, user_create,projet_id):
     return data
 
 
-def ticket_statut(id,projet_id,new_status):
+def ticket_statut(id, projet_id, new_status):
     data = {"error": False}
-    current_statut = get_ticket_statut(id,projet_id)
+    current_statut = get_ticket_statut(id, projet_id)
 
     if current_statut["error"] != True:
-        if (new_status != 0 and new_status < current_statut["statut"]):
+        if new_status != 0 and new_status < current_statut["statut"]:
             data = {
                 "error": True,
                 "msg": "Vous ne pouvez pas décrémenter le statut du ticket."
@@ -456,23 +466,40 @@ def ticket_statut(id,projet_id,new_status):
         else:
             data_try = change_ticket_statut(id, projet_id, new_status)
             if data_try["error"] == False:
-                return get_a_ticket(id,projet_id)
+                return get_a_ticket(id, projet_id)
 
     return data
 
-def get_all_ticket_commentaire(id,projet_id):
+
+def get_all_ticket_commentaire(id, projet_id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure, updated FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(id) + " ;")
+        req_str = (
+            "SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure, updated FROM tickets_commentaires WHERE projet_id = "
+            + str(projet_id)
+            + " and ticket_id = "
+            + str(id)
+            + " ;"
+        )
         req = db_run(req_str)
-        
+
         commentaires = []
         if req.CONTENT != None:
             for i in req.CONTENT:
-                commentaire_temp = commentaire(id=i[0],user_id=i[1],ticket_id=i[2],projet_id=i[3],commentaire=i[4],statut=i[5],date=i[6],heure=i[7],updated=i[8])
+                commentaire_temp = commentaire(
+                    id=i[0],
+                    user_id=i[1],
+                    ticket_id=i[2],
+                    projet_id=i[3],
+                    commentaire=i[4],
+                    statut=i[5],
+                    date=i[6],
+                    heure=i[7],
+                    updated=i[8],
+                )
 
                 TEMP = {
                     "id": commentaire_temp.id,
@@ -480,26 +507,38 @@ def get_all_ticket_commentaire(id,projet_id):
                     "ticket_id": commentaire_temp.ticket_id,
                     "projet_id": commentaire_temp.projet_id,
                     "commentaire": commentaire_temp.commentaire,
-                    "statut": commentaire_temp.statut,                    
+                    "statut": commentaire_temp.statut,
                     "date": commentaire_temp.date,
                     "heure": commentaire_temp.heure,
-                    "updated": commentaire_temp.updated
+                    "updated": commentaire_temp.updated,
                 }
                 commentaires.append(TEMP)
 
-        data = {"error": False, "total": len(commentaires), "Commentaires": commentaires}
+        data = {
+            "error": False,
+            "total": len(commentaires),
+            "Commentaires": commentaires,
+        }
     except:
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
 
 
-def get_a_ticket_commentaire(projet_id,ticket_id,id):
+def get_a_ticket_commentaire(projet_id, ticket_id, id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure, updated FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(ticket_id) + " and id = "+str(id)+";")
+        req_str = (
+            "SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure, updated FROM tickets_commentaires WHERE projet_id = "
+            + str(projet_id)
+            + " and ticket_id = "
+            + str(ticket_id)
+            + " and id = "
+            + str(id)
+            + ";"
+        )
         req = db_run(req_str, fetch=True)
         TMP = []
         if req.CONTENT != None:
@@ -513,27 +552,29 @@ def get_a_ticket_commentaire(projet_id,ticket_id,id):
                     statut=i[5],
                     date=i[6],
                     heure=i[7],
-                    updated=i[8])
-                
+                    updated=i[8],
+                )
+
                 TEMP = {
                     "id": commentaire_temp.id,
                     "user_id": commentaire_temp.user_id,
                     "ticket_id": commentaire_temp.ticket_id,
                     "projet_id": commentaire_temp.projet_id,
                     "commentaire": commentaire_temp.commentaire,
-                    "statut": commentaire_temp.statut,                    
+                    "statut": commentaire_temp.statut,
                     "date": commentaire_temp.date,
                     "heure": commentaire_temp.heure,
-                    "updated": commentaire_temp.updated
+                    "updated": commentaire_temp.updated,
                 }
                 TMP.append(TEMP)
-        if len(TMP) == 0 or len(TMP) == 1: 
-            data = {"error": False,  "Commentaire": TEMP}
+        if len(TMP) == 0 or len(TMP) == 1:
+            data = {"error": False, "Commentaire": TEMP}
         else:
             data = {"error": True}
     except:
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
+
 
 # PROJETS :
 ## Récupérer un projet
@@ -552,11 +593,7 @@ def get_a_projet(id):
         req = db_run(req_str)
         for i in req.CONTENT:
             projet_temp = projet(
-                id=i[0],
-                titre=i[1],
-                description=i[2],
-                date=i[3],
-                statut=i[4]
+                id=i[0], titre=i[1], description=i[2], date=i[3], statut=i[4]
             )
 
             TEMP = {
@@ -564,7 +601,7 @@ def get_a_projet(id):
                 "titre": projet_temp.titre,
                 "description": projet_temp.description,
                 "date": projet_temp.date,
-                "statut": projet_temp.statut
+                "statut": projet_temp.statut,
             }
 
         data = {"error": False, "Projet": TEMP}
@@ -574,6 +611,7 @@ def get_a_projet(id):
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
 
+
 ## Récupération de tous les projets
 def get_all_projets():
     data = {"error": False}
@@ -581,18 +619,12 @@ def get_all_projets():
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        req = db_run(
-            "SELECT id, titre, description, date, statut from projets;"
-        )
+        req = db_run("SELECT id, titre, description, date, statut from projets;")
         projets = []
 
         for i in req.CONTENT:
             projet_temp = projet(
-                id=i[0],
-                titre=i[1],
-                description=i[2],
-                date=i[3],
-                statut=i[4]
+                id=i[0], titre=i[1], description=i[2], date=i[3], statut=i[4]
             )
 
             TEMP = {
@@ -600,7 +632,7 @@ def get_all_projets():
                 "titre": projet_temp.titre,
                 "description": projet_temp.description,
                 "date": projet_temp.date,
-                "statut": projet_temp.statut
+                "statut": projet_temp.statut,
             }
 
             projets.append(TEMP)
@@ -609,6 +641,7 @@ def get_all_projets():
     except:
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
+
 
 ## Création d'un projet
 def create_projet(titre, description):
@@ -654,14 +687,32 @@ def post_commentaire(user_id, ticket_id, projet_id, message):
     statut = 0
 
     try:
-        db_str = "INSERT INTO `tickets_commentaires` (`user_id`, `ticket_id`, `projet_id`, `commentaire`, `statut`, `date`, `heure`) VALUES ('"+str(user_id)+"', '"+str(ticket_id)+"', '"+str(projet_id)+"', '"+str(message)+"', 0,'"+str(date)+"', '"+str(heure)+"');" 
-        db_run(db_str,commit=True, fetch=False)
-        
+        db_str = (
+            "INSERT INTO `tickets_commentaires` (`user_id`, `ticket_id`, `projet_id`, `commentaire`, `statut`, `date`, `heure`) VALUES ('"
+            + str(user_id)
+            + "', '"
+            + str(ticket_id)
+            + "', '"
+            + str(projet_id)
+            + "', '"
+            + str(message)
+            + "', 0,'"
+            + str(date)
+            + "', '"
+            + str(heure)
+            + "');"
+        )
+        db_run(db_str, commit=True, fetch=False)
+
         req = db_run("SELECT MAX(id) FROM tickets_commentaires")
-        
+
         (ID,) = req.CONTENT[0]
 
-        data = {"Commentaire": get_a_ticket_commentaire(projet_id,ticket_id,ID), "created": True, "error": False}
+        data = {
+            "Commentaire": get_a_ticket_commentaire(projet_id, ticket_id, ID),
+            "created": True,
+            "error": False,
+        }
     except:
         data = {
             "error": True,
@@ -670,7 +721,27 @@ def post_commentaire(user_id, ticket_id, projet_id, message):
         return data
     return data
 
+
+def put_commentaire(ticket_id, projet_id, id, message, statut):
+    try:
+        db_str = f"UPDATE `tickets_commentaires` SET `commentaire` = '{message}', `statut` = '{statut}', `updated` = '1' WHERE `id` = '{id}' AND `projet_id` = '{projet_id}';"
+        db_run(db_str, commit=True, fetch=False)
+        data = {
+            "Commentaire": get_a_ticket_commentaire(projet_id, ticket_id, id),
+            "created": True,
+            "error": False,
+        }
+    except:
+        data = {
+            "error": True,
+            "DB_error": True,
+        }
+        return data
+    return data
+
+
 # USERS
+
 
 def get_all_users():
     data = {"error": False}
@@ -678,9 +749,7 @@ def get_all_users():
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        req = db_run(
-            "SELECT id, username, super_admin, creation from utilisateurs;"
-        )
+        req = db_run("SELECT id, username, super_admin, creation from utilisateurs;")
         utilisateurs = []
 
         for i in req.CONTENT:
@@ -701,10 +770,15 @@ def get_all_users():
 
             utilisateurs.append(TEMP)
 
-        data = {"error": False, "total": len(utilisateurs), "Utilisateurs": utilisateurs}
+        data = {
+            "error": False,
+            "total": len(utilisateurs),
+            "Utilisateurs": utilisateurs,
+        }
     except:
         data = {"error": True, "DB_error": True, "error_message": req.ERROR_MSG}
     return data
+
 
 def get_a_users(id):
     data = {"error": False}
@@ -743,7 +817,6 @@ def get_a_users(id):
     return data
 
 
-
 ## Création d'un utilisateur
 def create_user(username, mot_de_passe, is_super_admin):
     ## Génération de la date
@@ -751,7 +824,11 @@ def create_user(username, mot_de_passe, is_super_admin):
     date = maintenant.strftime("%d/%m/%Y")
     # Defaut
     if verif_user_exist(username) == True:
-        data = {"error_message": "L'utilisateur existe déjà !", "created": False, "error": True}
+        data = {
+            "error_message": "L'utilisateur existe déjà !",
+            "created": False,
+            "error": True,
+        }
         return data
     try:
         STR = (
@@ -778,11 +855,18 @@ def create_user(username, mot_de_passe, is_super_admin):
         return data
     return data
 
+
 # Change password
-def change_user_mdp(user_id,motdepasse):
-    CMD = "UPDATE utilisateurs set motdepasse = '" + str(chiffrer_password(motdepasse)) + "' where id = '" + str(user_id) + "';"
+def change_user_mdp(user_id, motdepasse):
+    CMD = (
+        "UPDATE utilisateurs set motdepasse = '"
+        + str(chiffrer_password(motdepasse))
+        + "' where id = '"
+        + str(user_id)
+        + "';"
+    )
     REQ = db_run(CMD, fetch=False, commit=True)
-    return 
+    return
 
 
 # Fonction qui vérifie si une table existe ou non
@@ -821,16 +905,18 @@ def acces_db():
 
 def check_and_create_db_if_required(db_name, req_to_create_db):
     if verif_table(str(db_name)) == False:
-        print("--> [" + str(db_name) + "] La table en cours de création ...", end = '')
+        print("--> [" + str(db_name) + "] La table en cours de création ...", end="")
         db_run(req_to_create_db, fetch=False, commit=True)
         print(" OK !")
 
         if str(db_name) == "projets":
             maintenant = datetime.now()
             date = maintenant.strftime("%d/%m/%Y")
-            print("\t=> Ajout du projet initial.", end = '')
+            print("\t=> Ajout du projet initial.", end="")
             req_str = (
-                "INSERT INTO `projets` (`titre`, `description`, `date`, `statut`) VALUES ('Projet Initial', 'Voici un projet', '"+ str(date) + "', '0');"
+                "INSERT INTO `projets` (`titre`, `description`, `date`, `statut`) VALUES ('Projet Initial', 'Voici un projet', '"
+                + str(date)
+                + "', '0');"
             )
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
@@ -840,7 +926,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             maintenant = datetime.now()
             date = maintenant.strftime("%d/%m/%Y")
             heure = maintenant.strftime("%H:%M:%S")
-            print("\t=> Ajout du ticket de bienvenue.", end = '')
+            print("\t=> Ajout du ticket de bienvenue.", end="")
             req_str = (
                 "INSERT INTO `tickets` (`serveur`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('nehemiebarkia.fr', 'Bienvenue sur Fix "
                 + str(VERSION)
@@ -853,7 +939,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
         elif str(db_name) == "utilisateurs":
-            print("\t=> Ajout de l'utilisateur admin.", end = '')
+            print("\t=> Ajout de l'utilisateur admin.", end="")
             maintenant = datetime.now()
             date = maintenant.strftime("%d/%m/%Y")
             heure = maintenant.strftime("%H:%M:%S")
@@ -869,10 +955,8 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             print(" OK !")
 
         elif str(db_name) == "utilisateurs_permissions":
-            print("\t=> Ajout des permissions de l'utilisateur admin.", end = '')
-            req_str = (
-                "INSERT INTO `utilisateurs_permissions` (`utilisateur_id`, `projet_id`, `permissions`) VALUES ('1', '1', '2');"
-            )
+            print("\t=> Ajout des permissions de l'utilisateur admin.", end="")
+            req_str = "INSERT INTO `utilisateurs_permissions` (`utilisateur_id`, `projet_id`, `permissions`) VALUES ('1', '1', '2');"
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
 
@@ -907,12 +991,13 @@ def prepare():
         req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `statut` INT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `updated` BOOLEAN DEFAULT FALSE, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
         req_create_api_keys = "CREATE TABLE `api_keys` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL, `token` varchar(62) NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `type` INT NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `utilisateurs`(`id`) );"
 
-
         # Création si besoin :
         check_and_create_db_if_required("projets", req_create_projets)
         check_and_create_db_if_required("tickets", req_create_tickets)
         check_and_create_db_if_required("utilisateurs", req_create_utilisateurs)
-        check_and_create_db_if_required("utilisateurs_permissions", req_create_utilisateurs_permissions)
+        check_and_create_db_if_required(
+            "utilisateurs_permissions", req_create_utilisateurs_permissions
+        )
         check_and_create_db_if_required("logs", req_create_logs)
         check_and_create_db_if_required("tickets_commentaires", req_create_commentaires)
         check_and_create_db_if_required("api_keys", req_create_api_keys)
@@ -1161,15 +1246,18 @@ def get_tocken_dict(user_perms_level, user_id):
 async def web_index(request):
     return web.json_response(json.loads(display()))
 
+
 ########################
 # PROJETS ADMINISTRATION
 ########################
 async def web_get_all_projets(request):
     return web.json_response(json.loads(json.dumps(get_all_projets())))
 
+
 async def web_get_a_projet(request):
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_a_projet(id))))
+
 
 async def web_create_projet(request):
     # GET POST DATA
@@ -1177,13 +1265,8 @@ async def web_create_projet(request):
     titre = post_data.get("titre")
     description = post_data.get("description")
 
-    return web.json_response(
-        json.loads(
-            json.dumps(
-                create_projet(titre,description)
-            )
-        )
-    )
+    return web.json_response(json.loads(json.dumps(create_projet(titre, description))))
+
 
 ########################
 # TICKETS ADMINISTRATION
@@ -1196,13 +1279,13 @@ async def web_get_all_tikets(request):
 async def web_get_a_tiket(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_a_ticket(id,projet_id))))
+    return web.json_response(json.loads(json.dumps(get_a_ticket(id, projet_id))))
 
 
 async def web_get_a_tiket_statut(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_ticket_statut(id,projet_id))))
+    return web.json_response(json.loads(json.dumps(get_ticket_statut(id, projet_id))))
 
 
 async def web_create_tiket(request):
@@ -1217,7 +1300,9 @@ async def web_create_tiket(request):
     return web.json_response(
         json.loads(
             json.dumps(
-                create_ticket(serveur, data_objet, description, urgence, user_create,projet_id)
+                create_ticket(
+                    serveur, data_objet, description, urgence, user_create, projet_id
+                )
             )
         )
     )
@@ -1229,20 +1314,27 @@ async def web_ticket_statut(request):
     # GET POST DATA
     post_data = await request.json()
     new_statut = post_data.get("statut")
-    return web.json_response(json.loads(json.dumps(ticket_statut(id,projet_id,new_statut))))
-
+    return web.json_response(
+        json.loads(json.dumps(ticket_statut(id, projet_id, new_statut)))
+    )
 
 
 async def web_get_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_all_ticket_commentaire(ticket_id,projet_id))))
+    return web.json_response(
+        json.loads(json.dumps(get_all_ticket_commentaire(ticket_id, projet_id)))
+    )
+
 
 async def web_get_a_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["ticket_id"])
     id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_a_ticket_commentaire(projet_id,ticket_id,id))))
+    return web.json_response(
+        json.loads(json.dumps(get_a_ticket_commentaire(projet_id, ticket_id, id)))
+    )
+
 
 async def web_post_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
@@ -1251,7 +1343,24 @@ async def web_post_tiket_commentaires(request):
     post_data = await request.json()
     message = post_data.get("message")
     user_id = get_user_id_from_token(get_token(request))
-    return web.json_response(json.loads(json.dumps(post_commentaire(user_id, ticket_id, projet_id, message))))
+    return web.json_response(
+        json.loads(json.dumps(post_commentaire(user_id, ticket_id, projet_id, message)))
+    )
+
+
+async def web_put_tiket_commentaire(request):
+    projet_id = int(request.match_info["projet_id"])
+    ticket_id = int(request.match_info["ticket_id"])
+    id = int(request.match_info["id"])
+    # GET POST DATA
+    post_data = await request.json()
+    message = post_data.get("message")
+    statut = post_data.get("statut")
+    return web.json_response(
+        json.loads(
+            json.dumps(put_commentaire(ticket_id, projet_id, id, message, statut))
+        )
+    )
 
 
 ########################
@@ -1272,7 +1381,10 @@ async def web_post_users(request):
     username = post_data.get("username")
     motdepasse = post_data.get("motdepasse")
     super_admin = post_data.get("super_admin")
-    return web.json_response(json.loads(json.dumps(create_user(username,motdepasse,super_admin))))
+    return web.json_response(
+        json.loads(json.dumps(create_user(username, motdepasse, super_admin)))
+    )
+
 
 async def web_post_user_mdp(request):
     id = int(request.match_info["id"])
@@ -1280,8 +1392,8 @@ async def web_post_user_mdp(request):
     post_data = await request.json()
     motdepasse = post_data.get("motdepasse")
 
-    # CHANGEMENT 
-    change_user_mdp(id,motdepasse)
+    # CHANGEMENT
+    change_user_mdp(id, motdepasse)
     return web.json_response(json.loads(json.dumps(get_a_users(id))))
 
 
@@ -1306,7 +1418,6 @@ async def web_get_tokens(request):
             )
         )
     )
-
 
 
 # Get a token
@@ -1368,9 +1479,21 @@ app.router.add_post("/projets/{projet_id}/tickets", web_create_tiket)
 app.router.add_get("/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
 app.router.add_get("/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
 app.router.add_post("/projets/{projet_id}/tickets/{id}/statut", web_ticket_statut)
-app.router.add_get("/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires)
-app.router.add_get("/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}", web_get_a_tiket_commentaires)
-app.router.add_post("/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires)
+# TICKET COMMENTAIRES
+app.router.add_get(
+    "/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
+)
+app.router.add_get(
+    "/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
+    web_get_a_tiket_commentaires,
+)
+app.router.add_post(
+    "/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires
+)
+app.router.add_put(
+    "/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
+    web_put_tiket_commentaire,
+)
 # USERS
 app.router.add_get("/utilisateurs", web_get_users)
 app.router.add_get("/utilisateurs/{id}", web_get_a_users)
