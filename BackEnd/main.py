@@ -49,10 +49,10 @@ statut = "Green"  # Green = Tout est fonctionnel  Red = Database innacessible
 # =========================================================================
 #                               USERS
 # Niveau de permission :
-#
-# 0 -> Lecture seulement
-# 1 -> Prise en charge de tickets et leurs archivage.
-# 2 -> Archivage de nimporte quel tickets.
+# -1 -> Accès Interdit
+#  0 -> Lecture seulement
+#  1 -> Prise en charge de tickets et leurs archivage.
+#  2 -> Archivage de nimporte quel tickets.
 # =========================================================================
 
 
@@ -843,6 +843,7 @@ def create_user(username, mot_de_passe, is_super_admin):
             + "');"
         )
         req = db_run(STR, commit=True, fetch=False)
+        print(req)
         req = db_run("SELECT MAX(id) FROM utilisateurs")
         (ID,) = req.CONTENT[0]
         data = {"Utilisateur": get_a_users(ID), "created": True, "error": False}
@@ -1159,12 +1160,12 @@ def get_token(request):
     return token
 
 
-def get_user_permissions(user_id):
-    CMD = "SELECT permissions FROM utilisateurs where id = '" + str(user_id) + "';"
+def super_admin(user_id):
+    CMD = "SELECT super_admin FROM utilisateurs where id = '" + str(user_id) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
     for i in REQ.CONTENT:
-        id = i[0]
-    return id
+        super_admin = i[0]
+    return super_admin
 
 
 def get_user_id_from_token(token):
@@ -1174,66 +1175,61 @@ def get_user_id_from_token(token):
         id = i[0]
     return id
 
+def get_user_permission(user_id, projet_id):
+    CMD = f"SELECT permissions FROM utilisateurs_permissions where utilisateur_id = '{user_id}' and projet_id = '{projet_id}';"
+    REQ = db_run(CMD, fetch=True, commit=False)
+    permission = -1
+    for i in REQ.CONTENT:
+        permission = i[0]
+    return permission
 
-def get_tocken_dict(user_perms_level, user_id):
-    data = {}
-
-    if (user_perms_level == 0) or (user_perms_level == 1):
-        TOKENS = []
-        CMD = (
-            "select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type "
-            + "from api_keys "
-            + "inner join utilisateurs on api_keys.user_id = utilisateurs.id "
-            + "werre utilisateurs.id = "
-            + str(user_id)
-            + ";"
-        )
-        REQ = db_run(CMD, fetch=True, commit=False)
-        for i in REQ.CONTENT:
-            TMP = {
-                "id": i[0],
-                "user_id": i[1],
-                "username": i[2],
-                "token": i[3],
-                "date": i[4],
-                "heure": i[5],
-                "type": i[6],
+# Get token list
+def get_token_list(request, type):
+    # TYPE : 
+    #  1 -> FULL LIST 
+    #  2 -> MY FULL LIST
+        
+    user_id = get_user_id_from_token(get_token(request))
+    # GET PERMS
+    admin = super_admin(user_id)
+    # GET FULL LIST
+    if (type == 1):
+        if (admin == 0):
+            data = {
+                "error": True,
+                "error_message": "Vous ne pouvez pas lister tous les tokens sans être admin !"
             }
-            TOKENS.append(TMP)
+        else:
+            CMD = "select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id where type = 1;"
+    
+    
+    # GET ONLY MINE
+    elif (type == 2):
+            CMD = f"select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id where user_id = {user_id} and type = 1;"
 
-        data = {
-            "error": False,
-            "total": len(TOKENS),
-            "Tokens": TOKENS,
+
+    # GET LIST
+    TOKENS = []
+    REQ = db_run(CMD, fetch=True, commit=False)
+    for i in REQ.CONTENT:
+        TMP = {
+            "id": i[0],
+            "user_id": i[1],
+            "username": i[2],
+            "token": i[3],
+            "date": i[4],
+            "heure": i[5],
+            "type": i[6],
         }
+        TOKENS.append(TMP)
 
-        return data
+    data = {
+        "error": False,
+        "total": len(TOKENS),
+        "Tokens": TOKENS,
+    }
 
-    # Un utilisateur admin peut accéder à tous les tokens.
-    elif user_perms_level == 2:
-        TOKENS = []
-        CMD = "select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id;"
-        REQ = db_run(CMD, fetch=True, commit=False)
-        for i in REQ.CONTENT:
-            TMP = {
-                "id": i[0],
-                "user_id": i[1],
-                "username": i[2],
-                "token": i[3],
-                "date": i[4],
-                "heure": i[5],
-                "type": i[6],
-            }
-            TOKENS.append(TMP)
-
-        data = {
-            "error": False,
-            "total": len(TOKENS),
-            "Tokens": TOKENS,
-        }
-
-        return data
-
+    return data
 
 ###################################################
 ################   FONCTIONS WEB   ################
@@ -1401,7 +1397,7 @@ async def web_post_user_mdp(request):
 # TOKEN ADMINISTRATION
 ########################
 
-
+# GET FULL TOKEN LIST
 async def web_get_tokens(request):
     statut, error_code, error_msg = request_is_valid(request)
     if statut == False:
@@ -1411,16 +1407,32 @@ async def web_get_tokens(request):
     return web.json_response(
         json.loads(
             json.dumps(
-                get_tocken_dict(
-                    get_user_permissions(get_user_id_from_token(get_token(request))),
-                    get_user_id_from_token(get_token(request)),
+                get_token_list(
+                    request,
+                    1
                 )
             )
         )
     )
 
+async def web_get_my_tokens(request):
+    statut, error_code, error_msg = request_is_valid(request)
+    if statut == False:
+        data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
+        return web.json_response(json.loads(json.dumps(data)))
 
-# Get a token
+    return web.json_response(
+        json.loads(
+            json.dumps(
+                get_token_list(
+                    request,
+                    2
+                )
+            )
+        )
+    )
+
+# GET ONLY API
 async def web_post_tokens(request):
     # VARS
     EX = {"username": "admin", "password": "admin", "type": 1}
@@ -1502,6 +1514,7 @@ app.router.add_post("/utilisateurs/{id}/password", web_post_user_mdp)
 
 # API TOKEN
 app.router.add_get("/tokens", web_get_tokens)
+app.router.add_get("/tokens/my", web_get_my_tokens)
 app.router.add_post("/tokens", web_post_tokens)
 
 prepare()
