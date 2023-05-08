@@ -1175,6 +1175,7 @@ def get_user_id_from_token(token):
         id = i[0]
     return id
 
+
 def get_user_permission(user_id, projet_id):
     CMD = f"SELECT permissions FROM utilisateurs_permissions where utilisateur_id = '{user_id}' and projet_id = '{projet_id}';"
     REQ = db_run(CMD, fetch=True, commit=False)
@@ -1183,30 +1184,29 @@ def get_user_permission(user_id, projet_id):
         permission = i[0]
     return permission
 
+
 # Get token list
 def get_token_list(request, type):
-    # TYPE : 
-    #  1 -> FULL LIST 
+    # TYPE :
+    #  1 -> FULL LIST
     #  2 -> MY FULL LIST
-        
+
     user_id = get_user_id_from_token(get_token(request))
     # GET PERMS
     admin = super_admin(user_id)
     # GET FULL LIST
-    if (type == 1):
-        if (admin == 0):
+    if type == 1:
+        if admin == 0:
             data = {
                 "error": True,
-                "error_message": "Vous ne pouvez pas lister tous les tokens sans être admin !"
+                "error_message": "Vous ne pouvez pas lister tous les tokens sans être admin !",
             }
         else:
             CMD = "select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id where type = 1;"
-    
-    
-    # GET ONLY MINE
-    elif (type == 2):
-            CMD = f"select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id where user_id = {user_id} and type = 1;"
 
+    # GET ONLY MINE
+    elif type == 2:
+        CMD = f"select api_keys.id, api_keys.user_id, utilisateurs.username, api_keys.token, api_keys.date, api_keys.heure, api_keys.type from api_keys inner join utilisateurs on api_keys.user_id = utilisateurs.id where user_id = {user_id} and type = 1;"
 
     # GET LIST
     TOKENS = []
@@ -1230,6 +1230,7 @@ def get_token_list(request, type):
     }
 
     return data
+
 
 ###################################################
 ################   FONCTIONS WEB   ################
@@ -1397,6 +1398,7 @@ async def web_post_user_mdp(request):
 # TOKEN ADMINISTRATION
 ########################
 
+
 # GET FULL TOKEN LIST
 async def web_get_tokens(request):
     statut, error_code, error_msg = request_is_valid(request)
@@ -1404,16 +1406,8 @@ async def web_get_tokens(request):
         data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))
 
-    return web.json_response(
-        json.loads(
-            json.dumps(
-                get_token_list(
-                    request,
-                    1
-                )
-            )
-        )
-    )
+    return web.json_response(json.loads(json.dumps(get_token_list(request, 1))))
+
 
 async def web_get_my_tokens(request):
     statut, error_code, error_msg = request_is_valid(request)
@@ -1421,16 +1415,8 @@ async def web_get_my_tokens(request):
         data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))
 
-    return web.json_response(
-        json.loads(
-            json.dumps(
-                get_token_list(
-                    request,
-                    2
-                )
-            )
-        )
-    )
+    return web.json_response(json.loads(json.dumps(get_token_list(request, 2))))
+
 
 # GET ONLY API
 async def web_post_tokens(request):
