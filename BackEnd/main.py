@@ -123,6 +123,7 @@ class commentaire:
     statut: int
     date: str
     heure: str
+    updated: bool
 
 ########################
 # Fonctions de gestion
@@ -465,13 +466,13 @@ def get_all_ticket_commentaire(id,projet_id):
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(id) + " ;")
+        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure, updated FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(id) + " ;")
         req = db_run(req_str)
         
         commentaires = []
         if req.CONTENT != None:
             for i in req.CONTENT:
-                commentaire_temp = commentaire(id=i[0],user_id=i[1],ticket_id=i[2],projet_id=i[3],commentaire=i[4],statut=i[5],date=i[6],heure=i[7])
+                commentaire_temp = commentaire(id=i[0],user_id=i[1],ticket_id=i[2],projet_id=i[3],commentaire=i[4],statut=i[5],date=i[6],heure=i[7],updated=i[8])
 
                 TEMP = {
                     "id": commentaire_temp.id,
@@ -482,6 +483,7 @@ def get_all_ticket_commentaire(id,projet_id):
                     "statut": commentaire_temp.statut,                    
                     "date": commentaire_temp.date,
                     "heure": commentaire_temp.heure,
+                    "updated": commentaire_temp.updated
                 }
                 commentaires.append(TEMP)
 
@@ -497,7 +499,7 @@ def get_a_ticket_commentaire(projet_id,ticket_id,id):
         data = {"error": True}
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
-        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(ticket_id) + " and id = "+str(id)+";")
+        req_str = ("SELECT id, user_id, ticket_id, projet_id, commentaire, statut, date, heure, updated FROM tickets_commentaires WHERE projet_id = "+ str(projet_id) + " and ticket_id = "+ str(ticket_id) + " and id = "+str(id)+";")
         req = db_run(req_str, fetch=True)
         TMP = []
         if req.CONTENT != None:
@@ -510,7 +512,8 @@ def get_a_ticket_commentaire(projet_id,ticket_id,id):
                     commentaire=i[4],
                     statut=i[5],
                     date=i[6],
-                    heure=i[7])
+                    heure=i[7],
+                    updated=i[8])
                 
                 TEMP = {
                     "id": commentaire_temp.id,
@@ -521,6 +524,7 @@ def get_a_ticket_commentaire(projet_id,ticket_id,id):
                     "statut": commentaire_temp.statut,                    
                     "date": commentaire_temp.date,
                     "heure": commentaire_temp.heure,
+                    "updated": commentaire_temp.updated
                 }
                 TMP.append(TEMP)
         if len(TMP) == 0 or len(TMP) == 1: 
@@ -900,7 +904,7 @@ def prepare():
         req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `username` varchar(16) NOT NULL, `motdepasse` varchar(512) NOT NULL, `super_admin` INT NOT NULL, `creation` varchar(10) NOT NULL );"
         req_create_utilisateurs_permissions = "CREATE TABLE `utilisateurs_permissions` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur_id` INT NOT NULL, `projet_id` INT NOT NULL , `permissions` INT NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id),  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));"
         req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` INT NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
-        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `statut` INT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `statut` INT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `updated` BOOLEAN DEFAULT FALSE, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
         req_create_api_keys = "CREATE TABLE `api_keys` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL, `token` varchar(62) NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `type` INT NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `utilisateurs`(`id`) );"
 
 
