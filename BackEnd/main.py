@@ -34,7 +34,7 @@ statut = "Green"  # Green = Tout est fonctionnel  Red = Database innacessible
 # Statut :
 #  0 : Non-Traité
 #  1 : En-Cours
-#  2 : Bloqués
+#  2 : Bloqué
 #  3 : En-Tests
 #  4 : En-Revue
 #  5 : Archivé
@@ -134,6 +134,7 @@ class commentaire:
 ########################
 
 
+# Commande permetant l'envoie d'une requette SQL avec les options fetch et commit.
 def db_run(CMD, fetch=True, commit=False):
     ERROR = False
     DATA = {}
@@ -167,6 +168,7 @@ def db_run(CMD, fetch=True, commit=False):
     return body_sql(CONTENT=DATA, ERROR=False)
 
 
+# Vérification de l'état de la base de donnée.
 def db_ok():
     OK = False
     try:
@@ -184,6 +186,7 @@ def db_ok():
     return db_statut, db_error
 
 
+# Fonction d'affichage de la page d'accueil de l'api
 def display():
     db_statut, db_error = db_ok()
     data = {
@@ -197,6 +200,7 @@ def display():
     return json.dumps(data, indent=4)
 
 
+# Vérifiaction de la base de donnée avec un retour booléen.
 def check_if_everything_is_ok():
     db_statut, db_error = db_ok()
     if db_error == True:
@@ -204,6 +208,7 @@ def check_if_everything_is_ok():
     return True
 
 
+# Récupérer tous les tickets et retourner un tableau.
 def get_all_tickets(projet_id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
@@ -264,6 +269,7 @@ def get_all_tickets(projet_id):
     return data
 
 
+# Récupérer un seul ticket grâce à son id et son numéro de projet.
 def get_a_ticket(id, projet_id):
     data = {"error": False}
     id = int(id)
@@ -326,6 +332,7 @@ def get_a_ticket(id, projet_id):
     return data
 
 
+# Récupération de l'état d'un ticket grâce à son id et son projet_id.
 def get_ticket_statut(id, projet_id):
     data = {"error": False}
     id = int(id)
@@ -345,6 +352,7 @@ def get_ticket_statut(id, projet_id):
     return data
 
 
+# Modifier l'état d'un ticket.
 def change_ticket_statut(id, projet_id, statut):
     try:
         data_temp = get_a_ticket(id, projet_id)
@@ -387,6 +395,7 @@ def change_ticket_statut(id, projet_id, statut):
         return {"error": False}
 
 
+## Créer un ticket
 def create_ticket(serveur, objet, description, urgence, user_create, projet_id):
     ## Génération date et heure
     maintenant = datetime.now()
@@ -450,27 +459,7 @@ def create_ticket(serveur, objet, description, urgence, user_create, projet_id):
     return data
 
 
-def ticket_statut(id, projet_id, new_status):
-    data = {"error": False}
-    current_statut = get_ticket_statut(id, projet_id)
-
-    if current_statut["error"] != True:
-        if new_status != 0 and new_status < current_statut["statut"]:
-            data = {
-                "error": True,
-                "msg": "Vous ne pouvez pas décrémenter le statut du ticket."
-                + " Statut actuel = "
-                + str(current_statut["statut"])
-                + ".",
-            }
-        else:
-            data_try = change_ticket_statut(id, projet_id, new_status)
-            if data_try["error"] == False:
-                return get_a_ticket(id, projet_id)
-
-    return data
-
-
+## Récupérer tous les commentaires d'un ticket
 def get_all_ticket_commentaire(id, projet_id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
@@ -524,6 +513,7 @@ def get_all_ticket_commentaire(id, projet_id):
     return data
 
 
+## Récupérer le commentaire d'un ticket grâce à son id, l'id de tiket et l'id de projet.
 def get_a_ticket_commentaire(projet_id, ticket_id, id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
@@ -678,6 +668,7 @@ def create_projet(titre, description):
     return data
 
 
+## Création d'un commentaire
 def post_commentaire(user_id, ticket_id, projet_id, message):
     ## Génération de la date
     maintenant = datetime.now()
@@ -722,6 +713,7 @@ def post_commentaire(user_id, ticket_id, projet_id, message):
     return data
 
 
+## modification d'un commentaire
 def put_commentaire(ticket_id, projet_id, id, message, statut):
     try:
         db_str = f"UPDATE `tickets_commentaires` SET `commentaire` = '{message}', `statut` = '{statut}', `updated` = '1' WHERE `id` = '{id}' AND `projet_id` = '{projet_id}';"
@@ -743,6 +735,7 @@ def put_commentaire(ticket_id, projet_id, id, message, statut):
 # USERS
 
 
+## Récupération de tous les utilisateurs
 def get_all_users():
     data = {"error": False}
     if check_if_everything_is_ok() != True:
@@ -780,6 +773,7 @@ def get_all_users():
     return data
 
 
+## Récupération d'un utilisateur via son ID
 def get_a_users(id):
     data = {"error": False}
     id = int(id)
@@ -857,7 +851,7 @@ def create_user(username, mot_de_passe, is_super_admin):
     return data
 
 
-# Change password
+# Modification d'un mot de passe utilisateur
 def change_user_mdp(user_id, password):
     CMD = (
         "UPDATE utilisateurs set password = '"
@@ -904,6 +898,7 @@ def acces_db():
         return False
 
 
+# Vérification et création d'une database si besoin
 def check_and_create_db_if_required(db_name, req_to_create_db):
     if verif_table(str(db_name)) == False:
         print("--> [" + str(db_name) + "] La table en cours de création ...", end="")
@@ -966,7 +961,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
     return
 
 
-# Fonction qui va créer toutes les tables en cas de besoin
+# Création des tables si necessaires
 def prepare():
     print("Initialisation de l'API de FIX " + str(VERSION))
 
@@ -1009,6 +1004,7 @@ def prepare():
     return
 
 
+# Vérification qu'un utilisateur existe ou non.
 def verif_user_exist(user):
     CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     cpt = 0
@@ -1021,6 +1017,7 @@ def verif_user_exist(user):
     return False
 
 
+# Récupération du mot de passe chiffré d'un utilisateur grâce à un username
 def get_encrypted_user_password(user):
     CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     cpt = 0
@@ -1030,6 +1027,7 @@ def get_encrypted_user_password(user):
     return password
 
 
+# Récupération d'un user_id grâce à un username
 def get_user_id(user):
     CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
@@ -1038,12 +1036,14 @@ def get_user_id(user):
     return id
 
 
+# Chiffrement d'un mot de passe
 def chiffrer_password(password):
     mdp = password.encode()
     mdp_sign = sha512(mdp).hexdigest()
     return mdp_sign
 
 
+# Vérification de la validité d'un mot de passe
 def verif_user_password(username, password):
     if get_encrypted_user_password(username) == chiffrer_password(password):
         return True
@@ -1051,6 +1051,7 @@ def verif_user_password(username, password):
         return False
 
 
+# Génération d'un chaine de caractères en gise de token
 def generate_token_value():
     letters = string.ascii_uppercase
     numbers = string.digits
@@ -1065,6 +1066,7 @@ def generate_token_value():
     return token
 
 
+# Vérification si un token n'est pas présent dans la base
 def verif_token_unique(token):
     cmd = "SELECT count(*) FROM api_keys where token = '" + str(token) + "';"
     req = db_run(cmd, fetch=False, commit=False)
@@ -1075,6 +1077,7 @@ def verif_token_unique(token):
         return False
 
 
+# Création d'un token grâce à un username
 def token_create(username, type):
     token = generate_token_value()
     while verif_token_unique(token) == False:
@@ -1132,34 +1135,64 @@ def verif_token_valid(token):
             return False, 3, "Le type de token spécifié n'est pas pris en compte."
 
 
-def request_is_valid(request):
-    statut = False
-    error_code = 0
-    error_msg = "None"
-
+# Vérification de la validité d'une requêtte
+def request_is_valid(request, with_project, level_perms_min, projet_id):
+    # with_project = (True, False) --> Indique s'il ont aura besoin de récupérer ou non les permissions spécifiques de l'utilisateur sur un projet donné
+    # level_perms_min = (0,1,2) -> Indique le niveau de permission minimum dont un utilisateur a besoin pour requêtter une route (fonctionne obligatoirement avec with_project à True ).
+    # --> Dans le cas où "with_project est à False", avec un utilisateur non super-admin, on répondra TRUE car l'utilisateur est bien authentifié.
     try:
-        bearer = request.headers.get("Authorization")
-        token = bearer.split(" ")[1]
+        token = get_token(request)
     except:
         statut = False
         error_code = 1
         error_msg = "Vous n'avez pas spécifié de bearer en Header"
         return statut, error_code, error_msg
 
-    valid, code, msg = verif_token_valid(token)
-    statut = valid
-    error_code = code
-    error_msg = msg
+    # Récupération de l'état du token
+    statut, error_code, error_msg = verif_token_valid(token)
+    if statut != True:
+        return statut, error_code, error_msg
+    else:
+        # Le Token est valide, nous vérifions maintenant les permissions de l'utilisateur
+        user_id = get_user_id_from_token(token)
 
-    return statut, error_code, error_msg
+        if user_is_super_admin(user_id) == True:
+            # L'utilsateur étant super_admin celui-ci a tous les droits !
+            statut = True
+            error_code = 0
+            error_msg = "N/A"
+            return statut, error_code, error_msg
+        else:
+            if with_project == True:
+                if get_user_permission(user_id, projet_id) >= level_perms_min:
+                    # L'utilsateur a le niveau de perms suffisant.
+                    statut = True
+                    error_code = 0
+                    error_msg = "N/A"
+                    return statut, error_code, error_msg
+                else:
+                    # L'utilisateur n'a pas le niveau de perms suffisant.
+                    statut = False
+                    error_code = 3
+                    error_msg = "Permissions manquantes !"
+                    return statut, error_code, error_msg
+            elif with_project == False:
+                # L'utilisateur est bien authentifié mais nous ne procédons pas à une vérification supplémentaire car celle-ci n'est pas demmandée.
+                statut = True
+                error_code = 0
+                error_msg = "N/A"
+                return statut, error_code, error_msg
+    return verif_token_valid(token)
 
 
+# Récupération du token dans le header "Authorization"
 def get_token(request):
     bearer = request.headers.get("Authorization")
     token = bearer.split(" ")[1]
     return token
 
 
+# Récupération de l'attribut super_admin grâce à un user_id
 def super_admin(user_id):
     CMD = "SELECT super_admin FROM utilisateurs where id = '" + str(user_id) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
@@ -1168,6 +1201,16 @@ def super_admin(user_id):
     return super_admin
 
 
+# Simplification de la vérification du super_admin grâce à un user_id.
+def user_is_super_admin(user_id):
+    super_admin = super_admin(user_id)
+    if super_admin == 1:
+        return True
+    else:
+        return False
+
+
+# Récupération d'un id d'utilisateur grâce à son tocket
 def get_user_id_from_token(token):
     CMD = "SELECT user_id FROM api_keys where token = '" + str(token) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
@@ -1176,6 +1219,7 @@ def get_user_id_from_token(token):
     return id
 
 
+# Récupération des permissions d'un utilisateur sur un projet.
 def get_user_permission(user_id, projet_id):
     CMD = f"SELECT permissions FROM utilisateurs_permissions where utilisateur_id = '{user_id}' and projet_id = '{projet_id}';"
     REQ = db_run(CMD, fetch=True, commit=False)
@@ -1185,7 +1229,7 @@ def get_user_permission(user_id, projet_id):
     return permission
 
 
-# Get token list
+# Récupération de la liste des tokens dans un tableau
 def get_token_list(request, type):
     # TYPE :
     #  1 -> FULL LIST
@@ -1237,9 +1281,7 @@ def get_token_list(request, type):
 ###################################################
 
 
-########################
-# TOKEN ADMINISTRATION
-########################
+# WEB : (GET) Affichage de la page d'accueil
 async def web_index(request):
     return web.json_response(json.loads(display()))
 
@@ -1247,15 +1289,18 @@ async def web_index(request):
 ########################
 # PROJETS ADMINISTRATION
 ########################
+# WEB : (GET) Récupération des informations de tous les projets
 async def web_get_all_projets(request):
     return web.json_response(json.loads(json.dumps(get_all_projets())))
 
 
+# WEB : (GET) Récupération des informations d'un projet
 async def web_get_a_projet(request):
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_a_projet(id))))
 
 
+# WEB : (POST) Création d'un nouveau projet
 async def web_create_projet(request):
     # GET POST DATA
     post_data = await request.json()
@@ -1268,23 +1313,28 @@ async def web_create_projet(request):
 ########################
 # TICKETS ADMINISTRATION
 ########################
+# WEB : (GET) Récupération de tous les tickets d'un projet
 async def web_get_all_tikets(request):
     projet_id = int(request.match_info["projet_id"])
+    request_is_valid(request, with_project=True, projet_id=projet_id, level_perms_min=0)
     return web.json_response(json.loads(json.dumps(get_all_tickets(projet_id))))
 
 
+# WEB : (GET) Récupération d'un ticket
 async def web_get_a_tiket(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_a_ticket(id, projet_id))))
 
 
+# WEB : (GET) Récupération du statut d'un ticket
 async def web_get_a_tiket_statut(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_ticket_statut(id, projet_id))))
 
 
+# WEB : (POST) Création d'un nouveau ticket
 async def web_create_tiket(request):
     projet_id = int(request.match_info["projet_id"])
     # GET POST DATA
@@ -1305,17 +1355,37 @@ async def web_create_tiket(request):
     )
 
 
-async def web_ticket_statut(request):
+# WEB : (POST) d'un nouveau statut
+async def web_post_ticket_statut(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
     # GET POST DATA
     post_data = await request.json()
     new_statut = post_data.get("statut")
-    return web.json_response(
-        json.loads(json.dumps(ticket_statut(id, projet_id, new_statut)))
-    )
+
+    data = {"error": True}
+    current_statut = get_ticket_statut(id, projet_id)
+
+    if current_statut["error"] != True:
+        if new_statut != 0 and new_statut < current_statut["statut"]:
+            data = {
+                "error": True,
+                "msg": "Vous ne pouvez pas décrémenter le statut du ticket."
+                + " Statut actuel = "
+                + str(current_statut["statut"])
+                + ".",
+            }
+        else:
+            data_try = change_ticket_statut(id, projet_id, new_statut)
+            if data_try["error"] == False:
+                return json.loads(
+                    json.dumps(change_ticket_statut(id, projet_id, new_statut))
+                )
+
+    return web.json_response(json.loads(json.dumps(data)))
 
 
+# WEB : (GET) récupération d'un commentaire d'un ticket
 async def web_get_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["id"])
@@ -1324,6 +1394,7 @@ async def web_get_tiket_commentaires(request):
     )
 
 
+# WEB : (GET) Récupération d'un commentaire d'un ticket
 async def web_get_a_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["ticket_id"])
@@ -1333,6 +1404,7 @@ async def web_get_a_tiket_commentaires(request):
     )
 
 
+# WEB : (POST) Création d'un commentaire sur un ticket
 async def web_post_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["id"])
@@ -1345,6 +1417,7 @@ async def web_post_tiket_commentaires(request):
     )
 
 
+# WEB : PUT Modification d'un commentaire sur un ticket
 async def web_put_tiket_commentaire(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["ticket_id"])
@@ -1363,15 +1436,18 @@ async def web_put_tiket_commentaire(request):
 ########################
 # USERS ADMINISTRATION
 ########################
+# WEB : (GET) Liste des utilisateurs
 async def web_get_users(request):
     return web.json_response(json.loads(json.dumps(get_all_users())))
 
 
+# WEB : (GET) Liste d'un utilisateur
 async def web_get_a_users(request):
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_a_users(id))))
 
 
+# WEB : (POST) Création d'un utilisateur
 async def web_post_users(request):
     # GET POST DATA
     post_data = await request.json()
@@ -1383,6 +1459,7 @@ async def web_post_users(request):
     )
 
 
+# WEB : (POST) Changement d'un mot de passe d'un utilisateur
 async def web_post_user_mdp(request):
     id = int(request.match_info["id"])
     # GET POST DATA
@@ -1399,7 +1476,7 @@ async def web_post_user_mdp(request):
 ########################
 
 
-# GET FULL TOKEN LIST
+# WEB : (GET) Récupération de la liste des tokens à vie pour tous les utilisateurs
 async def web_get_tokens(request):
     statut, error_code, error_msg = request_is_valid(request)
     if statut == False:
@@ -1409,6 +1486,7 @@ async def web_get_tokens(request):
     return web.json_response(json.loads(json.dumps(get_token_list(request, 1))))
 
 
+# WEB : (GET) Récupération de la liste de mes tokens à vie
 async def web_get_my_tokens(request):
     statut, error_code, error_msg = request_is_valid(request)
     if statut == False:
@@ -1418,7 +1496,7 @@ async def web_get_my_tokens(request):
     return web.json_response(json.loads(json.dumps(get_token_list(request, 2))))
 
 
-# GET ONLY API
+# WEB : (POST) Création d'un token
 async def web_post_tokens(request):
     # VARS
     EX = {"username": "admin", "password": "admin", "type": 1}
@@ -1476,7 +1554,7 @@ app.router.add_post("/projets/{projet_id}/tickets", web_create_tiket)
 # TICKET
 app.router.add_get("/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
 app.router.add_get("/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
-app.router.add_post("/projets/{projet_id}/tickets/{id}/statut", web_ticket_statut)
+app.router.add_post("/projets/{projet_id}/tickets/{id}/statut", web_post_ticket_statut)
 # TICKET COMMENTAIRES
 app.router.add_get(
     "/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
