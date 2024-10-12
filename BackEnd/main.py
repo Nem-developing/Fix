@@ -1,3 +1,4 @@
+# Imports 
 from dataclasses import dataclass
 import datetime
 import json
@@ -11,11 +12,17 @@ from datetime import datetime, timedelta
 from hashlib import sha512
 
 # Imports locaux
-from database import *
-from projets import *
-from tickets import *
-from utilisateurs import *
-from variables import *
+from database.gestion import *
+from database.objets import *
+from projets.gestion import *
+from projets.objets import *
+from tickets.gestion import *
+from tickets.objets import *
+from utilisateurs.gestion import *
+from utilisateurs.objets import *
+from variables.constants import *
+from variables.db_config import *
+from variables.default import *
 
 ########################
 # RECAP DB

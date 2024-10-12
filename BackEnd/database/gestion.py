@@ -1,3 +1,31 @@
+# Imports 
+from dataclasses import dataclass
+import datetime
+import json
+from random import randint
+import random
+import string
+from typing import Optional
+from aiohttp import web
+import mysql.connector
+from datetime import datetime, timedelta
+from hashlib import sha512
+
+
+# Imports locaux
+from database.gestion import *
+from database.objets import *
+from projets.gestion import *
+from projets.objets import *
+from tickets.gestion import *
+from tickets.objets import *
+from utilisateurs.gestion import *
+from utilisateurs.objets import *
+from variables.constants import *
+from variables.db_config import *
+from variables.default import *
+
+
 ########################
 # Fonctions de gestion
 ########################
@@ -8,7 +36,8 @@ def db_run(CMD, fetch=True, commit=False):
     ERROR = False
     DATA = {}
     try:
-        # établir une connexion à la base de données
+        
+        # établir une connexion à la base de donnéess
         conn = mysql.connector.connect(
             host=DB_HOST, user=DB_USER, password=DB_PASSORD, database=DB_NAME
         )
@@ -37,7 +66,7 @@ def db_run(CMD, fetch=True, commit=False):
     return body_sql(CONTENT=DATA, ERROR=False)
 
 
-# Vérification de l'état de la base de donnée.
+# Vérification de l'état de la base de données.
 def db_ok():
     OK = False
     try:
@@ -55,7 +84,7 @@ def db_ok():
     return db_statut, db_error
 
 
-# Vérifiaction de la base de donnée avec un retour booléen.
+# Vérifiaction de la base de données avec un retour booléen.
 def check_if_everything_is_ok():
     db_statut, db_error = db_ok()
     if db_error == True:
@@ -103,7 +132,7 @@ def acces_db():
 # Vérification et création d'une database si besoin
 def check_and_create_db_if_required(db_name, req_to_create_db):
     if verif_table(str(db_name)) == False:
-        print("--> [" + str(db_name) + "] La table en cours de création ...", end="")
+        print("--> [" + str(db_name) + "] La table est en cours de création ...", end="")
         db_run(req_to_create_db, fetch=False, commit=True)
         print(" OK !")
 
@@ -170,11 +199,12 @@ def prepare():
     # Accès à la DB
     try:
         if acces_db() == True:
-            print("--> [OK] : Connexion à la base de données réussie !\n")
+            print("--> [OK] : Connexion à la base de donnéess réussie !\n")
         else:
-            print("--> [KO] : Connexion à la base de données échouée !\n")
+            print("--> [KO] : Connexion à la base de donnéess échouée !\n")
+            exit(1)
     except:
-        print("--> [KO] : Connexion à la base de données échouée !\n")
+        print("--> [KO] : Connexion à la base de donnéess échouée !\n")
         exit(1)
 
     # Tables présentes
@@ -201,6 +231,6 @@ def prepare():
         check_and_create_db_if_required("api_keys", req_create_api_keys)
     except:
         print(
-            "--> [KO] : Une erreur est survenue ! Nous avons pas pû correctement vérifier la base de donnée.\n"
+            "--> [KO] : Une erreur est survenue ! Nous avons pas pû correctement vérifier la base de données.\n"
         )
     return
