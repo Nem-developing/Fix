@@ -1,0 +1,43 @@
+version: '3.1'
+
+services:
+
+  fix:
+    image: nemdeveloping/fix:dev-2.9.5
+    restart: always
+    ports:
+      - 8081:80
+    environment:
+      utilisateur: exampleuser
+      mot_de_passe: examplepass
+      base_de_donnees: exampledb
+      hote_de_connexion: db
+
+    volumes:
+      - fix:/var/www/html
+
+
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MARIADB_DATABASE: exampledb
+      MARIADB_USER: exampleuser
+      MARIADB_PASSWORD: examplepass
+      MARIADB_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8082:8080
+volumes:
+  fix:
+  db:
+
+
+
+
+
