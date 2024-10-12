@@ -16,8 +16,6 @@ from database.gestion import *
 from database.objets import *
 from projets.gestion import *
 from projets.objets import *
-from tickets.gestion import *
-from tickets.objets import *
 from utilisateurs.gestion import *
 from utilisateurs.objets import *
 from variables.constants import *

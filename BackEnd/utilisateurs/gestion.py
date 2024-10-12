@@ -18,8 +18,6 @@ from projets.gestion import *
 from projets.objets import *
 from tickets.gestion import *
 from tickets.objets import *
-from utilisateurs.gestion import *
-from utilisateurs.objets import *
 from variables.constants import *
 from variables.db_config import *
 from variables.default import *
