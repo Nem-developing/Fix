@@ -14,6 +14,8 @@ from hashlib import sha512
 # Imports locaux
 from database.gestion import *
 from database.objets import *
+from projets.objets import *
+from projets.gestion import *
 from tickets.gestion import *
 from tickets.objets import *
 from utilisateurs.gestion import *
