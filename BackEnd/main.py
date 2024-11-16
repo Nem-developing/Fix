@@ -168,10 +168,10 @@ async def web_post_ticket_statut(request):
     current_statut = get_ticket_statut(id, projet_id)
 
     if current_statut["error"] != True:
-        if new_statut != 0 and new_statut < current_statut["statut"]:
+        if new_statut < 0:
             data = {
                 "error": True,
-                "msg": "Vous ne pouvez pas décrémenter le statut du ticket."
+                "msg": "Vous ne pouvez pas avoir un statut négatif."
                 + " Statut actuel = "
                 + str(current_statut["statut"])
                 + ".",
