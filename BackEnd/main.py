@@ -11,18 +11,13 @@ import mysql.connector
 from datetime import datetime, timedelta
 from hashlib import sha512
 
+from database.gestion import db_ok, prepare
+from projets.gestion import create_projet, get_a_projet, get_all_projets
+from tickets.gestion import change_ticket_statut, create_ticket, get_a_ticket, get_a_ticket_commentaire, get_all_ticket_commentaire, get_all_tickets, get_ticket_statut, post_commentaire, put_commentaire
+from utilisateurs.gestion import change_user_mdp, create_user, get_a_users, get_all_users, get_token, get_token_list, get_user_id_from_token, request_is_valid, token_create, verif_user_exist, verif_user_password
+from variables.constants import VERSION
+
 # Imports locaux
-from database.gestion import *
-from database.objets import *
-from projets.gestion import *
-from projets.objets import *
-from tickets.gestion import *
-from tickets.objets import *
-from utilisateurs.gestion import *
-from utilisateurs.objets import *
-from variables.constants import *
-from variables.db_config import *
-from variables.default import *
 
 ########################
 # RECAP DB
@@ -184,9 +179,7 @@ async def web_post_ticket_statut(request):
         else:
             data_try = change_ticket_statut(id, projet_id, new_statut)
             if data_try["error"] == False:
-                return json.loads(
-                    json.dumps(change_ticket_statut(id, projet_id, new_statut))
-                )
+                return web.json_response(json.loads(json.dumps(data_try)))
 
     return web.json_response(json.loads(json.dumps(data)))
 

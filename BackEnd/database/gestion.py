@@ -13,15 +13,11 @@ from hashlib import sha512
 
 
 # Imports locaux
-from projets.gestion import *
-from projets.objets import *
-from tickets.gestion import *
-from tickets.objets import *
-from utilisateurs.gestion import *
-from utilisateurs.objets import *
-from variables.constants import *
-from variables.db_config import *
-from variables.default import *
+from variables.constants import VERSION
+from database.objets import body_sql
+from variables.db_config import DB_HOST,DB_NAME,DB_PASSORD,DB_USER
+from utilisateurs.gestion import chiffrer_password
+
 
 
 ########################

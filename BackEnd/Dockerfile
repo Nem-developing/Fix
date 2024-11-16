@@ -26,4 +26,3 @@ COPY ./* /fix-api/
 WORKDIR /fix-api/
 EXPOSE 8080
 CMD ["python3 XXXX"]
-    

@@ -12,18 +12,12 @@ from datetime import datetime, timedelta
 from hashlib import sha512
 
 # Imports locaux
-from database.gestion import *
-from database.objets import *
-from projets.gestion import *
-from projets.objets import *
-from tickets.gestion import *
-from tickets.objets import *
-from variables.constants import *
-from variables.db_config import *
-from variables.default import *
+from utilisateurs.objets import utilisateur
 
 ## Récupération de tous les utilisateurs
 def get_all_users():
+    from database.gestion import check_if_everything_is_ok, db_run
+
     data = {"error": False}
     if check_if_everything_is_ok() != True:
         data = {"error": True}
@@ -62,6 +56,8 @@ def get_all_users():
 
 ## Récupération d'un utilisateur via son ID
 def get_a_users(id):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     data = {"error": False}
     id = int(id)
     if (check_if_everything_is_ok() != True) or (id < 0):
@@ -100,6 +96,8 @@ def get_a_users(id):
 
 ## Création d'un utilisateur
 def create_user(username, mot_de_passe, is_super_admin):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     ## Génération de la date
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")
@@ -140,6 +138,8 @@ def create_user(username, mot_de_passe, is_super_admin):
 
 # Modification d'un mot de passe utilisateur
 def change_user_mdp(user_id, password):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     CMD = (
         "UPDATE utilisateurs set password = '"
         + str(chiffrer_password(password))
@@ -154,6 +154,8 @@ def change_user_mdp(user_id, password):
 
 # Vérification qu'un utilisateur existe ou non.
 def verif_user_exist(user):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     cpt = 0
     REQ = db_run(CMD, fetch=True, commit=False)
@@ -167,6 +169,8 @@ def verif_user_exist(user):
 
 # Récupération du mot de passe chiffré d'un utilisateur grâce à un username
 def get_encrypted_user_password(user):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     cpt = 0
     REQ = db_run(CMD, fetch=True, commit=False)
@@ -177,6 +181,8 @@ def get_encrypted_user_password(user):
 
 # Récupération d'un user_id grâce à un username
 def get_user_id(user):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     CMD = "SELECT * FROM utilisateurs where username = '" + str(user) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
     for i in REQ.CONTENT:
@@ -216,6 +222,8 @@ def generate_token_value():
 
 # Vérification si un token n'est pas présent dans la base
 def verif_token_unique(token):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     cmd = "SELECT count(*) FROM api_keys where token = '" + str(token) + "';"
     req = db_run(cmd, fetch=False, commit=False)
     (count,) = req.CONTENT
@@ -227,6 +235,8 @@ def verif_token_unique(token):
 
 # Création d'un token grâce à un username
 def token_create(username, type):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     token = generate_token_value()
     while verif_token_unique(token) == False:
         token = generate_token_value()
@@ -258,6 +268,8 @@ def token_create(username, type):
 
 
 def verif_token_valid(token):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     cmd = "SELECT type,date,heure FROM api_keys where token = '" + str(token) + "';"
     req = db_run(cmd, fetch=False, commit=False)
 
@@ -337,6 +349,8 @@ def request_is_valid(request, with_project, level_perms_min, projet_id):
 
 # Récupération de l'attribut super_admin grâce à un user_id
 def super_admin(user_id):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     CMD = "SELECT super_admin FROM utilisateurs where id = '" + str(user_id) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
     for i in REQ.CONTENT:
@@ -355,6 +369,8 @@ def user_is_super_admin(user_id):
 
 # Récupération d'un id d'utilisateur grâce à son tocket
 def get_user_id_from_token(token):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     CMD = "SELECT user_id FROM api_keys where token = '" + str(token) + "';"
     REQ = db_run(CMD, fetch=True, commit=False)
     for i in REQ.CONTENT:
@@ -364,6 +380,8 @@ def get_user_id_from_token(token):
 
 # Récupération des permissions d'un utilisateur sur un projet.
 def get_user_permission(user_id, projet_id):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     CMD = f"SELECT permissions FROM utilisateurs_permissions where utilisateur_id = '{user_id}' and projet_id = '{projet_id}';"
     REQ = db_run(CMD, fetch=True, commit=False)
     permission = -1
@@ -374,6 +392,8 @@ def get_user_permission(user_id, projet_id):
 
 # Récupération de la liste des tokens dans un tableau
 def get_token_list(request, type):
+    from database.gestion import check_if_everything_is_ok, db_run
+
     # TYPE :
     #  1 -> FULL LIST
     #  2 -> MY FULL LIST

@@ -11,18 +11,10 @@ import mysql.connector
 from datetime import datetime, timedelta
 from hashlib import sha512
 
+
 # Imports locaux
-from database.gestion import *
-from database.objets import *
-from projets.objets import *
-from projets.gestion import *
-from tickets.gestion import *
-from tickets.objets import *
-from utilisateurs.gestion import *
-from utilisateurs.objets import *
-from variables.constants import *
-from variables.db_config import *
-from variables.default import *
+from projets.objets import projet
+from database.gestion import check_if_everything_is_ok, db_run
 
 ########################
 # Fonctions de gestion
