@@ -277,7 +277,8 @@ async def web_post_user_mdp(request):
 
 # WEB : (GET) Récupération de la liste des tokens à vie pour tous les utilisateurs
 async def web_get_tokens(request):
-    statut, error_code, error_msg = request_is_valid(request)
+
+    statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
     if statut == False:
         data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))
@@ -287,7 +288,7 @@ async def web_get_tokens(request):
 
 # WEB : (GET) Récupération de la liste de mes tokens à vie
 async def web_get_my_tokens(request):
-    statut, error_code, error_msg = request_is_valid(request)
+    statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
     if statut == False:
         data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))

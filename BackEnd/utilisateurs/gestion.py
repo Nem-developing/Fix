@@ -96,7 +96,7 @@ def get_a_users(id):
 
 ## Création d'un utilisateur
 def create_user(username, mot_de_passe, is_super_admin):
-    from database.gestion import check_if_everything_is_ok, db_run
+    from database.gestion import db_run
 
     ## Génération de la date
     maintenant = datetime.now()
@@ -122,7 +122,6 @@ def create_user(username, mot_de_passe, is_super_admin):
             + "');"
         )
         req = db_run(STR, commit=True, fetch=False)
-        print(req)
         req = db_run("SELECT MAX(id) FROM utilisateurs")
         (ID,) = req.CONTENT[0]
         data = {"Utilisateur": get_a_users(ID), "created": True, "error": False}
@@ -295,8 +294,28 @@ def verif_token_valid(token):
             return False, 3, "Le type de token spécifié n'est pas pris en compte."
 
 
+# Récupération de l'attribut super_admin grâce à un user_id
+def super_admin(user_id):
+    from database.gestion import check_if_everything_is_ok, db_run
+    
+    CMD = "SELECT 'super_admin' FROM utilisateurs where id = "+ str(user_id) +";"
+    REQ = db_run(CMD, fetch=True, commit=False)
+    for i in REQ.CONTENT:
+        super_admin = i[0]
+    return super_admin
+
+
+# Simplification de la vérification du super_admin grâce à un user_id.
+def user_is_super_admin(user_id):
+    is_admin = super_admin(user_id)
+    if is_admin == 1:
+        return True
+    else:
+        return False
+
+
 # Vérification de la validité d'une requêtte
-def request_is_valid(request, with_project, level_perms_min, projet_id):
+def request_is_valid(request, with_project, level_perms_min, projet_id=None):
     # with_project = (True, False) --> Indique s'il ont aura besoin de récupérer ou non les permissions spécifiques de l'utilisateur sur un projet donné
     # level_perms_min = (0,1,2) -> Indique le niveau de permission minimum dont un utilisateur a besoin pour requêtter une route (fonctionne obligatoirement avec with_project à True ).
     # --> Dans le cas où "with_project est à False", avec un utilisateur non super-admin, on répondra TRUE car l'utilisateur est bien authentifié.
@@ -347,24 +366,7 @@ def request_is_valid(request, with_project, level_perms_min, projet_id):
 
 
 
-# Récupération de l'attribut super_admin grâce à un user_id
-def super_admin(user_id):
-    from database.gestion import check_if_everything_is_ok, db_run
 
-    CMD = "SELECT super_admin FROM utilisateurs where id = '" + str(user_id) + "';"
-    REQ = db_run(CMD, fetch=True, commit=False)
-    for i in REQ.CONTENT:
-        super_admin = i[0]
-    return super_admin
-
-
-# Simplification de la vérification du super_admin grâce à un user_id.
-def user_is_super_admin(user_id):
-    super_admin = super_admin(user_id)
-    if super_admin == 1:
-        return True
-    else:
-        return False
 
 
 # Récupération d'un id d'utilisateur grâce à son tocket
