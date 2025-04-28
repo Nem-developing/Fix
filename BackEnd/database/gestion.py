@@ -108,13 +108,14 @@ def verif_table(table):
 
 
 # Retourne Vrais si on arrive à nous connecter à la DB
-def acces_db():
+def acces_db(timeout: int = 10):
     try:
         cnx = mysql.connector.connect(
             user=DB_USER,
             password=DB_PASSORD,
             host=DB_HOST,
             database=DB_NAME,
+            connection_timeout=timeout,
         )
         cursor = cnx.cursor()
         return True
