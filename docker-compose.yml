@@ -2,8 +2,8 @@ version: '3.1'
 
 services:
 
-  fix:
-    image: nemdeveloping/fix:dev-2.9.5
+  fix-api:
+    image: nemdeveloping/fix-api:1.0
     restart: always
     ports:
       - 8081:80
@@ -12,10 +12,6 @@ services:
       mot_de_passe: examplepass
       base_de_donnees: exampledb
       hote_de_connexion: db
-
-    volumes:
-      - fix:/var/www/html
-
 
   db:
     image: mariadb:latest
