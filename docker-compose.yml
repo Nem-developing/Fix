@@ -5,6 +5,10 @@ services:
   fix-api:
     image: nemdeveloping/fix-api:3.1
     restart: always
+    depends_on:
+      - fix-database
+    networks:
+      - fix-network
     ports:
       - 8081:80
     environment:
@@ -21,12 +25,16 @@ services:
       MARIADB_USER: exampleuser
       MARIADB_PASSWORD: examplepass
       MARIADB_RANDOM_ROOT_PASSWORD: '1'
+    networks:
+      - fix-network
     volumes:
       - db:/var/lib/mysql
 
   adminer:
     image: adminer
     restart: always
+    networks:
+      - fix-network
     ports:
       - 8082:8080
 volumes:
@@ -34,6 +42,5 @@ volumes:
   db:
 
 
-
-
-
+networks:
+  fix-network:  

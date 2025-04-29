@@ -30,7 +30,6 @@ def db_run(CMD, fetch=True, commit=False):
     ERROR = False
     DATA = {}
     try:
-        
         # établir une connexion à la base de donnéess
         conn = mysql.connector.connect(
             host=DB_HOST, user=DB_USER, password=DB_PASSORD, database=DB_NAME
@@ -118,9 +117,9 @@ def acces_db(timeout: int = 10):
             connection_timeout=timeout,
         )
         cursor = cnx.cursor()
-        return True
-    except:
-        return False
+        return True, []
+    except Exception as e:
+        return False, e
 
 
 
@@ -190,17 +189,19 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
 # Création des tables si necessaires
 def prepare():
     print("Initialisation de l'API de FIX " + str(VERSION))
-
-    # Accès à la DB
-    try:
-        if acces_db() == True:
-            print("--> [OK] : Connexion à la base de donnéess réussie !\n")
-        else:
-            print("--> [KO] : Connexion à la base de donnéess échouée !\n")
-            exit(1)
-    except:
+    acces_db_statut, acces_db_error = acces_db()
+    if acces_db_statut == True:
+        print("--> [OK] : Connexion à la base de donnéess réussie !\n")
+    else:
         print("--> [KO] : Connexion à la base de donnéess échouée !\n")
+        print()
+        print("================================================")
+        print()
+        print(acces_db_error)
+        print()
+        print("================================================")
         exit(1)
+    print("--> [KO] : Connexion à la base de donnéess échouée !\n")
 
     # Tables présentes
     print("Vérifcation des tables :")
