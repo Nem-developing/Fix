@@ -201,7 +201,6 @@ def prepare():
         print()
         print("================================================")
         exit(1)
-    print("--> [KO] : Connexion à la base de donnéess échouée !\n")
 
     # Tables présentes
     print("Vérifcation des tables :")
