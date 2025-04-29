@@ -8,16 +8,16 @@ services:
     ports:
       - 8081:80
     environment:
-      utilisateur: exampleuser
-      mot_de_passe: examplepass
-      base_de_donnees: exampledb
-      hote_de_connexion: db
+      DB_USER: exampleuser
+      DB_PASSWORD: examplepass
+      DB_NAME: fix
+      DB_HOSTNAME: fix-database
 
-  db:
+  fix-database:
     image: mariadb:latest
     restart: always
     environment:
-      MARIADB_DATABASE: exampledb
+      MARIADB_DATABASE: fix
       MARIADB_USER: exampleuser
       MARIADB_PASSWORD: examplepass
       MARIADB_RANDOM_ROOT_PASSWORD: '1'
