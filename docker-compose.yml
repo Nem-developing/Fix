@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   fix-api:
-    image: nemdeveloping/fix-api:1.0
+    image: nemdeveloping/fix-api:3.1
     restart: always
     ports:
       - 8081:80
