@@ -6,7 +6,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="MainLayout">
       <Sidebar />
-      <div>
+      <div className="Pages">
         <Navbar />
         <main>{children}</main>
       </div>

@@ -11,6 +11,61 @@
     "updatedAt": "2025-05-11T09:00:00Z"
   },
   {
+    "id": "ticket_001",
+    "title": "Problème de connexion",
+    "description": "L'utilisateur ne parvient pas à se connecter au site.",
+    "status": "open",
+    "priority": "high",
+    "createdBy": "user_02",
+    "assignedTo": "user_01",
+    "createdAt": "2025-05-10T08:00:00Z",
+    "updatedAt": "2025-05-11T09:00:00Z"
+  },
+  {
+    "id": "ticket_001",
+    "title": "Problème de connexion",
+    "description": "L'utilisateur ne parvient pas à se connecter au site.",
+    "status": "open",
+    "priority": "high",
+    "createdBy": "user_02",
+    "assignedTo": "user_01",
+    "createdAt": "2025-05-10T08:00:00Z",
+    "updatedAt": "2025-05-11T09:00:00Z"
+  },
+  {
+    "id": "ticket_001",
+    "title": "Problème de connexion",
+    "description": "L'utilisateur ne parvient pas à se connecter au site.",
+    "status": "open",
+    "priority": "high",
+    "createdBy": "user_02",
+    "assignedTo": "user_01",
+    "createdAt": "2025-05-10T08:00:00Z",
+    "updatedAt": "2025-05-11T09:00:00Z"
+  },
+  {
+    "id": "ticket_001",
+    "title": "Problème de connexion",
+    "description": "L'utilisateur ne parvient pas à se connecter au site.",
+    "status": "open",
+    "priority": "high",
+    "createdBy": "user_02",
+    "assignedTo": "user_01",
+    "createdAt": "2025-05-10T08:00:00Z",
+    "updatedAt": "2025-05-11T09:00:00Z"
+  },
+  {
+    "id": "ticket_001",
+    "title": "Problème de connexion",
+    "description": "L'utilisateur ne parvient pas à se connecter au site.",
+    "status": "open",
+    "priority": "high",
+    "createdBy": "user_02",
+    "assignedTo": "user_01",
+    "createdAt": "2025-05-10T08:00:00Z",
+    "updatedAt": "2025-05-11T09:00:00Z"
+  },
+  {
     "id": "ticket_002",
     "title": "Erreur affichage page profil",
     "description": "La page profil affiche une erreur 500 à certains utilisateurs.",

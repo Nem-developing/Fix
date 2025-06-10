@@ -2,7 +2,7 @@
 
 /* Corp de la page */
 .MainLayout {
-  background-color: blue;
+  background-color: rgb(242, 245, 247);
 
   min-height: 100vh;
 
@@ -19,6 +19,10 @@
   nav {
     display: flex;
     flex-direction: column;
+
+    a {
+      text-decoration: none;
+    }
   }
 
   h1 {
@@ -32,8 +36,66 @@
   }
 }
 
+.Pages {
+  flex-grow: 1;
+}
+
 /* ====================== Pages ====================== */
 
 .Dashboard {
-  background-color: red;
+  width: 100%;
+
+  h1 {
+    font-size: 2em;
+    margin: 1em;
+  }
+
+  .block {
+    width: 100%;
+
+    .Info-rapide {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+
+      .t-ouvert {
+        background-color: rgb(71, 142, 230);
+      }
+      .t-encours {
+        background-color: rgb(68, 89, 164);
+      }
+      .t-ferme {
+        background-color: rgb(52, 149, 140);
+      }
+      .t-ouvert,
+      .t-encours,
+      .t-ferme {
+        color: white;
+
+        /* ----------- A refaire */
+        padding: 1em;
+        width: 30%;
+
+        display: flex;
+        flex-direction: column;
+
+        border: 0 solid;
+        border-radius: 13px;
+
+        .nb-DumpNombreTicket {
+          margin-top: 0.2em;
+
+          font-size: 2.5em;
+        }
+      }
+    }
+
+    .Graphiques {
+      .etat,
+      .categorie {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
 }
