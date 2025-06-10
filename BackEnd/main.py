@@ -27,12 +27,13 @@ from variables.constants import VERSION
 # =========================================================================
 #                               TICKETS
 # Statut :
-#  0 : Non-Traité
-#  1 : En-Cours
-#  2 : Bloqué
-#  3 : En-Tests
-#  4 : En-Revue
-#  5 : Archivé
+#  0 : Non-Traité       --> Considéré "new"
+#  1 : En-Cours         --> Considéré "open"
+#  2 : Bloqué           --> Considéré "open"
+#  3 : En-Tests         --> Considéré "open"
+#  4 : En-Revue         --> Considéré "open"
+#  5 : Fermé            --> Considéré "closed"
+#
 #
 # Niveaux d'urgence :
 # 0 : Faible
@@ -141,7 +142,7 @@ async def web_create_tiket(request):
     projet_id = int(request.match_info["projet_id"])
     # GET POST DATA
     post_data = await request.json()
-    categorie = post_data.get("categorie")
+    serveur = post_data.get("serveur")
     data_objet = post_data.get("objet")
     description = post_data.get("description")
     urgence = post_data.get("urgence")
@@ -150,7 +151,7 @@ async def web_create_tiket(request):
         json.loads(
             json.dumps(
                 create_ticket(
-                    categorie, data_objet, description, urgence, user_create, projet_id
+                    serveur, data_objet, description, urgence, user_create, projet_id
                 )
             )
         )
@@ -350,7 +351,7 @@ async def web_stats_projet(request):
         data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))
 
-    return web.json_response(json.loads(json.dumps(get_projets_stats(request))))
+    return web.json_response(json.loads(json.dumps(get_projets_stats())))
 
 
 # WEB : (GET) Récupération des statistiques d'un projets
@@ -359,8 +360,8 @@ async def web_stats_a_projet(request):
     if statut == False:
         data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
         return web.json_response(json.loads(json.dumps(data)))
-
-    return web.json_response(json.loads(json.dumps(get_a_projet_stats(request))))
+    projet_id = int(request.match_info["projet_id"])
+    return web.json_response(json.loads(json.dumps(get_a_projet_stats(projet_id))))
 
 
 
