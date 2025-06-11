@@ -71,7 +71,7 @@ def get_projets_stats():
             data.append(get_a_projet_stats(i["id"]))
 
         return {"number of projects" : len(ALL_PROJECTS["Projets"]),
-                "stats" : ALL_PROJECTS}
+                "stats" : data}
     except:
         pass
     return data
