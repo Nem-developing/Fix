@@ -1,8 +1,8 @@
 export const routeConfig = [
-  { path: "/dashboard", label: "Dashboard" },
-  { path: "/new", label: "Nouveau Ticket" },
-  { path: "/open", label: "Tickets Ouverts" },
-  { path: "/history", label: "Historique" },
-  { path: "/reports", label: "Rapports" },
-  { path: "/users", label: "Utilisateurs" },
+  { path: "/new", label: "Nouveau Ticket", icon: "/icons/plus.svg" },
+  { path: "/dashboard", label: "Dashboard", icon: "/icons/accueil.svg" },
+  { path: "/open", label: "Tickets Ouverts", icon: "/icons/open.svg" },
+  { path: "/history", label: "Historique", icon: "/icons/history.svg" },
+  { path: "/reports", label: "Rapports", icon: "/icons/reports.svg" },
+  { path: "/users", label: "Utilisateurs", icon: "/icons/users.svg" },
 ];

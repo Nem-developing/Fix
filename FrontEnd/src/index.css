@@ -20,8 +20,21 @@
     display: flex;
     flex-direction: column;
 
+    margin-top: 1em;
+
     a {
       text-decoration: none;
+    }
+
+    .imagelien {
+      display: flex;
+      align-items: center;
+
+      img {
+        margin-left: 1em;
+
+        height: 1.5em;
+      }
     }
   }
 
@@ -31,8 +44,10 @@
     margin: 1em;
   }
 
-  .separation {
+  .with-separator {
     border-bottom: 1px solid rgb(105, 120, 136);
+    padding-bottom: 1em;
+    margin-bottom: 1em;
   }
 }
 
@@ -91,10 +106,35 @@
     }
 
     .Graphiques {
+      h2 {
+        font-size: 1.5em;
+        margin: 1em;
+      }
+
+      margin-top: 2em;
+
+      display: flex;
+      justify-content: space-evenly;
+
       .etat,
       .categorie {
         display: flex;
         flex-direction: column;
+
+        min-height: 30em;
+
+        border: 0 solid;
+        border-radius: 13px;
+
+        background-color: white;
+      }
+
+      .etat {
+        width: 60%;
+      }
+
+      .categorie {
+        width: 35%;
       }
     }
   }

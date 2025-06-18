@@ -24,8 +24,8 @@ const Dashboard = () => {
       </div>
       <div className="block">
         <div className="Graphiques">
-          <div className="etat"></div>
-          <div className="categorie"></div>
+          <div className="etat"><h2>État des tickets</h2></div>
+          <div className="categorie"><h2>Tickets par categorie</h2></div>
         </div>
       </div>
     </div>
