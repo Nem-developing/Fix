@@ -1,15 +1,19 @@
-# Informations : 
-- Fix est une application web permetant la gestion de tickets. Ce logiciel peut convenir pour une utilisation privée comme professionnelle. Choississez Fix pour une gestion simple rapide et efficace de vos incidents tequniques !   
+# Informations :
+
+- Fix est une application web permetant la gestion de tickets. Ce logiciel peut convenir pour une utilisation privée comme professionnelle. Choississez Fix pour une gestion simple rapide et efficace de vos incidents tequniques !
 
 ## Image d'illustration :
+
 ![Image d'illustration](https://github.com/Nem-developing/Fix/blob/master/photos/Fix-illustration.JPG?raw=true)
 
-## Dépendance : 
+## Dépendance :
+
 - API GOOGLE : https://developers.google.com/chart
 
+## Déployer l'application sous Docker :
 
-## Déployer l'application sous Docker : 
 ### docker-compose.yml
+
 ```YAML
 version: '3.1'
 
@@ -53,7 +57,21 @@ volumes:
   fix:
   db:
 ```
+
 ### Commande
+
+#### ⚠️ Supprime TOUS les conteneurs & images (en cas de besoin de mise au propre) ⚠️
+
 ```bash
-docker-compose up
+# ⚠️ DANGER ⚠️
+docker stop $(docker ps -aq) && \
+docker rm $(docker ps -aq) && \
+docker volume rm $(docker volume ls -q) && \
+docker rmi -f $(docker images -aq) && \
+# ⚠️ DANGER ⚠️
+```
+
+#### Initialisation des conteneur
+```bash
+docker compose up -d
 ```
