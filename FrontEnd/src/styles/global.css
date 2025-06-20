@@ -1,0 +1,15 @@
+/* ====================== Globale ====================== */
+
+/* Corp de la page */
+.MainLayout {
+  background-color: rgb(242, 245, 247);
+
+  min-height: 100vh;
+
+  display: flex;
+  font-family: "Rubik", sans-serif;
+}
+
+.Pages {
+  flex-grow: 1;
+}
