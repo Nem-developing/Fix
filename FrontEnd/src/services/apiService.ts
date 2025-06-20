@@ -1,5 +1,7 @@
 const BASE_URL = "http://localhost:8080";
 
+// ============================================================ Récupération des tickets
+
 export async function fetchTickets(endpointSuffix = "") {
   try {
     // Récupère la valeur 'projectId' depuis le localStorage
@@ -51,4 +53,35 @@ export async function fetchTickets(endpointSuffix = "") {
     console.error("Erreur fetchTickets:", error);
     throw error;
   }
+}
+
+// ============================================================ Création d'un nouveau ticket
+
+export async function createTicket(ticketData) {
+  // Récupérer projectId depuis localStorage ou valeur par défaut
+  const projectIdStr = localStorage.getItem("projectId");
+  let projectIdNum = 1;
+  if (projectIdStr) {
+    const parsed = parseInt(projectIdStr, 10);
+    if (!isNaN(parsed) && parsed > 0) projectIdNum = parsed;
+  } else {
+    localStorage.setItem("projectId", "1");
+  }
+
+  const url = `${BASE_URL}/projets/${projectIdNum}/tickets`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(ticketData),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
 }

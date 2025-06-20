@@ -57,14 +57,17 @@
 
 /* ====================== Pages ====================== */
 
-.Dashboard {
+.Dashboard,
+.NewTicket {
   width: 100%;
 
   h1 {
     font-size: 2em;
     margin: 1em;
   }
+}
 
+.Dashboard {
   .block {
     width: 100%;
 
@@ -136,6 +139,30 @@
       .categorie {
         width: 35%;
       }
+    }
+  }
+}
+
+.NewTicket {
+  display: flex;
+  flex-direction: column;
+
+  .formdiv {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    form {
+      display: flex;
+      flex-direction: column;
+
+      background-color: white;
+
+      border: 0 solid;
+      border-radius: 13px;
+
+      width: 80%;
     }
   }
 }
