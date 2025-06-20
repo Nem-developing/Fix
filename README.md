@@ -62,13 +62,20 @@ volumes:
 
 #### ⚠️ Supprime TOUS les conteneurs & images (en cas de besoin de mise au propre) ⚠️
 
+⚠️ DANGER ⚠️
+Sur linux :
 ```bash
-# ⚠️ DANGER ⚠️
 docker stop $(docker ps -aq) && \
 docker rm $(docker ps -aq) && \
 docker volume rm $(docker volume ls -q) && \
 docker rmi -f $(docker images -aq) && \
-# ⚠️ DANGER ⚠️
+```
+
+⚠️ DANGER ⚠️
+Sur windows: 
+```bash
+docker stop $(docker ps -aq); docker rm $(docker ps -aq)
+docker rmi $(docker images -aq); docker volume rm $(docker volume ls -q)
 ```
 
 #### Initialisation des conteneur
