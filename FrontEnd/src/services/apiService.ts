@@ -1,4 +1,4 @@
-declare var process: { env: { API_URL: string } }; var BASE_URL = process.env.API_URL;
+const BASE_URL = "http://fix-api:8080";
 
 export async function fetchTickets(endpointSuffix = "") {
   try {

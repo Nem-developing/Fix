@@ -8,4 +8,4 @@ COPY ./FrontEnd/ ./
 RUN npm i -y
 
 EXPOSE 5173
-CMD ["npm", "run","dev", "--host", "https://5173-cs-211488151727-default.cs-europe-west1-iuzs.cloudshell.dev/?authuser=0"]
+CMD ["npm", "run","dev"]
