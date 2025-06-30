@@ -2,6 +2,21 @@ version: '3.1'
 
 services:
 
+  traefik:
+    image: traefik:v2.10
+    restart: always
+    command:
+      - "--api.insecure=true"                    # Dashboard Traefik (optionnel)
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "8080:80"                                  # HTTP
+      - "8081:8080"                              # Dashboard Traefik (optionnel)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - fix-network
+
   fix-api:
     image: nemdeveloping/fix-api:3.1
     restart: always
@@ -9,13 +24,17 @@ services:
       - fix-database
     networks:
       - fix-network
-    ports:
-      - 8080:8080
     environment:
       DB_USER: exampleuser
       DB_PASSWORD: examplepass
       DB_NAME: fix
       DB_HOSTNAME: fix-database
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
+    - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api"
+    - "traefik.http.routers.fix-api.middlewares=api-stripprefix"
+    - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
 
 
   fix-app:
@@ -26,12 +45,13 @@ services:
       - fix-api
     networks:
       - fix-network
-    ports:
-      - 8000:5173
     environment:
       API_URL: "http://fix-api:8080"
       APP_URL: "http://localhost:8000"
-
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fix-app.rule=PathPrefix(`/`)"
+      - "traefik.http.services.fix-app.loadbalancer.server.port=5173"
 
   fix-database:
     image: mariadb:latest
@@ -51,12 +71,15 @@ services:
     restart: always
     networks:
       - fix-network
-    ports:
-      - 8082:8080
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.adminer.rule=PathPrefix(`/adminer`)"
+    - "traefik.http.middlewares.adminer-stripprefix.stripPrefix.prefixes=/adminer"
+    - "traefik.http.routers.adminer.middlewares=adminer-stripprefix"
+    - "traefik.http.services.adminer.loadbalancer.server.port=8080"
 volumes:
   fix:
   db:
 
-
 networks:
-  fix-network:  
+  fix-network:

@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY ./FrontEnd/ ./
 
-RUN npm i -y
+RUN npm i -y 
 
 EXPOSE 5173
 CMD ["npm", "run","dev"]
