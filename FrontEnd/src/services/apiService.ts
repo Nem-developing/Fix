@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+declare var process: { env: { API_URL: string } }; var BASE_URL = process.env.API_URL;
 
 export async function fetchTickets(endpointSuffix = "") {
   try {

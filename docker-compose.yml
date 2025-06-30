@@ -17,6 +17,22 @@ services:
       DB_NAME: fix
       DB_HOSTNAME: fix-database
 
+
+  fix-app:
+    image: nemdeveloping/fix-app:2.0
+    restart: always
+    depends_on:
+      - fix-database
+      - fix-api
+    networks:
+      - fix-network
+    ports:
+      - 8000:5173
+    environment:
+      API_URL: "http://fix-api:8080"
+      APP_URL: "http://localhost:8000"
+
+
   fix-database:
     image: mariadb:latest
     restart: always
