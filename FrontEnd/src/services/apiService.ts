@@ -1,4 +1,4 @@
-const BASE_URL = "http://fix-api:8080";
+const BASE_URL = "/api";
 
 export async function fetchTickets(endpointSuffix = "") {
   try {
