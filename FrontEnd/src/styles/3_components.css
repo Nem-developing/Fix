@@ -4,8 +4,6 @@
 .Sidebar {
   background-color: rgb(25, 47, 71);
 
-  width: 15%;
-
   nav {
     display: flex;
     flex-direction: column;
