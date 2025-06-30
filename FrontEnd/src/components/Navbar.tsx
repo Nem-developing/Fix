@@ -1,32 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-const Navbar = () => {
-  const [UserName, setUserName] = useState("...");
+type NavbarProps = {
+  onBurgerClick: () => void;
+  sidebarOpen: boolean;
+};
 
-  useEffect(() => {
-    fetch("/data/users.json")
-      .then((res) => {
-        // console.log("Réponse fetch:", res);
-        if (!res.ok) {
-          throw new Error("Erreur HTTP " + res.status);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        // console.log("Données reçues:", data);
-        if (data.length > 0) {
-          setUserName(data[0].name || data[0].username || "Utilisateur");
-        } else {
-          setUserName("Utilisateur");
-        }
-      })
-      .catch((err) => {
-        // console.error("Erreur fetch :", err);
-        setUserName("Utilisateur");
-      });
-  }, []);
-
-  return <header></header>;
+const Navbar: React.FC<NavbarProps> = ({ onBurgerClick, sidebarOpen }) => {
+  return (
+    <header className="Navbar">
+      <button
+        className={`burger ${sidebarOpen ? "open" : ""}`}
+        aria-label="Toggle sidebar menu"
+        onClick={onBurgerClick}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+  );
 };
 
 export default Navbar;
