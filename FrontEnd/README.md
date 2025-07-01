@@ -1,27 +1,31 @@
-# FrontEnd
+# Frontend de ELLLL TICKETOOOO OF NEMOOO 
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.12.
+## Composants
 
-## Development server
+### 📁 assets
+👉 Utilité : Contient les ressources statiques du projet.
+✅ Exemples : images, polices, icônes, fichiers audio, vidéos.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### 📁 components
+👉 Utilité : Contient les composants réutilisables de l'interface utilisateur.
+✅ Exemples : boutons, cartes, modales, listes.
 
-## Code scaffolding
+### 📁 layout
+👉 Utilité : Définit la structure globale des pages (enveloppe visuelle commune).
+✅ Exemples : en-tête, pied de page, barre latérale, grille générale.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### 📁 pages
+👉 Utilité : Contient les pages de l'application (vue complète).
+✅ Exemples : page d'accueil, page de profil, page d’erreur.
 
-## Build
+### 📁 routes
+👉 Utilité : Définit la configuration des routes/navigation de l'application.
+✅ Exemples : correspondances entre URL et composants.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### 📁 services
+👉 Utilité : Gère la logique métier et les appels API.
+✅ Exemples : appels HTTP, gestion du cache, accès à une base de données.
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### 📁 types
+👉 Utilité : Contient les définitions de types et interfaces TypeScript.
+✅ Exemples : interface User, type Product, enum Status.

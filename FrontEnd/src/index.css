@@ -1,0 +1,141 @@
+/* ====================== Principale ====================== */
+
+/* Corp de la page */
+.MainLayout {
+  background-color: rgb(242, 245, 247);
+
+  min-height: 100vh;
+
+  display: flex;
+  font-family: "Rubik", sans-serif;
+}
+
+/* Liens de navigation */
+.Sidebar {
+  background-color: rgb(25, 47, 71);
+
+  width: 15%;
+
+  nav {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 1em;
+
+    a {
+      text-decoration: none;
+    }
+
+    .imagelien {
+      display: flex;
+      align-items: center;
+
+      img {
+        margin-left: 1em;
+
+        height: 1.5em;
+      }
+    }
+  }
+
+  h1 {
+    color: white;
+
+    margin: 1em;
+  }
+
+  .with-separator {
+    border-bottom: 1px solid rgb(105, 120, 136);
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+  }
+}
+
+.Pages {
+  flex-grow: 1;
+}
+
+/* ====================== Pages ====================== */
+
+.Dashboard {
+  width: 100%;
+
+  h1 {
+    font-size: 2em;
+    margin: 1em;
+  }
+
+  .block {
+    width: 100%;
+
+    .Info-rapide {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+
+      .t-ouvert {
+        background-color: rgb(71, 142, 230);
+      }
+      .t-encours {
+        background-color: rgb(68, 89, 164);
+      }
+      .t-ferme {
+        background-color: rgb(52, 149, 140);
+      }
+      .t-ouvert,
+      .t-encours,
+      .t-ferme {
+        color: white;
+
+        /* ----------- A refaire */
+        padding: 1em;
+        width: 30%;
+
+        display: flex;
+        flex-direction: column;
+
+        border: 0 solid;
+        border-radius: 13px;
+
+        .nb-DumpNombreTicket {
+          margin-top: 0.2em;
+
+          font-size: 2.5em;
+        }
+      }
+    }
+
+    .Graphiques {
+      h2 {
+        font-size: 1.5em;
+        margin: 1em;
+      }
+
+      margin-top: 2em;
+
+      display: flex;
+      justify-content: space-evenly;
+
+      .etat,
+      .categorie {
+        display: flex;
+        flex-direction: column;
+
+        min-height: 30em;
+
+        border: 0 solid;
+        border-radius: 13px;
+
+        background-color: white;
+      }
+
+      .etat {
+        width: 60%;
+      }
+
+      .categorie {
+        width: 35%;
+      }
+    }
+  }
+}
