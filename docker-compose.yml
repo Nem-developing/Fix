@@ -6,12 +6,12 @@ services:
     image: traefik:v2.10
     restart: always
     command:
-      - "--api.insecure=true"                    # Dashboard Traefik (optionnel)
+      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     ports:
-      - "8080:80"                                  # HTTP
-      - "8081:8080"                              # Dashboard Traefik (optionnel)
+      - "8080:80"
+      - "8081:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
