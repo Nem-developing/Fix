@@ -29,6 +29,8 @@ services:
       DB_PASSWORD: examplepass
       DB_NAME: fix
       DB_HOSTNAME: fix-database
+    ports:
+      - "8000:8080"
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"

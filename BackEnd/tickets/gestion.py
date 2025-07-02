@@ -27,7 +27,7 @@ def get_all_tickets(projet_id):
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req = db_run(
-            "SELECT id, categorie, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive,projet_id from tickets WHERE projet_id = "
+            "SELECT id, categorie, titre, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive,projet_id from tickets WHERE projet_id = "
             + str(projet_id)
             + " ;"
         )
@@ -37,7 +37,7 @@ def get_all_tickets(projet_id):
             ticket_temp = ticket(
                 id=i[0],
                 categorie=i[1],
-                objet=i[2],
+                titre=i[2],
                 description=i[3],
                 date=i[4],
                 heure=i[5],
@@ -57,7 +57,7 @@ def get_all_tickets(projet_id):
                 "id": ticket_temp.id,
                 "projet_id": ticket_temp.projet_id,
                 "categorie": ticket_temp.categorie,
-                "objet": ticket_temp.objet,
+                "titre": ticket_temp.titre,
                 "description": ticket_temp.description,
                 "date": ticket_temp.date,
                 "heure": ticket_temp.heure,
@@ -89,7 +89,7 @@ def get_a_ticket(id, projet_id):
         return web.json_response(json.loads(json.dumps(data, indent=4)))
     try:
         req_str = (
-            "SELECT id, categorie, objet, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive, projet_id from tickets WHERE id ="
+            "SELECT id, categorie, titre, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec, date_fin, heure_fin, urgence, statut, technicien_affecte, technicien_qui_archive, projet_id from tickets WHERE id ="
             + str(id)
             + " and projet_id = "
             + str(projet_id)
@@ -100,7 +100,7 @@ def get_a_ticket(id, projet_id):
             ticket_temp = ticket(
                 id=i[0],
                 categorie=i[1],
-                objet=i[2],
+                titre=i[2],
                 description=i[3],
                 date=i[4],
                 heure=i[5],
@@ -120,7 +120,7 @@ def get_a_ticket(id, projet_id):
                 "id": ticket_temp.id,
                 "projet_id": ticket_temp.projet_id,
                 "categorie": ticket_temp.categorie,
-                "objet": ticket_temp.objet,
+                "titre": ticket_temp.titre,
                 "description": ticket_temp.description,
                 "date": ticket_temp.date,
                 "heure": ticket_temp.heure,
@@ -209,7 +209,7 @@ def change_ticket_statut(id, projet_id, statut):
 
 
 ## Créer un ticket
-def create_ticket(categorie, objet, description, urgence, user_create, projet_id):
+def create_ticket(categorie, titre, description, urgence, user_create_id, projet_id):
     ## Génération date et heure
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")
@@ -225,10 +225,10 @@ def create_ticket(categorie, objet, description, urgence, user_create, projet_id
 
     try:
         STR = (
-            "INSERT INTO `tickets` (`categorie`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('"
+            "INSERT INTO `tickets` (`categorie`, `titre`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`, `date_fin`, `heure_fin`, `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('"
             + str(categorie)
             + "', '"
-            + str(objet)
+            + str(titre)
             + "', '"
             + str(description)
             + "', '"
@@ -236,7 +236,7 @@ def create_ticket(categorie, objet, description, urgence, user_create, projet_id
             + "', '"
             + str(heure)
             + "', '"
-            + str(user_create)
+            + str(user_create_id)
             + "', '"
             + str(date_pec)
             + "', '"
