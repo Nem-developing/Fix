@@ -66,17 +66,24 @@ services:
     volumes:
       - db:/var/lib/mysql
 
-  adminer:
-    image: adminer
+  phpmyadmin:
+    image: phpmyadmin
     restart: always
+    environment:
+      PMA_HOST: fix-database
+      PMA_PORT: 3306
+      PMA_ABSOLUTE_URI: /phpmyadmin/
     networks:
       - fix-network
     labels:
     - "traefik.enable=true"
-    - "traefik.http.routers.adminer.rule=PathPrefix(`/adminer`)"
-    - "traefik.http.middlewares.adminer-stripprefix.stripPrefix.prefixes=/adminer"
-    - "traefik.http.routers.adminer.middlewares=adminer-stripprefix"
-    - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+    - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
+
+    - "traefik.http.middlewares.phpmyadmin-stripprefix.stripPrefix.prefixes=/phpmyadmin"
+    - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+
+    - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+
 volumes:
   fix:
   db:
