@@ -11,7 +11,7 @@ from typing import Optional
 class ticket:
     id: int
     categorie: str
-    objet: str
+    titre: str
     description: str
     date: str
     heure: str

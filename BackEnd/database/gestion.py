@@ -149,7 +149,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             heure = maintenant.strftime("%H:%M:%S")
             print("\t=> Ajout du ticket de bienvenue.", end="")
             req_str = (
-                "INSERT INTO `tickets` (`categorie`, `objet`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('Autre', 'Bienvenue sur Fix "
+                "INSERT INTO `tickets` (`categorie`, `titre`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('Autre', 'Bienvenue sur Fix "
                 + str(VERSION)
                 + " !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '"
                 + str(date)
@@ -207,7 +207,7 @@ def prepare():
     try:
         # Les requettes de créations de tables
         req_create_projets = "CREATE TABLE `projets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `titre` varchar(50), `description` varchar(1024), `date` varchar(10) NOT NULL, `statut` int NOT NULL);"
-        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `projet_id` INT NOT NULL , `categorie` varchar(50) NOT NULL, `objet` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` INT NOT NULL, `statut` INT NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `projet_id` INT NOT NULL , `categorie` varchar(50) NOT NULL, `titre` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` INT NOT NULL, `statut` INT NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
         req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `username` varchar(16) NOT NULL, `password` varchar(512) NOT NULL, `super_admin` INT NOT NULL, `creation` varchar(10) NOT NULL );"
         req_create_utilisateurs_permissions = "CREATE TABLE `utilisateurs_permissions` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur_id` INT NOT NULL, `projet_id` INT NOT NULL , `permissions` INT NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id),  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));"
         req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` INT NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
