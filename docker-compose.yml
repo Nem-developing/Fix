@@ -38,7 +38,7 @@ services:
 
 
   fix-app:
-    image: nemdeveloping/fix-app:2.0
+    image: nemdeveloping/fix-app:2.1
     restart: always
     depends_on:
       - fix-database
