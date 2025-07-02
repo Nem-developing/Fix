@@ -209,7 +209,7 @@ def change_ticket_statut(id, projet_id, statut):
 
 
 ## Créer un ticket
-def create_ticket(categorie, titre, description, urgence, user_create_id, projet_id):
+def create_ticket(titre, categorie, description, urgence, user_create_id, projet_id):
     ## Génération date et heure
     maintenant = datetime.now()
     date = maintenant.strftime("%d/%m/%Y")

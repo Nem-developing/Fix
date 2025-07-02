@@ -142,8 +142,8 @@ async def web_create_tiket(request):
     projet_id = int(request.match_info["projet_id"])
     # GET POST DATA
     post_data = await request.json()
-    serveur = post_data.get("serveur")
-    data_titre = post_data.get("titre")
+    titre = post_data.get("titre")
+    categorie = post_data.get("categorie")
     description = post_data.get("description")
     urgence = post_data.get("urgence")
     user_id = get_user_id_from_token(get_token(request))
@@ -151,7 +151,7 @@ async def web_create_tiket(request):
         json.loads(
             json.dumps(
                 create_ticket(
-                    serveur, data_titre, description, urgence, user_id, projet_id
+                    titre, categorie, description, urgence, user_id, projet_id
                 )
             )
         )

@@ -40,7 +40,7 @@ def create_project(token: str, titre: str, description: str) -> int:
 def create_ticket(token: str, projet_id: int, index: int = 0) -> int:
     url = f"{BASE_URL}/projets/{projet_id}/tickets"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
-
+    titre = "TITRE"
     categorie = random.choice([
         "bug", "feature", "support", "question",
         "maintenance", "sécurité", "performance", "accessibilité",
@@ -49,7 +49,7 @@ def create_ticket(token: str, projet_id: int, index: int = 0) -> int:
     description = ''.join(random.choices(string.ascii_lowercase + string.digits, k=50))
     urgence = random.randint(0, 2)
 
-    payload = {"categorie": categorie, "description": description, "urgence": urgence}
+    payload = {"categorie": categorie, "titre": titre, "description": description, "urgence": urgence}
 
     response = requests.post(url, json=payload, headers=headers)
     response.raise_for_status()
