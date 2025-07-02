@@ -1,6 +1,8 @@
 import requests
 import random
 import string
+from faker import Faker
+fake = Faker()
 
 # Configuration
 BASE_URL = "http://localhost:8000"
@@ -12,8 +14,8 @@ NB_TICKETS_EXISTANT = 50      # Tickets à créer pour le projet ID 1
 NB_NOUVEAUX_PROJETS = 2       # Nombre de projets à créer
 NB_TICKETS_PAR_PROJET = 30    # Tickets à créer par nouveau projet
 
-TITRE_PROJET = "SRV"
-DESCRIPTION_PROJET = "OBJ"
+TITRE_PROJET = fake.text(max_nb_chars=30)
+DESCRIPTION_PROJET = fake.text()
 STATUTS_POSSIBLES = [1, 2, 3, 4, 5]
 
 
@@ -40,13 +42,13 @@ def create_project(token: str, titre: str, description: str) -> int:
 def create_ticket(token: str, projet_id: int, index: int = 0) -> int:
     url = f"{BASE_URL}/projets/{projet_id}/tickets"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
-    titre = "TITRE"
+    titre = fake.text(max_nb_chars=30)
     categorie = random.choice([
         "bug", "feature", "support", "question",
         "maintenance", "sécurité", "performance", "accessibilité",
         "intégration", "UX", "mise à jour", "backup", "API", "régression"
     ])
-    description = ''.join(random.choices(string.ascii_lowercase + string.digits, k=50))
+    description = fake.text()
     urgence = random.randint(0, 2)
 
     payload = {"categorie": categorie, "titre": titre, "description": description, "urgence": urgence}
