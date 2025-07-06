@@ -12,8 +12,8 @@ const NewTicket = () => {
   const [confettiY, setConfettiY] = useState(0.5); // État pour la position Y des confettis
 
   const [formData, setFormData] = useState({
-    serveur: "",
-    objet: "",
+    titre: "",
+    categorie: "",
     description: "",
     urgence: 0,
   });
@@ -75,21 +75,21 @@ const NewTicket = () => {
       <div className="formdiv">
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Serveur :</label>
+            <label>Titre :</label>
             <input
               type="text"
-              name="serveur"
-              value={formData.serveur}
+              name="titre"
+              value={formData.titre}
               onChange={handleChange}
               required
             />
           </div>
           <div>
-            <label>Objet :</label>
+            <label>Categorie :</label>
             <input
               type="text"
-              name="objet"
-              value={formData.objet}
+              name="categorie"
+              value={formData.categorie}
               onChange={handleChange}
               required
             />

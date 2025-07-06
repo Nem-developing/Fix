@@ -40,7 +40,15 @@ export async function fetchTickets(endpointSuffix = "") {
       ""
     );
 
-    const res = await fetch(url);
+    // Récupération du token d'authentification depuis le localStorage
+    const token = localStorage.getItem("authToken");
+
+    const res = await fetch(url, {
+      headers: {
+        // Ajout du header Authorization avec le Bearer token
+        Authorization: `Bearer ${token ?? ""}`,
+      },
+    });
 
     // Si la réponse HTTP n'est pas OK (200), on déclenche une erreur
     if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
@@ -70,10 +78,14 @@ export async function createTicket(ticketData) {
 
   const url = `${BASE_URL}/projets/${projectIdNum}/tickets`;
 
+  // Récupération du token d'authentification depuis le localStorage
+  // const token = localStorage.getItem("authToken");
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      // Ajout du header Authorization avec le Bearer token
+      Authorization: `Bearer ${token ?? ""}`,
     },
     body: JSON.stringify(ticketData),
   });
