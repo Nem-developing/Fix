@@ -18,7 +18,7 @@ services:
       - fix-network
 
   fix-api:
-    image: nemdeveloping/fix-api:3.4
+    image: nemdeveloping/fix-api:3.5
     restart: always
     depends_on:
       - fix-database
