@@ -27,15 +27,41 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
   result,
   highlightLate,
 }) => {
-  const [tickets, setTickets] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Clé locale unique selon le filtre statut, format, etc
+  const cacheKey = `tickets-cache-${statut ?? "all"}-${format ?? "count"}`;
+  const initialCache = (() => {
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  })();
+
+  const [tickets, setTickets] = useState<any[]>(initialCache);
+  const [loading, setLoading] = useState(initialCache.length === 0); // charge uniquement si pas de cache
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    // 1. Lire depuis localStorage (stale)
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const cachedData = JSON.parse(cached);
+        setTickets(cachedData);
+        setLoading(false);
+      } catch {
+        // Ignorer erreur JSON parse
+      }
+    }
+
+    // 2. Requête API (revalidate)
     fetchTickets("tickets")
       .then((data) => {
         let filtered = data;
-
         if (statut) {
           const statutNum = statutMapping[statut];
           if (statutNum !== undefined) {
@@ -47,6 +73,9 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
 
         setTickets(filtered);
         setLoading(false);
+
+        // Mettre à jour le cache
+        localStorage.setItem(cacheKey, JSON.stringify(filtered));
       })
       .catch((err) => {
         setError(err);
@@ -54,7 +83,7 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
       });
   }, [statut, format, data, exclude, result]);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading && tickets.length === 0) return <p>Chargement...</p>;
   if (error) return <p>Erreur: {error.message}</p>;
 
   if (result === "light") {
