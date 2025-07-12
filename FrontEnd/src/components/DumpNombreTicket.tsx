@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { fetchTickets } from "../services/apiService";
 
-type Props = {
-  statut: string;
-};
+interface DumpNombreTicketProps {
+  statut?: string; // Filtrage par statut (ex: "open", "closed")
+  format?: "table"; // Affichage sous forme de tableau si présent
+  data?: string | string[]; // Colonnes à afficher
+  exclude?: string | string[]; // Colonnes à exclure
+  result?: "light"; // Mode "light" pour retourner juste un nombre
+}
 
 const statutMapping: Record<string, number> = {
   open: 0,
@@ -14,47 +18,88 @@ const statutMapping: Record<string, number> = {
   closed: 5,
 };
 
-const DumpNombreTicket: React.FC<Props> = ({ statut }) => {
-  const [count, setCount] = useState<number | null>(null);
+const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
+  statut,
+  format,
+  data,
+  exclude,
+  result,
+}) => {
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    console.log("Appel fetchTickets avec statut =", statut);
-
     fetchTickets("tickets")
-      .then((tickets) => {
-        console.log("Tickets reçus :", tickets);
+      .then((data) => {
+        let filtered = data;
 
-        const statutNum = statutMapping[statut];
-        console.log("statutNum (nombre) correspondant :", statutNum);
-
-        if (statutNum === undefined) {
-          console.warn(`Statut inconnu: ${statut}`);
-          setCount(null);
-          return;
+        if (statut) {
+          const statutNum = statutMapping[statut];
+          if (statutNum !== undefined) {
+            filtered = data.filter(
+              (ticket: any) => ticket.statut === statutNum
+            );
+          }
         }
 
-        const countByStatus = tickets.filter(
-          (ticket: { statut: number }) => ticket.statut === statutNum
-        ).length;
-
-        console.log(
-          `Nombre de tickets avec statut ${statut} (num ${statutNum}):`,
-          countByStatus
-        );
-
-        setCount(countByStatus);
+        setTickets(filtered);
+        setLoading(false);
       })
       .catch((err) => {
-        console.error("Erreur fetchTickets :", err);
-        setCount(null);
+        setError(err);
+        setLoading(false);
       });
-  }, [statut]);
+  }, [statut, format, data, exclude, result]);
 
-  return (
-    <div className="nb-DumpNombreTicket">
-      {count !== null ? count : "Chargement..."}
-    </div>
-  );
+  if (loading) return <p>Chargement...</p>;
+  if (error) return <p>Erreur: {error.message}</p>;
+
+  // Mode "light" : on retourne uniquement le nombre de tickets filtrés
+  if (result === "light") {
+    return <div className="nb-DumpNombreTicket">{tickets.length}</div>;
+  }
+
+  // Affichage sous forme de tableau
+  if (format === "table") {
+    const sample = tickets[0] || {};
+    let columns = Object.keys(sample);
+
+    if (data) {
+      if (typeof data === "string") {
+        columns = data.split(",").map((s) => s.trim());
+      } else {
+        columns = data;
+      }
+    } else if (exclude) {
+      const excludeList = Array.isArray(exclude) ? exclude : [exclude];
+      columns = columns.filter((col) => !excludeList.includes(col));
+    }
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            {columns.map((key) => (
+              <th key={key}>{key}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tickets.map((ticket, i) => (
+            <tr key={i}>
+              {columns.map((key) => (
+                <td key={key}>{String(ticket[key])}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
+  // Mode par défaut : affichage du nombre de tickets
+  return <div className="nb-DumpNombreTicket">{tickets.length}</div>;
 };
 
 export default DumpNombreTicket;

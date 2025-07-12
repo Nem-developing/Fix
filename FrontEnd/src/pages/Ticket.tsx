@@ -1,10 +1,11 @@
-import React from 'react';
+import React from "react";
+import DumpNombreTicket from "../components/DumpNombreTicket";
 
 const Ticket = () => {
   return (
     <div>
       <h1>Tickets</h1>
-      <p>Gestion des tickets, modification et suppression.</p>
+      <DumpNombreTicket format="table" data="id,titre,categorie,date" />
     </div>
   );
 };
