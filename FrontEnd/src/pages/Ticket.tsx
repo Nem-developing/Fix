@@ -3,7 +3,7 @@ import DumpNombreTicket from "../components/DumpNombreTicket";
 
 const Ticket = () => {
   return (
-    <div>
+    <div className="Ticket">
       <h1>Tickets</h1>
       <DumpNombreTicket format="table" data="id,titre,categorie,date" />
     </div>

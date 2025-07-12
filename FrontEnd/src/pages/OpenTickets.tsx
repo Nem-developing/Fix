@@ -1,10 +1,16 @@
-import React from 'react';
+import React from "react";
+import DumpNombreTicket from "../components/DumpNombreTicket";
 
 const OpenTickets = () => {
   return (
-    <div>
+    <div className="OpenTickets">
       <h1>Tickets Ouverts</h1>
-      <p>Liste des tickets actuellement ouverts.</p>
+      <DumpNombreTicket
+        format="table"
+        statut="open"
+        data="id,titre,categorie,date"
+        highlightLate={true}
+      />
     </div>
   );
 };

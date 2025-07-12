@@ -81,6 +81,7 @@ const NewTicket = () => {
               name="titre"
               value={formData.titre}
               onChange={handleChange}
+              autoComplete="off"
               required
             />
           </div>
@@ -91,6 +92,7 @@ const NewTicket = () => {
               name="categorie"
               value={formData.categorie}
               onChange={handleChange}
+              autoComplete="off"
               required
             />
           </div>
@@ -100,6 +102,7 @@ const NewTicket = () => {
               name="description"
               value={formData.description}
               onChange={handleChange}
+              autoComplete="off"
               required
             />
           </div>
