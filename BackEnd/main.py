@@ -11,7 +11,7 @@ import mysql.connector
 from datetime import datetime, timedelta
 from hashlib import sha512
 
-from stats.gestion import get_projets_stats, get_a_projet_stats
+from stats.gestion import get_projets_stats, get_a_projet_stats, get_tickets_graph
 from database.gestion import db_ok, prepare
 from projets.gestion import create_projet, get_a_projet, get_all_projets
 from tickets.gestion import change_ticket_statut, create_ticket, get_a_ticket, get_a_ticket_commentaire, get_all_ticket_commentaire, get_all_tickets, get_ticket_statut, post_commentaire, put_commentaire
@@ -363,7 +363,18 @@ async def web_stats_a_projet(request):
     projet_id = int(request.match_info["projet_id"])
     return web.json_response(json.loads(json.dumps(get_a_projet_stats(projet_id))))
 
-
+# WEB : (GET) Récupération des statistiques de tous les ticekts d'un projet
+async def web_stats_tickets(request):
+    statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
+    if statut == False:
+        data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
+        return web.json_response(json.loads(json.dumps(data)))
+    projet_id = int(request.match_info["projet_id"])
+    try:
+        days = int(request.rel_url.query["days"])
+    except:
+        days = 7
+    return web.json_response(json.loads(json.dumps(get_tickets_graph(projet_id,days))))
 
 # Définition des routes
 app = web.Application()
@@ -411,6 +422,7 @@ app.router.add_post("/tokens", web_post_tokens)
 # STATS
 app.router.add_get("/projets/stats", web_stats_projet)
 app.router.add_get("/projets/{projet_id}/stats", web_stats_a_projet)
+app.router.add_get("/projets/{projet_id}/graph", web_stats_tickets)
 
 
 

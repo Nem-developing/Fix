@@ -1,6 +1,5 @@
 # Imports 
 from dataclasses import dataclass
-import datetime
 import json
 from random import randint
 import random
@@ -8,7 +7,7 @@ import string
 from typing import Optional
 from aiohttp import web
 import mysql.connector
-from datetime import datetime, timedelta
+import datetime
 from hashlib import sha512
 
 # Imports locaux
@@ -22,7 +21,7 @@ from database.gestion import check_if_everything_is_ok, db_run
 # Fonctions de gestion
 ########################
 
-# Liste les catégories et le nombre 
+# Liste des catégories 
 def count_ticket_by_cat(projet_id):
     data = {"error": False}
     if check_if_everything_is_ok() != True:
@@ -95,3 +94,49 @@ def get_a_projet_stats(projet_id):
             "closed" : all_closed,
             "categories" : all_cats}
     return data
+
+
+def get_tickets_graph(projet_id,nbdays):
+    data = {"error": True}
+    if check_if_everything_is_ok() != True:
+        data = {"error": True}
+        return web.json_response(json.loads(json.dumps(data, indent=4)))
+
+    # Récupération des données
+    sql = f"""
+    SELECT stats_date, tickets_new, tickets_open, tickets_closed
+FROM tickets_stats
+WHERE projet_id = 1
+  AND stats_date >= CURDATE() - INTERVAL {nbdays} DAY
+ORDER BY stats_date DESC;
+"""
+    RESULT_SQL = db_run(sql, commit=False, fetch=True)
+    DONNES = {}
+    for i in RESULT_SQL.CONTENT:
+        DONNES[str(i[0])] = [i[1], i[2], i[3]]
+
+    # Génération des dates
+    today = datetime.datetime.today()
+    dates = [(today - datetime.timedelta(days=i)).date() for i in range(nbdays)]
+
+    # Mise en forme de la donnée
+    DATA = {}
+
+    for date_actuelle in dates:
+        date_actu = str(date_actuelle)
+        if date_actu in DONNES:
+            DATA[date_actu] = {
+                "date": str(date_actuelle),
+                "new": DONNES[date_actu][0],
+                "open": DONNES[date_actu][1],
+                "closed": DONNES[date_actu][2],
+            }
+
+        else:
+            DATA[date_actu] = {
+                "date": date_actu,
+                "new": 0,
+                "open": 0,
+                "closed": 0,
+            }
+    return DATA
