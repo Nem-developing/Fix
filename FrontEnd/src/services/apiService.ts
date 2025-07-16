@@ -101,3 +101,30 @@ export async function createTicket(ticketData) {
   const data = await response.json();
   return data;
 }
+
+export async function updateTicket(ticketId: number, ticketData: any) {
+  const projectIdStr = localStorage.getItem("projectId");
+  let projectIdNum = 1;
+  if (projectIdStr) {
+    const parsed = parseInt(projectIdStr, 10);
+    if (!isNaN(parsed) && parsed > 0) projectIdNum = parsed;
+  }
+
+  const url = `${BASE_URL}/projets/${projectIdNum}/tickets/${ticketId}`;
+  const token = localStorage.getItem("authToken") ?? "";
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(ticketData),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP ${response.status}`);
+  }
+
+  return await response.json();
+}
