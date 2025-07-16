@@ -8,6 +8,7 @@ interface DumpNombreTicketProps {
   exclude?: string | string[]; // Colonnes à exclure
   result?: "light"; // Mode "light" pour retourner juste un nombre
   extraWarningColumn?: boolean; // Ajoute une colonne "avertissement" si activé
+  onTicketClick?: (ticket: any) => void; // Permet l'ouverture d'une popup de modification
 }
 
 const statutMapping: Record<string, number> = {
@@ -26,6 +27,7 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
   exclude,
   result,
   extraWarningColumn,
+  onTicketClick,
 }) => {
   // Clé locale unique selon le filtre statut, format, etc
   const cacheKey = `tickets-cache-${statut ?? "all"}-${format ?? "count"}`;
@@ -106,9 +108,7 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
     }
 
     // Ajoute dynamiquement la colonne "avertissement" si activé
-    const finalColumns = extraWarningColumn
-      ? [...columns, "il y a"]
-      : columns;
+    const finalColumns = extraWarningColumn ? [...columns, "il y a"] : columns;
 
     return (
       <table className="DumpNombreTicket">
@@ -144,7 +144,11 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
             }
 
             return (
-              <tr key={i}>
+              <tr
+                key={i}
+                onClick={() => onTicketClick?.(ticket)}
+                className={onTicketClick ? "clickable-row" : ""}
+              >
                 {columns.map((key) => (
                   <td key={key}>{String(ticket[key])}</td>
                 ))}

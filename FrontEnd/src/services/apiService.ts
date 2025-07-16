@@ -1,4 +1,5 @@
-const BASE_URL = "/api";
+const BASE_URL = "http://localhost:9001/api";
+// const BASE_URL = "/api";
 
 // ============================================================ Récupération des tickets
 
@@ -80,6 +81,9 @@ export async function createTicket(ticketData) {
 
   // Récupération du token d'authentification depuis le localStorage
   // const token = localStorage.getItem("authToken");
+  const token =
+    "SKRZ0NBLTT0ZZZYY443A-JEU992C5Z7G3GG7RW5PR-FQ8MXG4EXJ17UAP5O3J5";
+
   const response = await fetch(url, {
     method: "POST",
     headers: {

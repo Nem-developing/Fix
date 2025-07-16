@@ -178,3 +178,117 @@
     transform: translateX(0);
   }
 }
+
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.clickable-row:hover {
+  background-color: #f0f0f0;
+}
+
+/* TicketEditModal */
+/* Fond de la modale */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  /* Conteneur de la modale */
+  .modal {
+    background-color: white;
+    border-radius: 13px;
+    padding: 2em;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeInScale 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Style des labels */
+  .modal label {
+    margin-top: 1rem;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: #555;
+  }
+
+  /* Inputs */
+  .modal input,
+  .modal textarea,
+  .modal select {
+    padding: 0.7em 1em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border 0.3s, box-shadow 0.3s;
+    width: 100%;
+  }
+
+  .modal input:focus,
+  .modal textarea:focus,
+  .modal select:focus {
+    border-color: rgb(71, 142, 230);
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    outline: none;
+  }
+
+  /* Boutons */
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5em;
+    gap: 1rem;
+  }
+
+  .buttons button {
+    padding: 0.75em 1.5em;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .buttons .save {
+    background-color: #28a745;
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+
+  .buttons .cancel {
+    background-color: #dc3545;
+
+    &:hover {
+      background-color: #be2837;
+    }
+  }
+}
