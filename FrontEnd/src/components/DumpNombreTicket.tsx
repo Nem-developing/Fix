@@ -7,7 +7,7 @@ interface DumpNombreTicketProps {
   data?: string | string[]; // Colonnes à afficher
   exclude?: string | string[]; // Colonnes à exclure
   result?: "light"; // Mode "light" pour retourner juste un nombre
-  highlightLate?: boolean; // Active l'effet rouge clignotant pour les tickets vieux de plus de x jours
+  extraWarningColumn?: boolean; // Ajoute une colonne "avertissement" si activé
 }
 
 const statutMapping: Record<string, number> = {
@@ -25,7 +25,7 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
   data,
   exclude,
   result,
-  highlightLate,
+  extraWarningColumn,
 }) => {
   // Clé locale unique selon le filtre statut, format, etc
   const cacheKey = `tickets-cache-${statut ?? "all"}-${format ?? "count"}`;
@@ -105,20 +105,26 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
       columns = columns.filter((col) => !excludeList.includes(col));
     }
 
+    // Ajoute dynamiquement la colonne "avertissement" si activé
+    const finalColumns = extraWarningColumn
+      ? [...columns, "il y a"]
+      : columns;
+
     return (
       <table className="DumpNombreTicket">
         <thead>
           <tr>
-            {columns.map((key) => (
+            {finalColumns.map((key) => (
               <th key={key}>{key}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {tickets.map((ticket, i) => {
-            // Calculer si le ticket est "late" (date > x jours)
+            let daysLate: number | null = null;
             let isLate = false;
-            if (highlightLate && ticket.date) {
+
+            if (extraWarningColumn && ticket.date) {
               const parts = ticket.date.split("/");
               if (parts.length === 3) {
                 // Format DD/MM/YYYY -> YYYY-MM-DD
@@ -130,17 +136,25 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
                 if (!isNaN(ticketDate.getTime())) {
                   const now = new Date();
                   const diffTime = now.getTime() - ticketDate.getTime();
-                  const diffDays = diffTime / (1000 * 60 * 60 * 24);
-                  isLate = diffDays > 3; // Nombre de jours pour le clignotement
+                  daysLate = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                  // Nombre de jours pour l'arvertissement
+                  isLate = daysLate >= 7;
                 }
               }
             }
 
             return (
-              <tr key={i} className={isLate ? "ticket-late" : ""}>
+              <tr key={i}>
                 {columns.map((key) => (
                   <td key={key}>{String(ticket[key])}</td>
                 ))}
+                {extraWarningColumn && (
+                  <td key="avertissement">
+                    {daysLate !== null
+                      ? `${daysLate} jours${isLate ? " ❗" : ""}`
+                      : "-"}
+                  </td>
+                )}
               </tr>
             );
           })}
@@ -148,8 +162,6 @@ const DumpNombreTicket: React.FC<DumpNombreTicketProps> = ({
       </table>
     );
   }
-
-  return <div className="nb-DumpNombreTicket">{tickets.length}</div>;
 };
 
 export default DumpNombreTicket;

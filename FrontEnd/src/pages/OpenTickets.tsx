@@ -9,7 +9,7 @@ const OpenTickets = () => {
         format="table"
         statut="open"
         data="id,titre,categorie,date"
-        highlightLate={true}
+        extraWarningColumn={true}
       />
     </div>
   );

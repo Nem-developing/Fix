@@ -154,18 +154,27 @@
   }
 }
 
-.ticket-late {
-  animation: clignote 1.5s ease-in-out infinite;
-  background-color: rgba(255, 0, 0, 0.1);
-  transition: background-color 0.5s ease-in-out;
+.late-alert {
+  color: red;
+  font-weight: bold;
+  margin-left: 5px;
+  animation: shake 0.5s ease-in-out;
 }
 
-@keyframes clignote {
-  0%,
-  100% {
-    background-color: rgba(255, 0, 0, 0.1);
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
   }
   50% {
-    background-color: rgba(255, 0, 0, 0.4);
+    transform: translateX(2px);
+  }
+  75% {
+    transform: translateX(-1px);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
