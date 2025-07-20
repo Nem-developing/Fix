@@ -8,7 +8,7 @@ import {
 import {
   TicketCommentForm,
   TicketCommentList,
-} from "../components/TicketComment";
+} from "../components/tickets/TicketComment";
 
 interface Ticket {
   id: number;

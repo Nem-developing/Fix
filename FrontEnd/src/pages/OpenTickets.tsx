@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import DumpNombreTicket from "../components/DumpNombreTicket";
-import TicketEditModal from "../components/TicketEditModal";
+import DumpNombreTicket from "../components/tickets/DumpNombreTicket";
+import TicketEditModal from "../components/tickets/TicketEditModal";
 
 const OpenTickets = () => {
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null);

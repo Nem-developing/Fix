@@ -228,3 +228,23 @@ export async function fetchTicketById(ticketId: number) {
 
   return await response.json();
 }
+
+export async function fetchGraphData() {
+  const projectIdStr = localStorage.getItem("projectId");
+  const projectId = projectIdStr ? parseInt(projectIdStr, 10) : 1;
+  const token = localStorage.getItem("authToken") ?? "";
+
+  const url = `${BASE_URL}/projets/${projectId}/graph`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP ${response.status}`);
+  }
+
+  return await response.json();
+}

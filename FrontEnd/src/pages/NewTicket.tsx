@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTicket } from "../services/apiService";
-import ConfettiExplosion from "../components/ConfettiExplosion";
+import ConfettiExplosion from "../components/style/ConfettiExplosion";
 import { useWindowSize } from "@react-hook/window-size";
 
 const NewTicket = () => {

@@ -1,5 +1,6 @@
 import React from "react";
-import DumpNombreTicket from "../components/DumpNombreTicket";
+import DumpNombreTicket from "../components/tickets/DumpNombreTicket";
+import EtatTicket from "../components/graph/Etat";
 
 const Dashboard = () => {
   return (
@@ -26,6 +27,7 @@ const Dashboard = () => {
         <div className="Graphiques">
           <div className="etat">
             <h2>État des tickets</h2>
+            <EtatTicket />
           </div>
           <div className="categorie">
             <h2>Tickets par categorie</h2>

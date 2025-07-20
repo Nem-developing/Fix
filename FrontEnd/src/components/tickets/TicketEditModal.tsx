@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { updateTicket } from "../services/apiService";
+import { updateTicket } from "../../services/apiService";
 import { useNavigate } from "react-router-dom";
 
 interface Ticket {

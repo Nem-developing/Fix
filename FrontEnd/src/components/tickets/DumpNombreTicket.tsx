@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchTickets } from "../services/apiService";
+import { fetchTickets } from "../../services/apiService";
 
 interface DumpNombreTicketProps {
   statut?: string; // Filtrage par statut (ex: "open", "closed")

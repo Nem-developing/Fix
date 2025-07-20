@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { routeConfig } from "../routes/routeConfig";
+import { routeConfig } from "../../routes/routeConfig";
 
 type SidebarProps = {
   isOpen: boolean;
