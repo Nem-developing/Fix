@@ -291,4 +291,12 @@
       background-color: #be2837;
     }
   }
+
+  .buttons .view {
+    background-color: #478EE6;
+
+    &:hover {
+      background-color: #326EBE;
+    }
+  }
 }

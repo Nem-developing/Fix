@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { updateTicket } from "../services/apiService";
+import { useNavigate } from "react-router-dom";
 
 interface Ticket {
   id: number;
@@ -20,6 +21,11 @@ const TicketEditModal: React.FC<TicketEditModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const navigate = useNavigate();
+  const handleViewTicket = (ticketId: number) => {
+    navigate(`/ticket/${ticketId}`);
+  };
+
   const [edited, setEdited] = useState<Ticket>({ ...ticket });
 
   const handleChange = (key: string, value: string) => {
@@ -66,6 +72,7 @@ const TicketEditModal: React.FC<TicketEditModalProps> = ({
         {/* Ajoute d'autres champs si besoin */}
 
         <div className="buttons">
+          <button className="view" onClick={() => handleViewTicket(ticket.id)}>Consulter</button>
           <button className="save" onClick={handleSave}>
             Sauvegarder
           </button>

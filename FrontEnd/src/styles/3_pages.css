@@ -4,7 +4,8 @@
 .Dashboard,
 .NewTicket,
 .Ticket,
-.OpenTickets {
+.OpenTickets,
+.TicketPage {
   width: 100%;
 
   h1 {
@@ -132,4 +133,138 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+.TicketPage {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ticket-details {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ticket-details h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.ticket-details p {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+  color: #555;
+}
+
+.ticket-details strong {
+  color: #222;
+}
+
+.comments-section {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.comments-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+/* Styles pour TicketCommentForm */
+.ticket-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.ticket-comment-form textarea {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #005eff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.form-buttons button:hover {
+  background-color: #0041c2;
+}
+
+.form-buttons button[type="button"] {
+  background-color: #999;
+}
+
+.form-buttons button[type="button"]:hover {
+  background-color: #777;
+}
+
+/* Styles pour TicketCommentList */
+.ticket-comment-list {
+  margin-top: 1rem;
+}
+
+.ticket-comment-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comment-item {
+  border-top: 1px solid #eee;
+  padding: 1rem 0;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.comment-date {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.comment-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comment-actions button {
+  background: none;
+  border: none;
+  color: #005eff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.comment-actions button:hover {
+  text-decoration: underline;
 }

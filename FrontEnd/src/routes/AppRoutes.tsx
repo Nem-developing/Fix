@@ -7,6 +7,7 @@ import TicketHistory from "../pages/TicketHistory";
 import Reports from "../pages/Reports";
 import Users from "../pages/Users";
 import Ticket from "../pages/Ticket";
+import TicketPage from "../pages/TicketPage";
 
 const AppRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AppRoutes = () => {
       <Route path="ticket" element={<Ticket />} />
       <Route path="/reports" element={<Reports />} />
       <Route path="/users" element={<Users />} />
+      <Route path="/ticket/:id" element={<TicketPage />} />
     </Routes>
   );
 };
