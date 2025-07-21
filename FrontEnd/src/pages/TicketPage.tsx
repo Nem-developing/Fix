@@ -4,6 +4,8 @@ import {
   createComment,
   fetchComments,
   fetchTicketById,
+  updateComment,
+  deleteComment,
 } from "../services/apiService";
 import {
   TicketCommentForm,
@@ -24,7 +26,6 @@ interface Comment {
   auteur: string;
   contenu: string;
   date: string;
-  timestamp: number;
 }
 
 const TicketPage: React.FC = () => {
@@ -70,16 +71,21 @@ const TicketPage: React.FC = () => {
       ? c.Commentaires.map((com) => {
           // Construit un objet Date valide à partir de la date et l'heure reçues
           const [jour, mois, annee] = com.date.split("/");
-          const timestamp = new Date(
-            `${annee}-${mois}-${jour}T${com.heure}`
-          ).getTime();
+          const dateUTC = new Date(`${annee}-${mois}-${jour}T${com.heure}Z`); // "Z" = UTC
+          const dateLocale = new Date(
+            dateUTC.getTime() + new Date().getTimezoneOffset()
+          );
+          const dateStr = dateLocale.toLocaleString("fr-FR", {
+            dateStyle: "short",
+            timeStyle: "short",
+          });
 
           return {
             id: com.id,
             auteur: `Utilisateur #${com.user_id}`,
             contenu: com.commentaire,
-            date: `${com.date} ${com.heure}`,
-            timestamp,
+            date: dateStr,
+            timestamp: dateLocale.getTime(),
           };
         })
       : [];
@@ -102,6 +108,35 @@ const TicketPage: React.FC = () => {
       await reloadComments(ticket.id);
     } catch (err) {
       console.error("Erreur lors de l'ajout du commentaire :", err);
+    }
+  };
+
+  const handleEditComment = async (commentToEdit: Comment) => {
+    const nouveauContenu = prompt(
+      "Modifier le commentaire :",
+      commentToEdit.contenu
+    );
+    if (nouveauContenu !== null && nouveauContenu.trim() !== "") {
+      try {
+        await updateComment(ticket!.id, commentToEdit.id, {
+          message: nouveauContenu.trim(),
+          statut: 0,
+        });
+        await reloadComments(ticket!.id);
+      } catch (err) {
+        console.error("Erreur lors de la modification :", err);
+      }
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (window.confirm("Supprimer ce commentaire ?")) {
+      try {
+        await deleteComment(ticket!.id, commentId);
+        await reloadComments(ticket!.id);
+      } catch (err) {
+        console.error("Erreur lors de la suppression :", err);
+      }
     }
   };
 
@@ -146,7 +181,11 @@ const TicketPage: React.FC = () => {
       <div className="comments-section">
         <h2>Commentaires</h2>
         <TicketCommentForm onSubmit={handleNewComment} />
-        <TicketCommentList comments={comments} />
+        <TicketCommentList
+          comments={comments}
+          onEdit={handleEditComment}
+          onDelete={handleDeleteComment}
+        />
       </div>
     </div>
   );

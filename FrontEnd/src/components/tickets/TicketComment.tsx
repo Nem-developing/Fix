@@ -9,7 +9,7 @@ interface Comment {
 
 interface TicketCommentListProps {
   comments: Comment[];
-  onEdit?: (comment: Comment) => void;
+  onEdit?: (comment: Comment) => Promise<void>;
   onDelete?: (commentId: number) => void;
 }
 
