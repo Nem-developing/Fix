@@ -229,7 +229,16 @@ export async function fetchTicketById(ticketId: number) {
   return await response.json();
 }
 
-export async function fetchGraphData() {
+type GraphEntry = {
+  date: string;
+  new: number;
+  open: number;
+  closed: number;
+};
+
+type GraphDataResponse = Record<string, GraphEntry>;
+
+export async function fetchGraphData(): Promise<Record<string, GraphEntry>> {
   const projectIdStr = localStorage.getItem("projectId");
   const projectId = projectIdStr ? parseInt(projectIdStr, 10) : 1;
   const token = localStorage.getItem("authToken") ?? "";

@@ -46,7 +46,7 @@
 
     .Info-rapide {
       display: flex;
-      justify-content: space-evenly;
+      justify-content: space-between;
 
       /* Styles communs aux t-ouvert, t-encours et t-ferme */
       .t-ouvert,
@@ -82,7 +82,7 @@
     .Graphiques {
       margin-top: 2em;
       display: flex;
-      justify-content: space-evenly;
+      justify-content: space-between;
 
       h2 {
         font-size: 1.5em;
@@ -94,18 +94,18 @@
       .categorie {
         display: flex;
         flex-direction: column;
-        min-height: 30em;
+        min-height: 24em;
         border: 0 solid;
         border-radius: 13px;
         background-color: white;
       }
 
       .etat {
-        width: 60%;
+        width: 66%;
       }
 
       .categorie {
-        width: 35%;
+        width: 33%;
       }
     }
   }
@@ -293,10 +293,10 @@
   }
 
   .buttons .view {
-    background-color: #478EE6;
+    background-color: #478ee6;
 
     &:hover {
-      background-color: #326EBE;
+      background-color: #326ebe;
     }
   }
 }
