@@ -1,10 +1,11 @@
-import React from 'react';
+import React from "react";
+import Information_dev from "../components/autres/informationdev";
 
 const Reports = () => {
   return (
     <div>
       <h1>Rapports</h1>
-      <p>Statistiques et rapports des tickets.</p>
+      <Information_dev type="info" featureName="Rapports" />
     </div>
   );
 };
