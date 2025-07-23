@@ -7,9 +7,9 @@ import { useWindowSize } from "@react-hook/window-size";
 const NewTicket = () => {
   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
-  const [width, height] = useWindowSize(); // Garde la taille de la fenêtre
-  const successMessageRef = useRef<HTMLHeadingElement>(null); // Réf pour le h2 du message de succès
-  const [confettiY, setConfettiY] = useState(0.5); // État pour la position Y des confettis
+  const [width, height] = useWindowSize();
+  const successMessageRef = useRef<HTMLHeadingElement>(null);
+  const [confettiY, setConfettiY] = useState(0.5);
 
   const [formData, setFormData] = useState({
     titre: "",
@@ -17,6 +17,8 @@ const NewTicket = () => {
     description: "",
     urgence: 0,
   });
+
+  const [categorieError, setCategorieError] = useState(false); // 🔴 État pour l'erreur de catégorie
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -33,21 +35,24 @@ const NewTicket = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.categorie) {
+      setCategorieError(true); // 🔴 active l'erreur si vide
+      return;
+    } else {
+      setCategorieError(false);
+    }
+
     try {
       const result = await createTicket(formData);
       console.log("Ticket créé :", result);
       setShowSuccess(true);
 
-      // Utilise un petit délai pour s'assurer que le DOM est mis à jour
-      // et que le message de succès est visible avant de calculer sa position.
-      // Le useRef doit pointer vers le 'h2' car c'est lui qui donne la position du texte.
       setTimeout(() => {
         if (successMessageRef.current) {
           const rect = successMessageRef.current.getBoundingClientRect();
-          // Calcule la position Y relative, sous le texte du message de succès.
           setConfettiY(rect.bottom / height + 0.02);
         }
-      }, 50); // Un léger délai de 50ms est souvent suffisant
+      }, 50);
 
       setTimeout(() => {
         setShowSuccess(false);
@@ -85,17 +90,38 @@ const NewTicket = () => {
               required
             />
           </div>
-          <div>
-            <label>Categorie :</label>
-            <input
-              type="text"
-              name="categorie"
-              value={formData.categorie}
-              onChange={handleChange}
-              autoComplete="off"
-              required
-            />
+
+          <div className="categorie-wrapper">
+            <label>Catégorie :</label>
+            <div className="categorie-options">
+              {[
+                "Support technique",
+                "Demande d'information",
+                "Problème de compte",
+                "Suggestion",
+                "Bug",
+                "Autre",
+              ].map((cat) => (
+                <button
+                  type="button"
+                  key={cat}
+                  className={`categorie-button ${
+                    formData.categorie === cat ? "selected" : ""
+                  }`}
+                  onClick={() => {
+                    setFormData((prev) => ({ ...prev, categorie: cat }));
+                    setCategorieError(false); // réinitialise l'erreur au clic
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            {categorieError && (
+              <p className="form-error">Veuillez sélectionner une catégorie.</p>
+            )}
           </div>
+
           <div>
             <label>Description :</label>
             <textarea
