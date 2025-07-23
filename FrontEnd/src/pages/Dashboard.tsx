@@ -2,6 +2,7 @@ import React from "react";
 import DumpNombreTicket from "../components/tickets/DumpNombreTicket";
 import EtatTicketGraph from "../components/graph/Etat";
 import CategoryTicketGraph from "../components/graph/Categorie";
+import Information_dev from "../components/autres/informationdev";
 
 const Dashboard = () => {
   return (
@@ -11,7 +12,7 @@ const Dashboard = () => {
       <div className="block">
         <div className="Info-rapide">
           <div className="t-ouvert">
-            <h2>OUVERTS</h2>
+            <h2>NOUVEAUX</h2>
             <DumpNombreTicket statut="open" result="light" />
           </div>
           <div className="t-encours">
@@ -32,6 +33,7 @@ const Dashboard = () => {
           </div>
           <div className="categorie">
             <h2>Tickets par categorie</h2>
+            <Information_dev type="warning" featureName="CategoryTicketGraph" />
             <CategoryTicketGraph />
           </div>
         </div>

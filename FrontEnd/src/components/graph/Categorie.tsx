@@ -11,12 +11,22 @@ import {
 // Données factices des catégories de tickets
 const mockData = [
   { name: "Bug", value: 8 },
-  { name: "Feature", value: 5 },
-  { name: "Support", value: 3 },
+  { name: "Demande d'information", value: 5 },
+  { name: "Support technique", value: 2 },
+  { name: "Problème de compte", value: 9 },
+  { name: "Suggestion", value: 1 },
+  { name: "Autre", value: 8 },
 ];
 
 // Couleurs pour chaque catégorie
-const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
+const COLORS = [
+  "#f51c1cff",
+  "#15c2f7ff",
+  "#e9971dff",
+  "#c41690ff",
+  "#1df81dff",
+  "#b9b9b9ff",
+];
 
 export default function CategoryTicketGraph() {
   return (
