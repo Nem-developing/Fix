@@ -40,6 +40,7 @@
     .Graphiques {
       margin-top: map-get(var.$spacings, xl);
       @include mix.flex-space-between;
+      align-items: stretch;
 
       h2 {
         font-size: var.$font-size-xl;
@@ -49,7 +50,6 @@
       .etat,
       .categorie {
         @include mix.flex-col;
-        min-height: 24em;
         border: 0 solid;
         border-radius: map-get(var.$border-radii, lg);
         background-color: var.$background-color-white;
@@ -57,9 +57,9 @@
 
       .etat {
         width: 66%;
-
         .recharts-responsive-container {
           display: flex;
+          flex-grow: 1;
 
           .recharts-wrapper {
             .recharts-legend-wrapper {
