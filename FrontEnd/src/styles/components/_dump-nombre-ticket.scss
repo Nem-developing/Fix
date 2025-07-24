@@ -1,41 +1,42 @@
 // src/styles/components/_dump-nombre-ticket.scss
+@use "../abstracts/variables" as var;
 
 .DumpNombreTicket {
   width: 100%;
   max-width: 100%;
   border-collapse: collapse;
-  margin: 2em auto;
-  font-size: 0.95rem;
-  border-radius: 8px; // Pensez à une variable
+  margin: map-get(var.$spacings, xl) auto;
+  font-size: var.$font-size-sm;
+  border-radius: map-get(var.$border-radii, sm);
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Pensez à une variable
+  box-shadow: var.$shadow-md;
 
   thead {
-    background-color: rgb(71, 142, 230); // Pensez à une variable
+    background-color: var.$color-primary-blue;
 
     th {
-      color: white; // Pensez à une variable
+      color: var.$color-white;
       text-align: left;
-      padding: 1em;
+      padding: map-get(var.$spacings, md);
       font-weight: 600;
-      font-size: 1rem;
+      font-size: var.$font-size-md;
     }
   }
 
   tbody {
     tr {
       &:nth-child(even) {
-        background-color: #f8f9fa; // Pensez à une variable
+        background-color: var.$background-success-table-even;
       }
 
       &:hover {
-        background-color: #e9f3ff; // Pensez à une variable
+        background-color: var.$background-hover-table-row;
       }
 
       td {
-        padding: 0.75em 1em;
-        border-top: 1px solid #ddd; // Pensez à une variable
-        color: #333; // Pensez à une variable
+        padding: map-get(var.$spacings, sm) map-get(var.$spacings, md);
+        border-top: 1px solid var.$border-color-light;
+        color: var.$text-color-dark;
         vertical-align: top;
       }
     }
@@ -44,8 +45,9 @@
 
 .clickable-row {
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background var.$transition-speed-fast ease;
 }
+
 .clickable-row:hover {
-  background-color: #f0f0f0; // Pensez à une variable
+  background-color: lighten(var.$background-light-gray, 3%);
 }

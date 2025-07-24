@@ -1,7 +1,8 @@
 // src/styles/components/_ticket-comment-list.scss
+@use "../abstracts/variables" as var;
 
 .ticket-comment-list {
-  margin-top: 1rem;
+  margin-top: map-get(var.$spacings, md);
 }
 
 .ticket-comment-list ul {
@@ -11,35 +12,35 @@
 }
 
 .comment-item {
-  border-top: 1px solid #eee; // Variable: $border-color-lighter
-  padding: 1rem 0;
+  border-top: 1px solid var.$border-color-lighter;
+  padding: map-get(var.$spacings, md) 0;
 }
 
 .comment-header {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
-  color: #333; // Variable: $text-color-dark
-  margin-bottom: 0.3rem;
+  color: var.$text-color-dark;
+  margin-bottom: map-get(var.$spacings, xxs) * 0.75;
 }
 
 .comment-date {
-  font-size: 0.85rem;
-  color: #888; // Variable: $text-color-light-gray
+  font-size: var.$font-size-xs;
+  color: var.$text-color-light-gray;
 }
 
 .comment-actions {
-  margin-top: 0.5rem;
+  margin-top: map-get(var.$spacings, xs);
   display: flex;
-  gap: 0.5rem;
+  gap: map-get(var.$spacings, xs);
 }
 
 .comment-actions button {
   background: none;
   border: none;
-  color: #005eff; // Variable: $color-primary-blue
+  color: var.$color-primary-blue;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: var.$font-size-sm * 0.95;
 }
 
 .comment-actions button:hover {

@@ -1,14 +1,14 @@
 // src/styles/components/_information-dev.scss
-@use '../abstracts/variables' as var; // Pour les variables
+@use "../abstracts/variables" as var; // Pour les variables
 
 .information-dev {
   padding: 10px 15px;
   margin-bottom: 15px;
-  border-radius: var.$border-radius-xs; // Variable pour le border-radius
+  border-radius: map-get(var.$border-radii, xs);
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: monospace; // Peut-être une variable si cette police est réutilisée
+  font-family: monospace;
   font-size: 14px;
 }
 

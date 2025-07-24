@@ -1,76 +1,69 @@
 // src/styles/pages/_dashboard.scss
+@use "../abstracts/variables" as var;
+@use "../abstracts/mixins" as mix;
 
 .Dashboard {
   .block {
     width: 100%;
 
     .Info-rapide {
-      display: flex;
-      justify-content: space-between;
+      @include mix.flex-space-between;
 
-      .t-ouvert,
-      .t-encours,
-      .t-ferme {
-        color: white; // Pensez à une variable
-        padding: 1em;
-        width: 30%; // Vous pourriez utiliser des pourcentages ou flex-basis
-        display: flex;
-        flex-direction: column;
+      %ticket-status-tile {
+        color: var.$color-white;
+        padding: map-get(var.$spacings, md);
+        width: 30%;
+        @include mix.flex-col;
         border: 0 solid;
-        border-radius: 13px; // Pensez à une variable de border-radius
+        border-radius: map-get(var.$border-radii, lg);
       }
 
       .t-ouvert {
-        background-color: rgb(71, 142, 230); // Pensez à une variable
+        @extend %ticket-status-tile;
+        background-color: var.$dashboard-ticket-open-color;
       }
       .t-encours {
-        background-color: rgb(68, 89, 164); // Pensez à une variable
+        @extend %ticket-status-tile;
+        background-color: var.$dashboard-ticket-in-progress-color;
       }
       .t-ferme {
-        background-color: rgb(52, 149, 140); // Pensez à une variable
+        @extend %ticket-status-tile;
+        background-color: var.$dashboard-ticket-closed-color;
       }
 
       .nb-DumpNombreTicket {
-        margin-top: 0.2em;
-        font-size: 2.5em;
+        margin-top: map-get(var.$spacings, xxs) * 0.5;
+        font-size: var.$font-size-xxxl;
       }
     }
 
     .Graphiques {
-      margin-top: 2em;
-      display: flex;
-      justify-content: space-between;
+      margin-top: map-get(var.$spacings, xl);
+      @include mix.flex-space-between;
 
       h2 {
-        font-size: 1.5em;
-        margin: 1em;
+        font-size: var.$font-size-xl;
+        margin: map-get(var.$spacings, md);
       }
 
       .etat,
       .categorie {
-        display: flex;
-        flex-direction: column;
+        @include mix.flex-col;
         min-height: 24em;
         border: 0 solid;
-        border-radius: 13px;
-        background-color: white;
+        border-radius: map-get(var.$border-radii, lg);
+        background-color: var.$background-color-white;
       }
 
       .etat {
         width: 66%;
 
-        // Styles Recharts pour .etat
         .recharts-responsive-container {
-          // Cible le conteneur responsif du graphique
-          display: flex; // Exemple : pour centrer ou aligner le contenu du graphique
+          display: flex;
 
           .recharts-wrapper {
-            // Cible l'enveloppe interne de Recharts
             .recharts-legend-wrapper {
-              // Cible spécifiquement la légende
-              display: flex;
-              align-items: center;
-              flex-direction: column; // Pour que les éléments de légende s'empilent verticalement
+              @include mix.flex-col-center;
             }
           }
         }
@@ -78,9 +71,6 @@
 
       .categorie {
         width: 33%;
-        // Si vous avez aussi des graphiques Recharts ici, vous pourriez
-        // copier les styles .recharts-responsive-container aussi si applicable,
-        // ou créer un mixin si ces styles sont très souvent répétés.
       }
     }
   }

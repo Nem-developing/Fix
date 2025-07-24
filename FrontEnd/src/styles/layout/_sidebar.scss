@@ -1,72 +1,69 @@
 // src/styles/layout/_sidebar.scss
+@use "../abstracts/variables" as var;
+@use "../abstracts/mixins" as mix;
 
 .Sidebar {
-  // Styles généraux de la Sidebar (déjà définis ou mis à jour)
   position: fixed;
   top: 0;
   left: -250px;
-  width: 260px;
+  width: var.$sidebar-width-mobile;
   height: 100vh;
-  transition: left 0.3s ease;
-  z-index: 10;
+  transition: left var.$transition-speed-medium ease;
+  z-index: var.$z-index-sidebar;
   overflow-y: auto;
-  padding: 1em;
-  background-color: rgb(25, 47, 71); // <-- Ajouté ici (pensez à une variable)
+  padding: map-get(var.$spacings, md);
+  background-color: var.$color-secondary-dark-blue;
 
   nav {
     display: flex;
     flex-direction: column;
-    margin-top: 1em;
+    margin-top: map-get(var.$spacings, md);
 
     a {
       text-decoration: none;
     }
 
     .imagelien {
-      display: flex;
-      align-items: center;
+      @include mix.flex-center-y;
 
       img {
-        margin-left: 1em;
-        height: 1.5em;
+        margin-left: map-get(var.$spacings, md);
+        height: var.$font-size-xl;
       }
     }
   }
 
   h1 {
-    color: white; // <-- Pensez à une variable
-    margin: 1em;
+    color: var.$color-white;
+    margin: map-get(var.$spacings, md);
   }
 
   .with-separator {
-    border-bottom: 1px solid rgb(105, 120, 136); // <-- Pensez à une variable
-    padding-bottom: 1em;
-    margin-bottom: 1em;
+    border-bottom: 1px solid var.$border-color-sidebar-separator;
+    padding-bottom: map-get(var.$spacings, md);
+    margin-bottom: map-get(var.$spacings, md);
   }
 
-  // Styles d'ouverture et de desktop... (ceux que vous aviez déjà)
   &.open {
     left: 0;
   }
 
   .SidebarContent {
     pointer-events: none;
-    // opacity: 0;
   }
 
   &.open .SidebarContent {
     pointer-events: auto;
-    // opacity: 1;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: var.$breakpoint-tablet) {
     position: relative;
     left: 0;
-    width: 15%;
+    width: var.$sidebar-width-desktop;
     height: auto;
-    .SidebarContent { // S'assure que le contenu est toujours interactif sur desktop
-        pointer-events: auto;
-        opacity: 1;
+    .SidebarContent {
+      pointer-events: auto;
+      opacity: 1;
     }
   }
 }

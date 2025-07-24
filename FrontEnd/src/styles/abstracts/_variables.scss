@@ -1,41 +1,56 @@
 // src/styles/abstracts/_variables.scss
 
-// Couleurs de fond
-$background-light: rgb(242, 245, 247); // Anciennement #f2f4f7
+// ======================================
+// 1. Unités de base et échelles
+// ======================================
+
+// Unité de base pour l'espacement (utilisez 'rem' pour la scalabilité avec la taille de police du navigateur)
+$spacing-base-unit: 1rem; // Équivaut à 16px par défaut (si body font-size est 16px)
+
+// Map pour les espacements
+$spacings: (
+  xxs: $spacing-base-unit * 0.25,
+  xs: $spacing-base-unit * 0.5,
+  sm: $spacing-base-unit * 0.75,
+  md: $spacing-base-unit,
+  lg: $spacing-base-unit * 1.5,
+  xl: $spacing-base-unit * 2,
+  xxl: $spacing-base-unit * 3,
+);
+
+// Map pour les border-radius
+$border-radii: (
+  xs: 4px,
+  sm: 8px,
+  md: 10px,
+  lg: 13px,
+  pill: 9999px,
+);
+
+// ======================================
+// 2. Couleurs de la palette
+// ======================================
+
+// Couleurs principales et neutres
+$color-primary-blue: rgb(71, 142, 230);
+$color-primary-blue-dark: rgb(2, 68, 150);
+$color-secondary-dark-blue: rgb(25, 47, 71);
+$color-white: white;
+$color-black: #000;
+$color-red: #ff0000;
 
 // Couleurs de texte
 $text-color-dark: #333;
 $text-color-medium: #555;
-$color-white: white;
+$text-color-light-gray: #888;
+$text-color-strong: #222;
 
-// Couleurs primaires/secondaires
-$color-primary-blue: rgb(71, 142, 230);
-$color-primary-blue-dark: rgb(2, 68, 150); // Pour le hover du bouton submit
-
-// Bordures
-$border-color-default: #ccc;
-
-// Border-radius
-$border-radius-lg: 13px;
-$border-radius-sm: 8px;
-
-// Ombres
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-$shadow-focus: rgba(0, 123, 255, 0.3); // Ombre pour les focus
-$shadow-hover: rgba(0, 123, 255, 0.2); // Ombre pour les hover
-
-// Breakpoints
-$breakpoint-tablet: 768px;
-$breakpoint-mobile: 480px;
-
+// Couleurs de fond
 $background-light: rgb(242, 245, 247);
-$font-primary: "Rubik", sans-serif;
-
-$color-burger-icon: white;
-$breakpoint-desktop: 768px; // Pour vos media queries
-
-
-// src/styles/abstracts/_variables.scss
+$background-light-gray: #f9f9f9;
+$background-color-white: #fff;
+$background-success-table-even: #f8f9fa;
+$background-hover-table-row: #e9f3ff;
 
 // Couleurs des messages d'information/alerte
 $info-background-color: #e0f2f7;
@@ -54,7 +69,83 @@ $success-background-color: #e8f5e9;
 $success-text-color: #4caf50;
 $success-border-color: #a5d6a7;
 
-// Border-radius commun
-$border-radius-xs: 4px; // Par exemple, pour les petits rayons
+$button-save-color: #28a745;
+$button-save-hover-color: darken($button-save-color, 8%);
 
-// ... autres variables existantes
+$button-cancel-color: #dc3545;
+$button-cancel-hover-color: darken($button-cancel-color, 8%);
+$button-view-color: #478ee6;
+$button-view-hover-color: darken($button-view-color, 8%);
+$button-default-color: #999;
+$button-default-hover-color: #777;
+
+// Couleurs spécifiques pour le Dashboard
+$dashboard-ticket-open-color: rgb(71, 142, 230);
+$dashboard-ticket-in-progress-color: rgb(68, 89, 164);
+$dashboard-ticket-closed-color: rgb(52, 149, 140);
+
+// ======================================
+// 3. Bordures et ombres (Box Shadows)
+// ======================================
+
+$border-color-default: #ccc;
+$border-color-light: #ddd;
+$border-color-lighter: #eee;
+$border-color-sidebar-separator: rgb(105, 120, 136);
+
+$shadow-xs: 0 1px 3px rgba($color-black, 0.04);
+$shadow-sm: 0 1px 4px rgba($color-black, 0.05);
+$shadow-md: 0 4px 12px rgba($color-black, 0.1);
+$shadow-focus: rgba($color-primary-blue, 0.3); // Ombre pour les focus
+$shadow-hover: rgba($color-primary-blue, 0.2); // Ombre pour les hover
+
+// ======================================
+// 4. Typographie
+// ======================================
+
+// Famille de police
+$font-family-primary: "Rubik", sans-serif;
+$font-family-monospace: monospace;
+
+// Tailles de police (basées sur une échelle)
+$font-size-base: 1rem; // 16px
+$font-size-sm: $font-size-base * 0.9; // ~14.4px
+$font-size-xs: $font-size-base * 0.8; // ~12.8px
+$font-size-md: $font-size-base;
+$font-size-lg: $font-size-base * 1.25; // 20px
+$font-size-xl: $font-size-base * 1.5; // 24px (pour h2 ou titre important)
+$font-size-xxl: $font-size-base * 2; // 32px (pour h1)
+$font-size-xxxl: $font-size-base * 2.5; // 40px (pour grand titre comme .nb-DumpNombreTicket)
+
+// ======================================
+// 5. Z-index et transitions
+// ======================================
+
+// Z-index (pour la gestion des couches)
+$z-index-sidebar: 10;
+$z-index-navbar: 100;
+$z-index-burger: 200;
+$z-index-modal-overlay: 1000;
+$z-index-success-overlay-background: 998;
+$z-index-success-overlay-content: 1000;
+
+// Transitions
+$transition-speed-fast: 0.2s;
+$transition-speed-medium: 0.3s;
+$transition-speed-slow: 0.5s;
+
+// ======================================
+// 6. Breakpoints responsives
+// ======================================
+
+$breakpoint-tablet: 768px;
+$breakpoint-mobile: 480px;
+
+// ======================================
+// 7. Largeurs et autres dimensions spécifiques
+// ======================================
+
+$sidebar-width-mobile: 260px;
+$sidebar-width-desktop: 15%;
+$modal-max-width: 600px;
+$ticket-page-max-width: 900px;

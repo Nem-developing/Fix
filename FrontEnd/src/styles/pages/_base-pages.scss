@@ -1,4 +1,5 @@
 // src/styles/pages/_base-pages.scss
+@use "../abstracts/variables" as var;
 
 .Dashboard,
 .NewTicket,
@@ -8,9 +9,9 @@
   width: 100%;
 
   h1 {
-    font-size: 2em;
-    margin-left: 1em;
-    margin-bottom: 1em;
-    margin-top: 0.5em;
+    font-size: var.$font-size-xxl;
+    margin-left: map-get(var.$spacings, md);
+    margin-bottom: map-get(var.$spacings, md);
+    margin-top: map-get(var.$spacings, xs);
   }
 }

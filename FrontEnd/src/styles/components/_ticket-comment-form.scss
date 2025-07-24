@@ -1,43 +1,44 @@
 // src/styles/components/_ticket-comment-form.scss
+@use "../abstracts/variables" as var;
 
 .ticket-comment-form {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
+  gap: map-get(var.$spacings, xs);
+  margin-bottom: map-get(var.$spacings, xl);
 }
 
 .ticket-comment-form textarea {
-  padding: 0.75rem;
-  border: 1px solid #ccc; // Variable: $border-color-default
-  border-radius: 8px; // Variable: $border-radius-sm
-  font-size: 1rem;
+  padding: map-get(var.$spacings, sm);
+  border: 1px solid var.$border-color-default;
+  border-radius: map-get(var.$border-radii, sm);
+  font-size: var.$font-size-md;
   resize: vertical;
 }
 
 .form-buttons {
   display: flex;
-  gap: 0.75rem;
+  gap: map-get(var.$spacings, sm);
 }
 
 .form-buttons button {
-  padding: 0.5rem 1rem;
+  padding: map-get(var.$spacings, xs) map-get(var.$spacings, md);
   border: none;
-  background-color: #005eff; // Variable: $color-primary-blue
-  color: white; // Variable: $color-white
-  border-radius: 6px; // Variable: $border-radius-xs
+  background-color: var.$color-primary-blue;
+  color: var.$color-white;
+  border-radius: map-get(var.$border-radii, xs);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color var.$transition-speed-fast ease;
 }
 
 .form-buttons button:hover {
-  background-color: #0041c2; // Variable: $color-primary-blue-hover
+  background-color: var.$color-primary-blue-dark;
 }
 
 .form-buttons button[type="button"] {
-  background-color: #999; // Variable: $color-gray
+  background-color: var.$button-default-color;
 }
 
 .form-buttons button[type="button"]:hover {
-  background-color: #777; // Variable: $color-gray-hover
+  background-color: var.$button-default-hover-color;
 }

@@ -1,4 +1,6 @@
 // src/styles/components/_ticket-edit-modal.scss
+@use "../abstracts/variables" as var;
+@use "../abstracts/mixins" as mix;
 
 .modal-overlay {
   position: fixed;
@@ -6,96 +8,92 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.4); // Pensez à une variable
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  background: rgba(var.$color-black, 0.4);
+  @include mix.flex-center;
+  z-index: var.$z-index-modal-overlay;
 
   h2 {
-    font-size: 1.5em;
+    font-size: var.$font-size-xl;
   }
 
   .modal {
-    background-color: white; // Pensez à une variable
-    border-radius: 13px; // Pensez à une variable
-    padding: 2em;
-    max-width: 600px;
+    background-color: var.$background-color-white;
+    border-radius: map-get(var.$border-radii, lg);
+    padding: map-get(var.$spacings, xl);
+    max-width: var.$modal-max-width;
     width: 100%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // Pensez à une variable
-    animation: fadeInScale 0.3s ease-in-out;
+    box-shadow: var.$shadow-md;
+    animation: fadeInScale var.$transition-speed-medium ease-in-out;
     display: flex;
     flex-direction: column;
   }
 
-  // L'animation @keyframes doit être globale ou dans un fichier d'animations
-  /* @keyframes fadeInScale { ... } */
-
   label {
-    margin-top: 1rem;
-    margin-bottom: 0.4rem;
+    margin-top: map-get(var.$spacings, md);
+    margin-bottom: map-get(var.$spacings, xxs);
     font-weight: 500;
-    color: #555; // Pensez à une variable
+    color: var.$text-color-medium;
   }
 
   input,
   textarea,
   select {
-    padding: 0.7em 1em;
-    border: 1px solid #ccc; // Pensez à une variable
-    border-radius: 8px; // Pensez à une variable
-    font-size: 1rem;
-    transition: border 0.3s, box-shadow 0.3s;
+    padding: map-get(var.$spacings, sm);
+    border: 1px solid var.$border-color-default;
+    border-radius: map-get(var.$border-radii, sm);
+    font-size: var.$font-size-md;
+    transition: border var.$transition-speed-medium,
+      box-shadow var.$transition-speed-medium;
     width: 100%;
   }
 
   input:focus,
   textarea:focus,
   select:focus {
-    border-color: rgb(71, 142, 230); // Pensez à une variable
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); // Pensez à une variable
+    border-color: var.$color-primary-blue;
+    box-shadow: 0 0 5px var.$shadow-focus;
     outline: none;
   }
 
   .buttons {
     display: flex;
     justify-content: flex-end;
-    margin-top: 1.5em;
-    gap: 1rem;
+    margin-top: map-get(var.$spacings, lg);
+    gap: map-get(var.$spacings, md);
   }
 
   .buttons button {
-    padding: 0.75em 1.5em;
-    font-size: 1rem;
+    padding: map-get(var.$spacings, sm) map-get(var.$spacings, lg);
+    font-size: var.$font-size-md;
     font-weight: bold;
-    color: white; // Pensez à une variable
+    color: var.$color-white;
     border: none;
-    border-radius: 8px; // Pensez à une variable
+    border-radius: map-get(var.$border-radii, sm);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color var.$transition-speed-medium;
   }
 
   .buttons .save {
-    background-color: #28a745; // Pensez à une variable
+    background-color: var.$button-save-color;
 
     &:hover {
-      background-color: #218838; // Pensez à une variable
+      background-color: var.$button-save-hover-color;
     }
   }
 
   .buttons .cancel {
-    background-color: #dc3545; // Pensez à une variable
+    background-color: var.$button-cancel-color;
 
     &:hover {
-      background-color: #be2837; // Pensez à une variable
+      background-color: var.$button-cancel-hover-color;
     }
   }
 
   .buttons .view {
-    background-color: #478ee6; // Pensez à une variable
+    background-color: var.$button-view-color;
 
     &:hover {
-      background-color: #326ebe; // Pensez à une variable
+      background-color: var.$button-view-hover-color;
     }
   }
 }
