@@ -1,13 +1,15 @@
 // src/styles/components/_dump-nombre-ticket.scss
 @use "../abstracts/variables" as var;
+@use "sass:color";
+@use "sass:map";
 
 .DumpNombreTicket {
   width: 100%;
   max-width: 100%;
   border-collapse: collapse;
-  margin: map-get(var.$spacings, xl) auto;
+  margin: map.get(var.$spacings, xl) auto;
   font-size: var.$font-size-sm;
-  border-radius: map-get(var.$border-radii, sm);
+  border-radius: map.get(var.$border-radii, sm);
   overflow: hidden;
   box-shadow: var.$shadow-md;
 
@@ -17,7 +19,7 @@
     th {
       color: var.$color-white;
       text-align: left;
-      padding: map-get(var.$spacings, md);
+      padding: map.get(var.$spacings, md);
       font-weight: 600;
       font-size: var.$font-size-md;
     }
@@ -34,7 +36,7 @@
       }
 
       td {
-        padding: map-get(var.$spacings, sm) map-get(var.$spacings, md);
+        padding: map.get(var.$spacings, sm) map.get(var.$spacings, md);
         border-top: 1px solid var.$border-color-light;
         color: var.$text-color-dark;
         vertical-align: top;
@@ -49,5 +51,5 @@
 }
 
 .clickable-row:hover {
-  background-color: lighten(var.$background-light-gray, 3%);
+  background-color: color.adjust(var.$background-light-gray, $lightness: 3%);
 }

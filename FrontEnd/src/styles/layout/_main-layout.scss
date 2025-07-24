@@ -1,4 +1,6 @@
+// src/styles/layout/_main-layout.scss
 @use "../abstracts/variables" as var;
+@use "sass:map";
 
 .MainLayout {
   background-color: var.$background-light;
@@ -10,7 +12,7 @@
 .Pages {
   /* Styles mobiles (par défaut) */
   margin-left: 0;
-  padding: map-get(var.$spacings, md);
+  padding: map.get(var.$spacings, md);
 
   /* Styles desktop */
   @media (min-width: 768px) {

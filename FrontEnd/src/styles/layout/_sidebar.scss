@@ -1,6 +1,7 @@
 // src/styles/layout/_sidebar.scss
 @use "../abstracts/variables" as var;
 @use "../abstracts/mixins" as mix;
+@use "sass:map";
 
 .Sidebar {
   position: fixed;
@@ -11,13 +12,13 @@
   transition: left var.$transition-speed-medium ease;
   z-index: var.$z-index-sidebar;
   overflow-y: auto;
-  padding: map-get(var.$spacings, md);
+  padding: map.get(var.$spacings, md);
   background-color: var.$color-secondary-dark-blue;
 
   nav {
     display: flex;
     flex-direction: column;
-    margin-top: map-get(var.$spacings, md);
+    margin-top: map.get(var.$spacings, md);
 
     a {
       text-decoration: none;
@@ -27,7 +28,7 @@
       @include mix.flex-center-y;
 
       img {
-        margin-left: map-get(var.$spacings, md);
+        margin-left: map.get(var.$spacings, md);
         height: var.$font-size-xl;
       }
     }
@@ -35,13 +36,13 @@
 
   h1 {
     color: var.$color-white;
-    margin: map-get(var.$spacings, md);
+    margin: map.get(var.$spacings, md);
   }
 
   .with-separator {
     border-bottom: 1px solid var.$border-color-sidebar-separator;
-    padding-bottom: map-get(var.$spacings, md);
-    margin-bottom: map-get(var.$spacings, md);
+    padding-bottom: map.get(var.$spacings, md);
+    margin-bottom: map.get(var.$spacings, md);
   }
 
   &.open {

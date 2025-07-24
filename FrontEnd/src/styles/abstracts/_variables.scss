@@ -1,5 +1,8 @@
 // src/styles/abstracts/_variables.scss
 
+@use "sass:color";
+@use "sass:map";
+
 // ======================================
 // 1. Unités de base et échelles
 // ======================================
@@ -70,12 +73,12 @@ $success-text-color: #4caf50;
 $success-border-color: #a5d6a7;
 
 $button-save-color: #28a745;
-$button-save-hover-color: darken($button-save-color, 8%);
+$button-save-hover-color: color.adjust($button-save-color, $lightness: -8%);
 
 $button-cancel-color: #dc3545;
-$button-cancel-hover-color: darken($button-cancel-color, 8%);
+$button-cancel-hover-color: color.adjust($button-cancel-color, $lightness: -8%);
 $button-view-color: #478ee6;
-$button-view-hover-color: darken($button-view-color, 8%);
+$button-view-hover-color: color.adjust($button-view-color, $lightness: -8%);
 $button-default-color: #999;
 $button-default-hover-color: #777;
 

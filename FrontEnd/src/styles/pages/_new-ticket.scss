@@ -1,5 +1,6 @@
 // src/styles/pages/_new-ticket.scss
 @use "../abstracts/variables" as var;
+@use "sass:map";
 
 .NewTicket {
   display: flex;
@@ -19,7 +20,7 @@
       display: flex;
       flex-direction: column;
       background-color: var.$color-white;
-      border-radius: map-get(var.$border-radii, lg);
+      border-radius: map.get(var.$border-radii, lg);
       padding: 2em;
       box-shadow: var.$shadow-md; // Variable pour l'ombre
 
@@ -40,7 +41,7 @@
         select {
           padding: 0.7em 1em;
           border: 1px solid var.$border-color-default;
-          border-radius: map-get(var.$border-radii, sm);
+          border-radius: map.get(var.$border-radii, sm);
           font-size: 1rem;
           transition: border 0.3s, box-shadow 0.3s;
 
@@ -67,7 +68,7 @@
         .categorie-button {
           padding: 0.6em 1.2em;
           border: 1px solid var.$border-color-default;
-          border-radius: map-get(var.$border-radii, sm);
+          border-radius: map.get(var.$border-radii, sm);
           background-color: var.$color-white;
           cursor: pointer;
           font-size: 1rem;
@@ -110,7 +111,7 @@
         color: var.$color-white;
         background-color: var.$color-primary-blue;
         border: none;
-        border-radius: map-get(var.$border-radii, sm);
+        border-radius: map.get(var.$border-radii, sm);
         cursor: pointer;
         transition: background-color 0.3s;
 

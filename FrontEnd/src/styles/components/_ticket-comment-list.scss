@@ -1,8 +1,9 @@
 // src/styles/components/_ticket-comment-list.scss
 @use "../abstracts/variables" as var;
+@use "sass:map";
 
 .ticket-comment-list {
-  margin-top: map-get(var.$spacings, md);
+  margin-top: map.get(var.$spacings, md);
 }
 
 .ticket-comment-list ul {
@@ -13,7 +14,7 @@
 
 .comment-item {
   border-top: 1px solid var.$border-color-lighter;
-  padding: map-get(var.$spacings, md) 0;
+  padding: map.get(var.$spacings, md) 0;
 }
 
 .comment-header {
@@ -21,7 +22,7 @@
   justify-content: space-between;
   font-weight: bold;
   color: var.$text-color-dark;
-  margin-bottom: map-get(var.$spacings, xxs) * 0.75;
+  margin-bottom: map.get(var.$spacings, xxs) * 0.75;
 }
 
 .comment-date {
@@ -30,9 +31,9 @@
 }
 
 .comment-actions {
-  margin-top: map-get(var.$spacings, xs);
+  margin-top: map.get(var.$spacings, xs);
   display: flex;
-  gap: map-get(var.$spacings, xs);
+  gap: map.get(var.$spacings, xs);
 }
 
 .comment-actions button {

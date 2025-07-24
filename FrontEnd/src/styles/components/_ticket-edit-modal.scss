@@ -1,6 +1,7 @@
 // src/styles/components/_ticket-edit-modal.scss
 @use "../abstracts/variables" as var;
 @use "../abstracts/mixins" as mix;
+@use "sass:map";
 
 .modal-overlay {
   position: fixed;
@@ -18,8 +19,8 @@
 
   .modal {
     background-color: var.$background-color-white;
-    border-radius: map-get(var.$border-radii, lg);
-    padding: map-get(var.$spacings, xl);
+    border-radius: map.get(var.$border-radii, lg);
+    padding: map.get(var.$spacings, xl);
     max-width: var.$modal-max-width;
     width: 100%;
     box-shadow: var.$shadow-md;
@@ -29,8 +30,8 @@
   }
 
   label {
-    margin-top: map-get(var.$spacings, md);
-    margin-bottom: map-get(var.$spacings, xxs);
+    margin-top: map.get(var.$spacings, md);
+    margin-bottom: map.get(var.$spacings, xxs);
     font-weight: 500;
     color: var.$text-color-medium;
   }
@@ -38,9 +39,9 @@
   input,
   textarea,
   select {
-    padding: map-get(var.$spacings, sm);
+    padding: map.get(var.$spacings, sm);
     border: 1px solid var.$border-color-default;
-    border-radius: map-get(var.$border-radii, sm);
+    border-radius: map.get(var.$border-radii, sm);
     font-size: var.$font-size-md;
     transition: border var.$transition-speed-medium,
       box-shadow var.$transition-speed-medium;
@@ -58,17 +59,17 @@
   .buttons {
     display: flex;
     justify-content: flex-end;
-    margin-top: map-get(var.$spacings, lg);
-    gap: map-get(var.$spacings, md);
+    margin-top: map.get(var.$spacings, lg);
+    gap: map.get(var.$spacings, md);
   }
 
   .buttons button {
-    padding: map-get(var.$spacings, sm) map-get(var.$spacings, lg);
+    padding: map.get(var.$spacings, sm) map.get(var.$spacings, lg);
     font-size: var.$font-size-md;
     font-weight: bold;
     color: var.$color-white;
     border: none;
-    border-radius: map-get(var.$border-radii, sm);
+    border-radius: map.get(var.$border-radii, sm);
     cursor: pointer;
     transition: background-color var.$transition-speed-medium;
   }

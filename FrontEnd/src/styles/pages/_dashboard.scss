@@ -1,6 +1,7 @@
 // src/styles/pages/_dashboard.scss
 @use "../abstracts/variables" as var;
 @use "../abstracts/mixins" as mix;
+@use "sass:map";
 
 .Dashboard {
   .block {
@@ -11,11 +12,11 @@
 
       %ticket-status-tile {
         color: var.$color-white;
-        padding: map-get(var.$spacings, md);
+        padding: map.get(var.$spacings, md);
         width: 30%;
         @include mix.flex-col;
         border: 0 solid;
-        border-radius: map-get(var.$border-radii, lg);
+        border-radius: map.get(var.$border-radii, lg);
       }
 
       .t-ouvert {
@@ -32,26 +33,26 @@
       }
 
       .nb-DumpNombreTicket {
-        margin-top: map-get(var.$spacings, xxs) * 0.5;
+        margin-top: map.get(var.$spacings, xxs) * 0.5;
         font-size: var.$font-size-xxxl;
       }
     }
 
     .Graphiques {
-      margin-top: map-get(var.$spacings, xl);
+      margin-top: map.get(var.$spacings, xl);
       @include mix.flex-space-between;
       align-items: stretch;
 
       h2 {
         font-size: var.$font-size-xl;
-        margin: map-get(var.$spacings, md);
+        margin: map.get(var.$spacings, md);
       }
 
       .etat,
       .categorie {
         @include mix.flex-col;
         border: 0 solid;
-        border-radius: map-get(var.$border-radii, lg);
+        border-radius: map.get(var.$border-radii, lg);
         background-color: var.$background-color-white;
       }
 

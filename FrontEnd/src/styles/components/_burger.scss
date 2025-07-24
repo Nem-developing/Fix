@@ -1,13 +1,14 @@
 // src/styles/components/_burger.scss
 @use "../abstracts/variables" as var;
 @use "../abstracts/mixins" as mix;
+@use "sass:map";
 
 .burger {
   position: fixed;
-  top: map-get(var.$spacings, md);
-  left: map-get(var.$spacings, md);
-  width: map-get(var.$spacings, md);
-  height: map-get(var.$spacings, md);
+  top: map.get(var.$spacings, md);
+  left: map.get(var.$spacings, md);
+  width: map.get(var.$spacings, md);
+  height: map.get(var.$spacings, md);
   @include mix.flex-space-around-col;
   background: transparent;
   border: none;
@@ -23,10 +24,10 @@
 }
 
 .burger span {
-  width: map-get(var.$spacings, md);
-  height: map-get(var.$spacings, xxs) * 0.5;
+  width: map.get(var.$spacings, md);
+  height: map.get(var.$spacings, xxs) * 0.5;
   background: var.$color-white;
-  border-radius: map-get(var.$border-radii, pill);
+  border-radius: map.get(var.$border-radii, pill);
   transition: all var.$transition-speed-medium linear;
   transform-origin: 1px;
 }
