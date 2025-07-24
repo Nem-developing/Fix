@@ -1,0 +1,101 @@
+// src/styles/components/_ticket-edit-modal.scss
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4); // Pensez à une variable
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  .modal {
+    background-color: white; // Pensez à une variable
+    border-radius: 13px; // Pensez à une variable
+    padding: 2em;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // Pensez à une variable
+    animation: fadeInScale 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // L'animation @keyframes doit être globale ou dans un fichier d'animations
+  /* @keyframes fadeInScale { ... } */
+
+  label {
+    margin-top: 1rem;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: #555; // Pensez à une variable
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 0.7em 1em;
+    border: 1px solid #ccc; // Pensez à une variable
+    border-radius: 8px; // Pensez à une variable
+    font-size: 1rem;
+    transition: border 0.3s, box-shadow 0.3s;
+    width: 100%;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: rgb(71, 142, 230); // Pensez à une variable
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); // Pensez à une variable
+    outline: none;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5em;
+    gap: 1rem;
+  }
+
+  .buttons button {
+    padding: 0.75em 1.5em;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white; // Pensez à une variable
+    border: none;
+    border-radius: 8px; // Pensez à une variable
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .buttons .save {
+    background-color: #28a745; // Pensez à une variable
+
+    &:hover {
+      background-color: #218838; // Pensez à une variable
+    }
+  }
+
+  .buttons .cancel {
+    background-color: #dc3545; // Pensez à une variable
+
+    &:hover {
+      background-color: #be2837; // Pensez à une variable
+    }
+  }
+
+  .buttons .view {
+    background-color: #478ee6; // Pensez à une variable
+
+    &:hover {
+      background-color: #326ebe; // Pensez à une variable
+    }
+  }
+}

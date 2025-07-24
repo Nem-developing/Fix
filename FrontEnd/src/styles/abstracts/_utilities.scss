@@ -1,0 +1,8 @@
+// src/styles/abstracts/_utilities.scss
+
+.late-alert {
+  color: red; // Pensez à une variable
+  font-weight: bold;
+  margin-left: 5px;
+  animation: shake 0.5s ease-in-out;
+}

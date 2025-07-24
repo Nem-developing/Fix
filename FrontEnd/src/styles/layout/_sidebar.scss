@@ -1,0 +1,72 @@
+// src/styles/layout/_sidebar.scss
+
+.Sidebar {
+  // Styles généraux de la Sidebar (déjà définis ou mis à jour)
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 260px;
+  height: 100vh;
+  transition: left 0.3s ease;
+  z-index: 10;
+  overflow-y: auto;
+  padding: 1em;
+  background-color: rgb(25, 47, 71); // <-- Ajouté ici (pensez à une variable)
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1em;
+
+    a {
+      text-decoration: none;
+    }
+
+    .imagelien {
+      display: flex;
+      align-items: center;
+
+      img {
+        margin-left: 1em;
+        height: 1.5em;
+      }
+    }
+  }
+
+  h1 {
+    color: white; // <-- Pensez à une variable
+    margin: 1em;
+  }
+
+  .with-separator {
+    border-bottom: 1px solid rgb(105, 120, 136); // <-- Pensez à une variable
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+  }
+
+  // Styles d'ouverture et de desktop... (ceux que vous aviez déjà)
+  &.open {
+    left: 0;
+  }
+
+  .SidebarContent {
+    pointer-events: none;
+    // opacity: 0;
+  }
+
+  &.open .SidebarContent {
+    pointer-events: auto;
+    // opacity: 1;
+  }
+
+  @media (min-width: 768px) {
+    position: relative;
+    left: 0;
+    width: 15%;
+    height: auto;
+    .SidebarContent { // S'assure que le contenu est toujours interactif sur desktop
+        pointer-events: auto;
+        opacity: 1;
+    }
+  }
+}

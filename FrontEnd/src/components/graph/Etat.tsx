@@ -10,6 +10,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { fetchGraphData } from "../../services/apiService";
+import Information_dev from "../autres/informationdev";
+
+// TODO : stale‑while‑revalidate
 
 export default function EtatTicketGraph() {
   const [data, setData] = React.useState<any[]>([]);
@@ -38,36 +41,39 @@ export default function EtatTicketGraph() {
   if (error) return <p>Erreur : {error}</p>;
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis
-          domain={[0, "dataMax"]}
-          tickFormatter={(value) => value}
-          allowDecimals={false}
-        />
-        <Tooltip />
-        <Legend />
-        <Line
-          type="monotone"
-          dataKey="new"
-          stroke="rgb(71, 142, 230)"
-          name="Nouveaux"
-        />
-        <Line
-          type="monotone"
-          dataKey="open"
-          stroke="rgb(68, 89, 164)"
-          name="Ouverts"
-        />
-        <Line
-          type="monotone"
-          dataKey="closed"
-          stroke="rgb(52, 149, 140)"
-          name="Fermés"
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <div>
+      <Information_dev type="info" featureName="stale‑while‑revalidate" />
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis
+            domain={[0, "dataMax"]}
+            tickFormatter={(value) => value}
+            allowDecimals={false}
+          />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="new"
+            stroke="rgb(71, 142, 230)"
+            name="Nouveaux"
+          />
+          <Line
+            type="monotone"
+            dataKey="open"
+            stroke="rgb(68, 89, 164)"
+            name="Ouverts"
+          />
+          <Line
+            type="monotone"
+            dataKey="closed"
+            stroke="rgb(52, 149, 140)"
+            name="Fermés"
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

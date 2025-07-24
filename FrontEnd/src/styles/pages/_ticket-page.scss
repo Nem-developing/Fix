@@ -1,0 +1,46 @@
+// src/styles/pages/_ticket-page.scss
+
+.TicketPage {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ticket-details {
+  background-color: #f9f9f9; // Variable: $color-light-gray-bg
+  border: 1px solid #ddd; // Variable: $border-color-light
+  border-radius: 10px; // Variable: $border-radius-md
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); // Variable: $shadow-light
+}
+
+.ticket-details h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333; // Variable: $text-color-dark
+}
+
+.ticket-details p {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+  color: #555; // Variable: $text-color-medium
+}
+
+.ticket-details strong {
+  color: #222; // Variable: $text-color-strong
+}
+
+.comments-section {
+  background-color: #fff; // Variable: $color-white
+  border: 1px solid #eee; // Variable: $border-color-lighter
+  border-radius: 10px; // Variable: $border-radius-md
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); // Variable: $shadow-subtle
+}
+
+.comments-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #444; // Variable: $text-color-dark-medium
+}

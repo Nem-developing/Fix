@@ -1,0 +1,40 @@
+.burger {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 200;
+
+  /* Masqué sur desktop */
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.burger span {
+  width: 1rem;
+  height: 0.1rem;
+  background: white; /* Pensez à utiliser une variable SCSS ici */
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  transform-origin: 1px;
+}
+
+/* Animation burger -> croix */
+.burger.open span:nth-child(1) {
+  transform: rotate(45deg);
+}
+.burger.open span:nth-child(2) {
+  opacity: 0;
+}
+.burger.open span:nth-child(3) {
+  transform: rotate(-45deg);
+}

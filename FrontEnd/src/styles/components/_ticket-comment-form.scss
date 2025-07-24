@@ -1,0 +1,43 @@
+// src/styles/components/_ticket-comment-form.scss
+
+.ticket-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.ticket-comment-form textarea {
+  padding: 0.75rem;
+  border: 1px solid #ccc; // Variable: $border-color-default
+  border-radius: 8px; // Variable: $border-radius-sm
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #005eff; // Variable: $color-primary-blue
+  color: white; // Variable: $color-white
+  border-radius: 6px; // Variable: $border-radius-xs
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.form-buttons button:hover {
+  background-color: #0041c2; // Variable: $color-primary-blue-hover
+}
+
+.form-buttons button[type="button"] {
+  background-color: #999; // Variable: $color-gray
+}
+
+.form-buttons button[type="button"]:hover {
+  background-color: #777; // Variable: $color-gray-hover
+}

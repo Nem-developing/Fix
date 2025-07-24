@@ -1,0 +1,87 @@
+// src/styles/pages/_dashboard.scss
+
+.Dashboard {
+  .block {
+    width: 100%;
+
+    .Info-rapide {
+      display: flex;
+      justify-content: space-between;
+
+      .t-ouvert,
+      .t-encours,
+      .t-ferme {
+        color: white; // Pensez à une variable
+        padding: 1em;
+        width: 30%; // Vous pourriez utiliser des pourcentages ou flex-basis
+        display: flex;
+        flex-direction: column;
+        border: 0 solid;
+        border-radius: 13px; // Pensez à une variable de border-radius
+      }
+
+      .t-ouvert {
+        background-color: rgb(71, 142, 230); // Pensez à une variable
+      }
+      .t-encours {
+        background-color: rgb(68, 89, 164); // Pensez à une variable
+      }
+      .t-ferme {
+        background-color: rgb(52, 149, 140); // Pensez à une variable
+      }
+
+      .nb-DumpNombreTicket {
+        margin-top: 0.2em;
+        font-size: 2.5em;
+      }
+    }
+
+    .Graphiques {
+      margin-top: 2em;
+      display: flex;
+      justify-content: space-between;
+
+      h2 {
+        font-size: 1.5em;
+        margin: 1em;
+      }
+
+      .etat,
+      .categorie {
+        display: flex;
+        flex-direction: column;
+        min-height: 24em;
+        border: 0 solid;
+        border-radius: 13px;
+        background-color: white;
+      }
+
+      .etat {
+        width: 66%;
+
+        // Styles Recharts pour .etat
+        .recharts-responsive-container {
+          // Cible le conteneur responsif du graphique
+          display: flex; // Exemple : pour centrer ou aligner le contenu du graphique
+
+          .recharts-wrapper {
+            // Cible l'enveloppe interne de Recharts
+            .recharts-legend-wrapper {
+              // Cible spécifiquement la légende
+              display: flex;
+              align-items: center;
+              flex-direction: column; // Pour que les éléments de légende s'empilent verticalement
+            }
+          }
+        }
+      }
+
+      .categorie {
+        width: 33%;
+        // Si vous avez aussi des graphiques Recharts ici, vous pourriez
+        // copier les styles .recharts-responsive-container aussi si applicable,
+        // ou créer un mixin si ces styles sont très souvent répétés.
+      }
+    }
+  }
+}

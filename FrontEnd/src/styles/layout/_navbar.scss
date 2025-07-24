@@ -1,0 +1,8 @@
+.Navbar {
+  position: fixed;
+  top: 0;
+  width: 100%; /* Ajoutez une largeur par défaut si elle n'est pas déjà gérée ailleurs */
+  z-index: 100;
+  overflow-y: auto; /* Probablement pas nécessaire pour une Navbar fixe en haut */
+  color: white; /* Exemple */
+}

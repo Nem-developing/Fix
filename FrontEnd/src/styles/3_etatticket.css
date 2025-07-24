@@ -1,9 +1,0 @@
-.Graphiques .etat .recharts-responsive-container {
-  display: flex;
-
-  .recharts-wrapper .recharts-legend-wrapper {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-}

@@ -1,0 +1,20 @@
+@use "../abstracts/variables" as var;
+
+.MainLayout {
+  background-color: var.$background-light;
+  min-height: 100vh;
+  display: flex;
+  font-family: var.$font-primary;
+}
+
+.Pages {
+  /* Styles mobiles (par défaut) */
+  margin-left: 0;
+  padding: 1em;
+
+  /* Styles desktop */
+  @media (min-width: 768px) {
+    flex-grow: 1;
+    /* margin-left: 0; // Déjà défini ou lié à Sidebar */
+  }
+}

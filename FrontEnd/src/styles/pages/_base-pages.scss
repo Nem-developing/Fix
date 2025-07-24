@@ -1,0 +1,16 @@
+// src/styles/pages/_base-pages.scss
+
+.Dashboard,
+.NewTicket,
+.Ticket,
+.OpenTickets,
+.TicketPage {
+  width: 100%;
+
+  h1 {
+    font-size: 2em;
+    margin-left: 1em;
+    margin-bottom: 1em;
+    margin-top: 0.5em;
+  }
+}

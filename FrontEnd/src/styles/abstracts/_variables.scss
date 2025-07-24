@@ -1,0 +1,60 @@
+// src/styles/abstracts/_variables.scss
+
+// Couleurs de fond
+$background-light: rgb(242, 245, 247); // Anciennement #f2f4f7
+
+// Couleurs de texte
+$text-color-dark: #333;
+$text-color-medium: #555;
+$color-white: white;
+
+// Couleurs primaires/secondaires
+$color-primary-blue: rgb(71, 142, 230);
+$color-primary-blue-dark: rgb(2, 68, 150); // Pour le hover du bouton submit
+
+// Bordures
+$border-color-default: #ccc;
+
+// Border-radius
+$border-radius-lg: 13px;
+$border-radius-sm: 8px;
+
+// Ombres
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-focus: rgba(0, 123, 255, 0.3); // Ombre pour les focus
+$shadow-hover: rgba(0, 123, 255, 0.2); // Ombre pour les hover
+
+// Breakpoints
+$breakpoint-tablet: 768px;
+$breakpoint-mobile: 480px;
+
+$background-light: rgb(242, 245, 247);
+$font-primary: "Rubik", sans-serif;
+
+$color-burger-icon: white;
+$breakpoint-desktop: 768px; // Pour vos media queries
+
+
+// src/styles/abstracts/_variables.scss
+
+// Couleurs des messages d'information/alerte
+$info-background-color: #e0f2f7;
+$info-text-color: #2196f3;
+$info-border-color: #90caf9;
+
+$warning-background-color: #fffde7;
+$warning-text-color: #ffc107;
+$warning-border-color: #ffe082;
+
+$error-background-color: #ffebee;
+$error-text-color: #f44336;
+$error-border-color: #ef9a9a;
+
+$success-background-color: #e8f5e9;
+$success-text-color: #4caf50;
+$success-border-color: #a5d6a7;
+
+// Border-radius commun
+$border-radius-xs: 4px; // Par exemple, pour les petits rayons
+
+// ... autres variables existantes
