@@ -8,6 +8,7 @@ import Reports from "../pages/Reports";
 import Users from "../pages/Users";
 import Ticket from "../pages/Ticket";
 import TicketPage from "../pages/TicketPage";
+import Connection from "../pages/Connection";
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
       <Route path="/reports" element={<Reports />} />
       <Route path="/users" element={<Users />} />
       <Route path="/ticket/:id" element={<TicketPage />} />
+      <Route path="/connection" element={<Connection />} />
     </Routes>
   );
 };

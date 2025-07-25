@@ -1,13 +1,13 @@
 // src/styles/main.scss
 
 // 1. Abstractions (variables, mixins, animations, utilities)
-@use "abstracts/variables"; // <-- S'assurer que les nouvelles variables sont définies ici
+@use "abstracts/variables";
 @use "abstracts/mixins";
 @use "abstracts/animations";
 @use "abstracts/utilities";
 
 // 2. Base (reset, typography)
-@use "base/reset";
+@use "base/reset";   
 @use "base/typography";
 
 // 3. Layout (structure globale)
@@ -29,5 +29,4 @@
 @use "pages/dashboard";
 @use "pages/ticket-page";
 @use "pages/new-ticket";
-
-// ... autres imports si besoin
+@use "pages/connection-page";
