@@ -437,11 +437,11 @@ app.router.add_get("/api/projets/{projet_id}/graph", web_stats_tickets)
 
 setup_aiohttp_apispec(
     app=app,
-    title="My Documentation",
-    version="v1",
+    title="Documentation de L'API FIX",
+    version=VERSION,
     url="/api/docs/swagger",
     swagger_path="/api/docs",
-    )
+)
 
 
 prepare()
