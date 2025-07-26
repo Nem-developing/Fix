@@ -18,7 +18,7 @@ services:
       - fix-network
 
   fix-api:
-    image: nemdeveloping/fix-api:3.6
+    image: nemdeveloping/fix-api:3.7
     restart: always
     depends_on:
       - fix-database
@@ -33,10 +33,34 @@ services:
       - "8000:8080"
     labels:
     - "traefik.enable=true"
+
+    ## Middleware de redirection : /static → /api/static
+    - "traefik.http.middlewares.static-redirect.redirectRegex.regex=^/static/(.*)"
+    - "traefik.http.middlewares.static-redirect.redirectRegex.replacement=/api/static/$$1"
+    - "traefik.http.middlewares.static-redirect.redirectRegex.permanent=true"
+
+    ## Route de redirection
+    - "traefik.http.routers.static-redirect.rule=PathPrefix(`/static`)"
+    - "traefik.http.routers.static-redirect.middlewares=static-redirect"
+    - "traefik.http.routers.static-redirect.entrypoints=web"
+    - "traefik.http.routers.static-redirect.priority=100"
+
+    ## Middleware de redirection : /docs/swagger → /api/docs/swagger
+    - "traefik.http.middlewares.swagger-redirect.redirectRegex.regex=^/docs/swagger(.*)"
+    - "traefik.http.middlewares.swagger-redirect.redirectRegex.replacement=/api/docs/swagger$$1"
+    - "traefik.http.middlewares.swagger-redirect.redirectRegex.permanent=true"
+
+    ## Route principale pour /api
     - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
     - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api"
     - "traefik.http.routers.fix-api.middlewares=api-stripprefix"
     - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
+
+    ## Route pour /api/static
+    - "traefik.http.routers.fix-api-static.rule=PathPrefix(`/api/static`)"
+    - "traefik.http.middlewares.static-stripprefix.stripPrefix.prefixes=/api/static"
+    - "traefik.http.routers.fix-api-static.middlewares=static-stripprefix"
+    - "traefik.http.routers.fix-api-static.service=fix-api"
 
 
   fix-app:

@@ -10,6 +10,16 @@ from aiohttp import web
 import mysql.connector
 from datetime import datetime, timedelta
 from hashlib import sha512
+from aiohttp_apispec import (
+    setup_aiohttp_apispec,
+    docs,
+    response_schema,
+    request_schema,
+)
+from marshmallow import Schema, fields
+class RequestSchema(Schema):
+    name = fields.Str(required=True)
+    age = fields.Int(required=True)
 
 from stats.gestion import get_projets_stats, get_a_projet_stats, get_tickets_graph
 from database.gestion import db_ok, prepare
@@ -84,7 +94,12 @@ def display():
 ###################################################
 
 
-# WEB : (GET) Affichage de la page d'accueil
+@docs(
+    tags=["mytag"],
+    summary="Test method summary",
+    description="Test method description",
+)
+@request_schema(RequestSchema())
 async def web_index(request):
     return web.json_response(json.loads(display()))
 
@@ -424,6 +439,13 @@ app.router.add_get("/projets/stats", web_stats_projet)
 app.router.add_get("/projets/{projet_id}/stats", web_stats_a_projet)
 app.router.add_get("/projets/{projet_id}/graph", web_stats_tickets)
 
+setup_aiohttp_apispec(
+    app=app,
+    title="My Documentation",
+    version="v1",
+    url="/docs/swagger",
+    swagger_path="/docs",
+)
 
 
 prepare()
