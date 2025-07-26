@@ -1,7 +1,6 @@
 version: '3.1'
 
 services:
-
   traefik:
     image: traefik:v2.10
     restart: always
@@ -35,32 +34,32 @@ services:
     - "traefik.enable=true"
 
     ## Middleware de redirection : /static → /api/static
-    - "traefik.http.middlewares.static-redirect.redirectRegex.regex=^/static/(.*)"
-    - "traefik.http.middlewares.static-redirect.redirectRegex.replacement=/api/static/$$1"
-    - "traefik.http.middlewares.static-redirect.redirectRegex.permanent=true"
+    - "traefik.http.middlewares.static-redirect.redirectregex.regex=^/static/(.*)"
+    - "traefik.http.middlewares.static-redirect.redirectregex.replacement=/api/static/$$1"
+    - "traefik.http.middlewares.static-redirect.redirectregex.permanent=true"
 
-    ## Route de redirection
+    ## Route de redirection static
     - "traefik.http.routers.static-redirect.rule=PathPrefix(`/static`)"
     - "traefik.http.routers.static-redirect.middlewares=static-redirect"
     - "traefik.http.routers.static-redirect.entrypoints=web"
     - "traefik.http.routers.static-redirect.priority=100"
 
-    ## Middleware de redirection : /docs/swagger → /api/docs/swagger
-    - "traefik.http.middlewares.swagger-redirect.redirectRegex.regex=^/docs/swagger(.*)"
-    - "traefik.http.middlewares.swagger-redirect.redirectRegex.replacement=/api/docs/swagger$$1"
-    - "traefik.http.middlewares.swagger-redirect.redirectRegex.permanent=true"
+    ## Middleware pour désactiver validator Swagger UI
+    - "traefik.http.middlewares.add-validator-url.redirectregex.regex=^/api/docs$"
+    - "traefik.http.middlewares.add-validator-url.redirectregex.replacement=/api/docs?validatorUrl="
+    - "traefik.http.middlewares.add-validator-url.redirectregex.permanent=false"
+
+    ## Router pour appliquer middleware sur /api/docs
+    - "traefik.http.routers.docs-validator-disable.rule=Path(`/api/docs`)"
+    - "traefik.http.routers.docs-validator-disable.entrypoints=web"
+    - "traefik.http.routers.docs-validator-disable.middlewares=add-validator-url"
+    - "traefik.http.routers.docs-validator-disable.service=fix-api"
 
     ## Route principale pour /api
     - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
-    - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api"
-    - "traefik.http.routers.fix-api.middlewares=api-stripprefix"
+    - "traefik.http.routers.fix-api.entrypoints=web"
     - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
 
-    ## Route pour /api/static
-    - "traefik.http.routers.fix-api-static.rule=PathPrefix(`/api/static`)"
-    - "traefik.http.middlewares.static-stripprefix.stripPrefix.prefixes=/api/static"
-    - "traefik.http.routers.fix-api-static.middlewares=static-stripprefix"
-    - "traefik.http.routers.fix-api-static.service=fix-api"
 
 
   fix-app:

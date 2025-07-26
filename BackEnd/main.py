@@ -17,9 +17,7 @@ from aiohttp_apispec import (
     request_schema,
 )
 from marshmallow import Schema, fields
-class RequestSchema(Schema):
-    name = fields.Str(required=True)
-    age = fields.Int(required=True)
+
 
 from stats.gestion import get_projets_stats, get_a_projet_stats, get_tickets_graph
 from database.gestion import db_ok, prepare
@@ -93,13 +91,11 @@ def display():
 ################   FONCTIONS WEB   ################
 ###################################################
 
-
 @docs(
-    tags=["mytag"],
-    summary="Test method summary",
-    description="Test method description",
+    tags=["info"],
+    summary="status",
+    description="Display API status and version",
 )
-@request_schema(RequestSchema())
 async def web_index(request):
     return web.json_response(json.loads(display()))
 
@@ -393,59 +389,59 @@ async def web_stats_tickets(request):
 
 # Définition des routes
 app = web.Application()
-app.router.add_get("/", web_index)
+app.router.add_get("/api/", web_index)
 
 # GESTION DES PROJETS
-app.router.add_get("/projets", web_get_all_projets)
-app.router.add_get("/projets/{id}", web_get_a_projet)
-app.router.add_post("/projets", web_create_projet)
+app.router.add_get("/api/projets", web_get_all_projets)
+app.router.add_get("/api/projets/{id}", web_get_a_projet)
+app.router.add_post("/api/projets", web_create_projet)
 
 # GET ALL & CREATE ONE
-app.router.add_get("/projets/{projet_id}/tickets", web_get_all_tikets)
-app.router.add_post("/projets/{projet_id}/tickets", web_create_tiket)
+app.router.add_get("/api/projets/{projet_id}/tickets", web_get_all_tikets)
+app.router.add_post("/api/projets/{projet_id}/tickets", web_create_tiket)
 
 # TICKET
-app.router.add_get("/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
-app.router.add_get("/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
-app.router.add_post("/projets/{projet_id}/tickets/{id}/statut", web_post_ticket_statut)
+app.router.add_get("/api/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
+app.router.add_get("/api/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
+app.router.add_post("/api/projets/{projet_id}/tickets/{id}/statut", web_post_ticket_statut)
 # TICKET COMMENTAIRES
 app.router.add_get(
-    "/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
+    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
 )
 app.router.add_get(
-    "/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
+    "/api/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
     web_get_a_tiket_commentaires,
 )
 app.router.add_post(
-    "/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires
+    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires
 )
 app.router.add_put(
-    "/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
+    "/api/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
     web_put_tiket_commentaire,
 )
 # USERS
-app.router.add_get("/utilisateurs", web_get_users)
-app.router.add_get("/utilisateurs/{id}", web_get_a_users)
-app.router.add_post("/utilisateurs", web_post_users)
-app.router.add_post("/utilisateurs/{id}/password", web_post_user_mdp)
+app.router.add_get("/api/utilisateurs", web_get_users)
+app.router.add_get("/api/utilisateurs/{id}", web_get_a_users)
+app.router.add_post("/api/utilisateurs", web_post_users)
+app.router.add_post("/api/utilisateurs/{id}/password", web_post_user_mdp)
 
 # API TOKEN
-app.router.add_get("/tokens", web_get_tokens)
-app.router.add_get("/tokens/my", web_get_my_tokens)
-app.router.add_post("/tokens", web_post_tokens)
+app.router.add_get("/api/tokens", web_get_tokens)
+app.router.add_get("/api/tokens/my", web_get_my_tokens)
+app.router.add_post("/api/tokens", web_post_tokens)
 
 # STATS
-app.router.add_get("/projets/stats", web_stats_projet)
-app.router.add_get("/projets/{projet_id}/stats", web_stats_a_projet)
-app.router.add_get("/projets/{projet_id}/graph", web_stats_tickets)
+app.router.add_get("/api/projets/stats", web_stats_projet)
+app.router.add_get("/api/projets/{projet_id}/stats", web_stats_a_projet)
+app.router.add_get("/api/projets/{projet_id}/graph", web_stats_tickets)
 
 setup_aiohttp_apispec(
     app=app,
     title="My Documentation",
     version="v1",
-    url="/docs/swagger",
-    swagger_path="/docs",
-)
+    url="/api/docs/swagger",
+    swagger_path="/api/docs",
+    )
 
 
 prepare()
