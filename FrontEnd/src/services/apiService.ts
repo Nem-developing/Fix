@@ -1,5 +1,5 @@
 // --> apiService.ts - Appels API métier
-// 
+//
 // - Fonctions courtes et lisibles grâce aux utilitaires
 // - Organisation par domaine (tickets, commentaires, graphiques)
 // - Élimination des répétitions de code
@@ -49,6 +49,11 @@ export async function createTicket(ticketData: any) {
 export async function updateTicket(ticketId: number, ticketData: any) {
   const url = buildProjectUrl(`tickets/${ticketId}`);
   return await apiPut(url, ticketData);
+}
+
+export async function fetchTicketsV2() {
+  const url = buildProjectUrl("stats");
+  return await apiGet(url);
 }
 
 // ============================================================ Gestion des commentaires

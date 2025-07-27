@@ -6,14 +6,14 @@
 // - Fonctions génériques pour tous les types d'appels HTTP (GET, POST, PUT, DELETE)
 // - Initialisation automatique des valeurs par défaut
 
-const BASE_URL = "http://localhost:9001";
+const BASE_URL = "http://localhost:9001/api";
 
 // Initialisation des valeurs par défaut
 const initializeDefaults = () => {
   if (!localStorage.getItem("authToken")) {
     localStorage.setItem(
       "authToken",
-      "GDN4E9R29QIVES1ZV286-STCBBUVCGZIY04NO0LP3-YQ7WKYY7JNVL8YIPNSN3"
+      "FIF5BCUTQHRNFHPTV35Q-JCMILIZL5RNV602JVSOJ-JM7HV9F50U2S1IXL7ZVI"
     );
   }
 
