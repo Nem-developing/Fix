@@ -7,6 +7,7 @@ import CategorySelector from "../components/utility/CategorySelector";
 import UrgencySelector from "../components/utility/UrgencySelector";
 import useForm from "../hooks/useForm";
 import useSuccessAnimation from "../hooks/useSuccessAnimation";
+import { categories } from "../constants/categories";
 
 interface NewTicketFormValues {
   titre: string;
@@ -53,8 +54,12 @@ const NewTicket: React.FC = () => {
 
   const validateForm = (data: NewTicketFormValues) => {
     const newErrors: Partial<NewTicketFormValues> = {};
-    if (!data.categorie) {
-      newErrors.categorie = "Veuillez sélectionner une catégorie.";
+    if (
+      !data.categorie ||
+      (!categories.includes(data.categorie) && data.categorie.trim().length < 1)
+    ) {
+      newErrors.categorie =
+        "Veuillez sélectionner ou saisir une catégorie valide.";
     }
     return newErrors;
   };

@@ -28,8 +28,9 @@ class TicketCache {
   private data: any[] = [];
   private listeners: Set<() => void> = new Set();
   private isLoading = false;
-  private CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  private AUTO_REFRESH_INTERVAL = 2 * 60 * 1000; // 2 minutes
+  private time = 15 * 1000;
+  private CACHE_DURATION = this.time;
+  private AUTO_REFRESH_INTERVAL = this.time;
   private intervalId: number | null = null;
   private lastDataHash: string = "";
 
