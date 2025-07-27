@@ -33,7 +33,6 @@ const Dashboard = () => {
           </div>
           <div className="categorie">
             <h2>Tickets par categorie</h2>
-            <Information_dev type="warning" featureName="CategoryTicketGraph" />
             <CategoryTicketGraph />
           </div>
         </div>

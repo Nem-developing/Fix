@@ -47,12 +47,14 @@ const Connection: React.FC = () => {
               id="login"
               label="Identifiant"
               type="text"
+              name="login"
               value={values.login}
               onChange={handleChange}
               required
             />
             <InputField
               id="password"
+              name="password"
               label="Mot de passe"
               type="password"
               value={values.password}

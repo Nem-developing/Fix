@@ -88,3 +88,8 @@ export async function fetchGraphData(): Promise<Record<string, GraphEntry>> {
   const url = buildProjectUrl("graph");
   return await apiGet(url);
 }
+
+export async function fetchStatsData() {
+  const url = buildProjectUrl("stats");
+  return await apiGet(url);
+}

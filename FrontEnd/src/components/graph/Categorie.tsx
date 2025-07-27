@@ -7,18 +7,10 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { fetchStatsData } from "../../services/apiService";
 
-// Données factices des catégories de tickets
-const mockData = [
-  { name: "Bug", value: 8 },
-  { name: "Demande d'information", value: 5 },
-  { name: "Support technique", value: 2 },
-  { name: "Problème de compte", value: 9 },
-  { name: "Suggestion", value: 1 },
-  { name: "Autre", value: 8 },
-];
+const CACHE_KEY = "graph-tickets-categorie";
 
-// Couleurs pour chaque catégorie
 const COLORS = [
   "#f51c1cff",
   "#15c2f7ff",
@@ -29,11 +21,67 @@ const COLORS = [
 ];
 
 export default function CategoryTicketGraph() {
+  const [data, setData] = React.useState<any[]>([]);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    // 1. Lecture cache
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      console.log("[CACHE] Donnée brute :", cached);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          console.log("[CACHE] Donnée parsée :", parsed);
+          if (parsed.data && Array.isArray(parsed.data)) {
+            setData(parsed.data);
+            console.log("[CACHE] Donnée utilisée pour affichage !");
+          }
+        } catch (parseError) {
+          console.warn("[CACHE] Erreur de parsing JSON:", parseError);
+          localStorage.removeItem(CACHE_KEY);
+        }
+      }
+    } catch (e) {
+      console.warn("[CACHE] Erreur lecture cache :", e);
+    }
+
+    // 2. Appel API
+    const fetchFresh = async () => {
+      try {
+        const rawData = await fetchStatsData();
+        console.log("[API] Donnée brute :", rawData);
+
+        const categoriesObj = rawData?.categories?.categories || {};
+        console.log("[API] Categories extraites :", categoriesObj);
+
+        const formattedData = Object.entries(categoriesObj).map(
+          ([name, value]) => ({ name, value })
+        );
+        console.log("[API] Données formatées pour graphique :", formattedData);
+
+        setData(formattedData);
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ data: formattedData })
+        );
+        console.log("[CACHE] Mise à jour avec données API !");
+      } catch (err: any) {
+        console.error("[API] Erreur lors de l'appel :", err);
+        setError(err.message || "Erreur lors du chargement des données");
+      }
+    };
+
+    fetchFresh();
+  }, []);
+
+  if (error) return <p>Erreur : {error}</p>;
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <PieChart>
         <Pie
-          data={mockData}
+          data={data}
           dataKey="value"
           nameKey="name"
           cx="50%"
@@ -41,7 +89,7 @@ export default function CategoryTicketGraph() {
           outerRadius={90}
           label
         >
-          {mockData.map((entry, index) => (
+          {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

@@ -4,34 +4,45 @@ import React from "react";
 
 interface InputFieldProps {
   id: string;
+  name: string;
   label: string;
-  type: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type: "text" | "password" | "email" | "number" | "textarea";
+  value: string | number;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   required?: boolean;
+  error?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
   id,
+  name,
   label,
   type,
   value,
   onChange,
   required = false,
+  error,
 }) => {
+  const InputComponent = type === "textarea" ? "textarea" : "input";
+
   return (
     <div className="form-group">
       <label htmlFor={id} className="form-label">
-        {label} :F
+        {label} :
       </label>
-      <input
-        type={type}
+      <InputComponent
         id={id}
+        name={name}
         className="form-input"
         value={value}
         onChange={onChange}
         required={required}
+        {...(type !== "textarea" && { type })}
+        autoComplete="off"
       />
+      {error && <p className="form-error">{error}</p>}
     </div>
   );
 };
