@@ -1,13 +1,41 @@
 import React, { useState } from "react";
+import useForm from "../hooks/useForm";
+import InputField from "../components/utility/InputField";
 
-const Connection = () => {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+interface ConnectionFormValues {
+  login: string;
+  password: string;
+}
+
+const Connection: React.FC = () => {
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-  };
+  const { values, handleChange, handleSubmit } = useForm<ConnectionFormValues>({
+    initialValues: { login: "", password: "" },
+    onSubmit: async (formValues) => {
+      // TODO : Ajouter le service d'authentification
+      console.log("Tentative de connexion avec :", formValues);
+      setMessage("Connexion en cours...");
+
+      try {
+        // Simuler un appel API
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        if (
+          formValues.login === "admin" &&
+          formValues.password === "password"
+        ) {
+          setMessage("Connexion réussie ! Redirection...");
+          // Logique de redirection ou de gestion de l'authentification réussie
+        } else {
+          setMessage("Identifiants incorrects.");
+        }
+      } catch (error) {
+        console.error("Erreur de connexion :", error);
+        setMessage("Une erreur est survenue lors de la connexion.");
+      }
+    },
+  });
 
   return (
     <div className="Connection">
@@ -15,32 +43,22 @@ const Connection = () => {
         <div className="connection-card">
           <h2 className="connection-title">Connexion</h2>
           <form onSubmit={handleSubmit} className="connection-form">
-            <div className="form-group">
-              <label htmlFor="login" className="form-label">
-                Identifiant :
-              </label>
-              <input
-                type="text"
-                id="login"
-                className="form-input"
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Mot de passe :
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="form-input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+            <InputField
+              id="login"
+              label="Identifiant"
+              type="text"
+              value={values.login}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              id="password"
+              label="Mot de passe"
+              type="password"
+              value={values.password}
+              onChange={handleChange}
+              required
+            />
             <button type="submit" className="connection-button">
               Se connecter
             </button>

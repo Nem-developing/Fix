@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { updateTicket } from "../../services/apiService";
 import { useNavigate } from "react-router-dom";
+import useModalClose from "../../hooks/useModalClose";
+import TicketForm from "../form/TicketForm";
 
 interface Ticket {
   id: number;
   titre: string;
   categorie: string;
   date: string;
-  [key: string]: any; // Pour supporter d'autres champs
+  [key: string]: any;
 }
 
 interface TicketEditModalProps {
@@ -22,9 +24,8 @@ const TicketEditModal: React.FC<TicketEditModalProps> = ({
   onSave,
 }) => {
   const navigate = useNavigate();
-  const handleViewTicket = (ticketId: number) => {
-    navigate(`/ticket/${ticketId}`);
-  };
+  const { modalContentRef, isClosing, handleCloseWithAnimation } =
+    useModalClose({ onClose });
 
   const [edited, setEdited] = useState<Ticket>({ ...ticket });
 
@@ -36,47 +37,34 @@ const TicketEditModal: React.FC<TicketEditModalProps> = ({
     try {
       const updated = await updateTicket(ticket.id, edited);
       onSave?.(updated);
-      onClose();
+      handleCloseWithAnimation();
     } catch (err) {
       console.error("Erreur lors de la mise à jour du ticket :", err);
       alert("Échec de la mise à jour du ticket.");
     }
   };
 
+  const handleViewTicket = (ticketId: number) => {
+    navigate(`/ticket/${ticketId}`);
+    handleCloseWithAnimation();
+  };
+
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div
+        className={`modal ${isClosing ? "closing" : ""}`}
+        ref={modalContentRef}
+      >
         <h2>Modification du ticket #{ticket.id}</h2>
-
-        <label>Titre :</label>
-        <input
-          type="text"
-          value={edited.titre}
-          onChange={(e) => handleChange("titre", e.target.value)}
-        />
-
-        <label>Catégorie :</label>
-        <input
-          type="text"
-          value={edited.categorie}
-          onChange={(e) => handleChange("categorie", e.target.value)}
-        />
-
-        <label>Date :</label>
-        <input
-          type="text"
-          value={edited.date}
-          onChange={(e) => handleChange("date", e.target.value)}
-        />
-
-        {/* Ajoute d'autres champs si besoin */}
-
+        <TicketForm formData={edited} onFieldChange={handleChange} />
         <div className="buttons">
-          <button className="view" onClick={() => handleViewTicket(ticket.id)}>Consulter</button>
+          <button className="view" onClick={() => handleViewTicket(ticket.id)}>
+            Consulter
+          </button>
           <button className="save" onClick={handleSave}>
             Sauvegarder
           </button>
-          <button className="cancel" onClick={onClose}>
+          <button className="cancel" onClick={handleCloseWithAnimation}>
             Annuler
           </button>
         </div>
