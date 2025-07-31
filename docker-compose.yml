@@ -1,24 +1,26 @@
-version: '3.1'
+version: "3.1"
 
 services:
-
   traefik:
     image: traefik:v2.10
     restart: always
     command:
-      - "--api.insecure=true"                    # Dashboard Traefik (optionnel)
+      # Dashboard Traefik (optionnel)
+      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     ports:
-      - "8080:80"                                  # HTTP
-      - "8081:8080"                              # Dashboard Traefik (optionnel)
+      # HTTP
+      - "5153:80"
+      # Dashboard Traefik (optionnel)
+      - "9900:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - fix-network
 
   fix-api:
-    image: nemdeveloping/fix-api:3.1
+    image: nemdeveloping/fix-api:3.8
     restart: always
     depends_on:
       - fix-database
@@ -29,16 +31,17 @@ services:
       DB_PASSWORD: examplepass
       DB_NAME: fix
       DB_HOSTNAME: fix-database
+    ports:
+      - "9001:8080"
     labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
-    - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api"
-    - "traefik.http.routers.fix-api.middlewares=api-stripprefix"
-    - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
-
+      - "traefik.enable=true"
+      - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
+      - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api"
+      - "traefik.http.routers.fix-api.middlewares=api-stripprefix"
+      - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
 
   fix-app:
-    image: nemdeveloping/fix-app:2.0
+    image: nemdeveloping/fix-app:2.2
     restart: always
     depends_on:
       - fix-database
@@ -60,23 +63,30 @@ services:
       MARIADB_DATABASE: fix
       MARIADB_USER: exampleuser
       MARIADB_PASSWORD: examplepass
-      MARIADB_RANDOM_ROOT_PASSWORD: '1'
+      MARIADB_RANDOM_ROOT_PASSWORD: "1"
     networks:
       - fix-network
     volumes:
       - db:/var/lib/mysql
 
-  adminer:
-    image: adminer
+  phpmyadmin:
+    image: phpmyadmin
     restart: always
+    environment:
+      PMA_HOST: fix-database
+      PMA_PORT: 3306
+      PMA_ABSOLUTE_URI: /phpmyadmin/
     networks:
       - fix-network
     labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.adminer.rule=PathPrefix(`/adminer`)"
-    - "traefik.http.middlewares.adminer-stripprefix.stripPrefix.prefixes=/adminer"
-    - "traefik.http.routers.adminer.middlewares=adminer-stripprefix"
-    - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
+
+      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripPrefix.prefixes=/phpmyadmin"
+      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+
+      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+
 volumes:
   fix:
   db:
