@@ -12,12 +12,15 @@ import { fetchStatsData } from "../../services/apiService";
 const CACHE_KEY = "graph-tickets-categorie";
 
 const COLORS = [
-  "#f51c1cff",
-  "#15c2f7ff",
-  "#e9971dff",
-  "#c41690ff",
-  "#1df81dff",
-  "#b9b9b9ff",
+  "#ff9b3eff", // Orange Vif
+  "#33FF57", // Vert Pomme
+  "#3357FF", // Bleu Électrique
+  "#FF33F6", // Fuchsia Éclatant
+  "#F6FF33", // Jaune Citron
+  "#33FFF6", // Cyan Lumineux
+  "#FF3333", // Rouge Sang
+  "#aa33ffff", // Violet Intense
+  "#33FFB5", // Vert Menthe
 ];
 
 export default function CategoryTicketGraph() {
@@ -78,7 +81,7 @@ export default function CategoryTicketGraph() {
   if (error) return <p>Erreur : {error}</p>;
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%">
       <PieChart>
         <Pie
           data={data}

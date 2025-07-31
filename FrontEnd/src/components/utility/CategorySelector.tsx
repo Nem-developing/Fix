@@ -58,6 +58,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
               placeholder="Autre..."
               className={`categorie-button ${isCustom ? "selected" : ""}`}
               value={customCategory}
+              maxLength={30}
               onChange={handleCustomCategoryChange}
             />
           ) : (

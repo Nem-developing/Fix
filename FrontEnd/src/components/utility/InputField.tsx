@@ -13,6 +13,7 @@ interface InputFieldProps {
   ) => void;
   required?: boolean;
   error?: string;
+  maxLength?: number;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -24,6 +25,7 @@ const InputField: React.FC<InputFieldProps> = ({
   onChange,
   required = false,
   error,
+  maxLength,
 }) => {
   const InputComponent = type === "textarea" ? "textarea" : "input";
 
@@ -41,6 +43,7 @@ const InputField: React.FC<InputFieldProps> = ({
         required={required}
         {...(type !== "textarea" && { type })}
         autoComplete="off"
+        {...(maxLength ? { maxLength } : {})}
       />
       {error && <p className="form-error">{error}</p>}
     </div>

@@ -42,6 +42,7 @@
       margin-top: map.get(var.$spacings, xl);
       @include mix.flex-space-between;
       align-items: stretch;
+      min-height: 23em;
 
       h2 {
         font-size: var.$font-size-xl;
