@@ -1,21 +1,21 @@
 // src/styles/main.scss
 
-// 1. Abstractions (variables, mixins, animations, utilities)
+// Abstractions (variables, mixins, animations, utilities)
 @use "abstracts/variables";
 @use "abstracts/mixins";
 @use "abstracts/animations";
 @use "abstracts/utilities";
 
-// 2. Base (reset, typography)
-@use "base/reset";   
+// Base (reset, typography)
+@use "base/reset";
 @use "base/typography";
 
-// 3. Layout (structure globale)
+// Layout (structure globale)
 @use "layout/main-layout";
 @use "layout/sidebar";
 @use "layout/navbar";
 
-// 4. Components (éléments réutilisables)
+// Components (éléments réutilisables)
 @use "components/burger";
 @use "components/dump-nombre-ticket";
 @use "components/ticket-edit-modal";
@@ -24,9 +24,14 @@
 @use "components/ticket-comment-list";
 @use "components/information-dev";
 
-// 5. Pages (styles spécifiques à des pages entières)
+// Pages (styles spécifiques à des pages entières)
 @use "pages/base-pages";
 @use "pages/dashboard";
 @use "pages/ticket-page";
 @use "pages/new-ticket";
 @use "pages/connection-page";
+
+// Themes (thèmes spécifiques)
+@use "themes/dark";
+@use "themes/light";
+@use "themes/fr";
