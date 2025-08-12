@@ -4,7 +4,7 @@ options:
   logging: GCS_ONLY
 
 steps:
-  - name: 'hello-world'
+  - name: 'debian'
     entrypoint: 'bash'
     args:
       - '-c'
