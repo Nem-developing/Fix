@@ -1,3 +1,11 @@
+logsBucket: 'gs://prod-nehemiebarkia-fix-builds'
+
+options:
+  logging: GCS_ONLY
+
+substitutions:
+  _TAG: "v1.0.0"
+
 steps:
   - name: 'ubuntu'
     entrypoint: 'bash'
@@ -6,6 +14,3 @@ steps:
       - 'echo "hello world, tag : $TAG"'
     env:
       - 'TAG=${_TAG}'
-
-substitutions:
-  _TAG: "v1.0.0"
