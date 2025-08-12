@@ -1,0 +1,11 @@
+steps:
+  - name: 'ubuntu'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'echo "hello world, tag : $TAG"'
+    env:
+      - 'TAG=${_TAG}'
+
+substitutions:
+  _TAG: "v1.0.0"
