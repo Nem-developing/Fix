@@ -4,8 +4,12 @@ options:
   logging: GCS_ONLY
 
 steps:
-  - name: 'debian'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - 'echo "hello world, tag : $TAG_NAME"'
+  # Install Ansible
+  - name: 'python:3.9-slim'
+    entrypoint: 'pip'
+    args: ['install', 'ansible']
+
+  # Run Ansible playbook
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'ansible-playbook'
+    args: ['-i', 'ansible/inventory.yml', 'ansible/playbook.yml']
