@@ -1,7 +1,7 @@
 logsBucket: 'gs://prod-nehemiebarkia-fix-builds'
 
 substitutions:
-  _DOCKERHUB_USER: 'Nemdeveloping'
+  _DOCKERHUB_USER: 'elticketo'
 options:
   logging: GCS_ONLY
 
@@ -14,32 +14,33 @@ steps:
         echo "$$DOCKERHUB_PASSWORD" | docker login -u "$$DOCKERHUB_USERNAME" --password-stdin
     secretEnv: ['DOCKERHUB_USERNAME', 'DOCKERHUB_PASSWORD']
 
+  # Build et push de l'api
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
-      - 'docker.io/${_DOCKERHUB_USER}/fix-api:${_TAG_NAME}'
+      - 'docker.io/${_DOCKERHUB_USER}/elticketo-api:${_TAG_NAME}'
       - './BackEnd'
     id: 'build-api'
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'docker.io/${_DOCKERHUB_USER}/fix-api:${_TAG_NAME}'
+      - 'docker.io/${_DOCKERHUB_USER}/elticketo-api:${_TAG_NAME}'
 
   # Build et push du frontend app
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
-      - 'docker.io/${_DOCKERHUB_USER}/fix-app:${_TAG_NAME}'
+      - 'docker.io/${_DOCKERHUB_USER}/elticketo-app:${_TAG_NAME}'
       - './FrontEnd'
     id: 'build-app'
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'docker.io/${_DOCKERHUB_USER}/fix-app:${_TAG_NAME}'
+      - 'docker.io/${_DOCKERHUB_USER}/elticketo-app:${_TAG_NAME}'
 
 availableSecrets:
   secretManager:
