@@ -6,6 +6,11 @@ options:
   logging: GCS_ONLY
 
 steps:
+  # Debug
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'ls -lisah ./']
+
   # Login   
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
