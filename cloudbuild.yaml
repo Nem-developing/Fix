@@ -8,6 +8,11 @@ options:
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
+    args: ['-c', 'echo $$DOCKERHUB_USERNAME']
+    secretEnv: ['DOCKERHUB_USERNAME', 'DOCKERHUB_PASSWORD']
+    
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
     args: ['-c', 'docker login --username=$$DOCKERHUB_USERNAME --password=$$DOCKERHUB_PASSWORD']
     secretEnv: ['DOCKERHUB_USERNAME', 'DOCKERHUB_PASSWORD']
 
