@@ -17,7 +17,7 @@ steps:
     args:
     - 'build'
     - '-t'
-    - 'docker.io/${_DOCKERHUB_USER}/elticketo-api:${TAG_NAME}'
+    - 'docker.io/${_DOCKERHUB_USER}/api:${TAG_NAME}'
     - '-f'
     - './BackEnd/Dockerfile'
     - '.'
@@ -26,14 +26,14 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'docker.io/${_DOCKERHUB_USER}/elticketo-api:${TAG_NAME}'
+      - 'docker.io/${_DOCKERHUB_USER}/api:${TAG_NAME}'
 
   # Build et push du frontend app
   - name: 'gcr.io/cloud-builders/docker'
     args:
     - 'build'
     - '-t'
-    - 'docker.io/${_DOCKERHUB_USER}/elticketo-app:${TAG_NAME}'
+    - 'docker.io/${_DOCKERHUB_USER}/app:${TAG_NAME}'
     - '-f'
     - './FrontEnd/Dockerfile'
     - '.'
@@ -42,7 +42,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'docker.io/${_DOCKERHUB_USER}/elticketo-app:${TAG_NAME}'
+      - 'docker.io/${_DOCKERHUB_USER}/app:${TAG_NAME}'
 
 availableSecrets:
   secretManager:
