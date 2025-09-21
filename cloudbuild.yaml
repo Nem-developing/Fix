@@ -15,10 +15,10 @@ steps:
   # Build et push de l'api
   - name: 'gcr.io/cloud-builders/docker'
     args:
-      - 'build'
-      - '-t'
-      - 'docker.io/${_DOCKERHUB_USER}/elticketo-api:${_TAG_NAME}'
-      - './BackEnd'
+    - 'build'
+    - '-t'
+    - 'docker.io/${_DOCKERHUB_USER}/elticketo-api:${TAG_NAME}'
+    - './BackEnd'
     id: 'build-api'
 
   - name: 'gcr.io/cloud-builders/docker'
