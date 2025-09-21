@@ -6,11 +6,7 @@ options:
   logging: GCS_ONLY
 
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
-    args: ['-c', 'echo $$DOCKERHUB_USERNAME']
-    secretEnv: ['DOCKERHUB_USERNAME', 'DOCKERHUB_PASSWORD']
-    
+  # Login   
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: ['-c', 'docker login --username=$$DOCKERHUB_USERNAME --password=$$DOCKERHUB_PASSWORD']
