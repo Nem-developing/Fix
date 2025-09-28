@@ -17,7 +17,7 @@ services:
       - fix-network
 
   fix-api:
-    image: nemdeveloping/fix-api:3.8
+    image: elticketo/api:alpha_2.0
     restart: always
     depends_on:
       - fix-database
@@ -63,7 +63,7 @@ services:
 
 
   fix-app:
-    image: nemdeveloping/fix-app:2.2
+    image: elticketo/app:alpha_2.0
     restart: always
     depends_on:
       - fix-database
