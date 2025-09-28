@@ -1,12 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import "./reset.css"
-import "./index.css"; 
+import "./styles/main.scss";
+import { ThemeProvider } from "./context/useTheme";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
+  // ========================= Supprimer le "React.StrictMode" en production =========================
   <React.StrictMode>
-    <App />
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );

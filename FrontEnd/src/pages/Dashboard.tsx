@@ -1,5 +1,8 @@
 import React from "react";
-import DumpNombreTicket from "../components/DumpNombreTicket";
+import DumpNombreTicket from "../components/tickets/DumpNombreTicket";
+import EtatTicketGraph from "../components/graph/Etat";
+import CategoryTicketGraph from "../components/graph/Categorie";
+import Information_dev from "../components/autres/informationdev";
 
 const Dashboard = () => {
   return (
@@ -9,23 +12,29 @@ const Dashboard = () => {
       <div className="block">
         <div className="Info-rapide">
           <div className="t-ouvert">
-            <h2>OUVERTS</h2>
-            <DumpNombreTicket statut="open" />
+            <h2>NOUVEAUX</h2>
+            <DumpNombreTicket statut="open" result="light" />
           </div>
           <div className="t-encours">
             <h2>EN COURS</h2>
-            <DumpNombreTicket statut="inprogress" />
+            <DumpNombreTicket statut="inprogress" result="light" />
           </div>
           <div className="t-ferme">
             <h2>FERMÉS</h2>
-            <DumpNombreTicket statut="closed" />
+            <DumpNombreTicket statut="closed" result="light" />
           </div>
         </div>
       </div>
       <div className="block">
         <div className="Graphiques">
-          <div className="etat"><h2>État des tickets</h2></div>
-          <div className="categorie"><h2>Tickets par categorie</h2></div>
+          <div className="etat">
+            <h2>État des tickets</h2>
+            <EtatTicketGraph />
+          </div>
+          <div className="categorie">
+            <h2>Tickets par categorie</h2>
+            <CategoryTicketGraph />
+          </div>
         </div>
       </div>
     </div>

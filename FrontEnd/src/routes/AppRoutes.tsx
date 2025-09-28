@@ -6,6 +6,9 @@ import OpenTickets from "../pages/OpenTickets";
 import TicketHistory from "../pages/TicketHistory";
 import Reports from "../pages/Reports";
 import Users from "../pages/Users";
+import Ticket from "../pages/Ticket";
+import TicketPage from "../pages/TicketPage";
+import Connection from "../pages/Connection";
 
 const AppRoutes = () => {
   return (
@@ -15,8 +18,11 @@ const AppRoutes = () => {
       <Route path="/new" element={<NewTicket />} />
       <Route path="/open" element={<OpenTickets />} />
       <Route path="/history" element={<TicketHistory />} />
+      <Route path="ticket" element={<Ticket />} />
       <Route path="/reports" element={<Reports />} />
       <Route path="/users" element={<Users />} />
+      <Route path="/ticket/:id" element={<TicketPage />} />
+      <Route path="/connection" element={<Connection />} />
     </Routes>
   );
 };
