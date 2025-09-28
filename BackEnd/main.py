@@ -177,11 +177,6 @@ async def web_get_a_tiket(request):
     summary="Get the status of a ticket",
     description="Get the status of a ticket",
 )
-async def web_get_a_tiket_statut(request):
-    projet_id = int(request.match_info["projet_id"])
-    id = int(request.match_info["id"])
-    return web.json_response(json.loads(json.dumps(get_ticket_statut(id, projet_id))))
-
 
 # WEB : (POST) Création d'un nouveau ticket
 class CreateTicketSchema(Schema):
@@ -214,43 +209,6 @@ async def web_create_tiket(request):
             )
         )
     )
-
-
-# WEB : (POST) d'un nouveau statut
-class ChangeTicketStatutSchema(Schema):
-    statut = fields.Int(required=True)
-
-@docs(
-    tags=["tickets"],
-    summary="Change the status of a ticket",
-    description="Change the status of a ticket"
-)
-@request_schema(ChangeTicketStatutSchema)
-async def web_post_ticket_statut(request):
-    projet_id = int(request.match_info["projet_id"])
-    id = int(request.match_info["id"])
-    # GET POST DATA
-    post_data = await request.json()
-    new_statut = post_data.get("statut")
-
-    data = {"error": True}
-    current_statut = get_ticket_statut(id, projet_id)
-
-    if current_statut["error"] != True:
-        if new_statut < 0:
-            data = {
-                "error": True,
-                "msg": "Vous ne pouvez pas avoir un statut négatif."
-                + " Statut actuel = "
-                + str(current_statut["statut"])
-                + ".",
-            }
-        else:
-            data_try = change_ticket_statut(id, projet_id, new_statut)
-            if data_try["error"] == False:
-                return web.json_response(json.loads(json.dumps(data_try)))
-
-    return web.json_response(json.loads(json.dumps(data)))
 
 
 # WEB : (GET) récupération des commentaires d'un ticket
@@ -550,8 +508,6 @@ app.router.add_post("/api/projets/{projet_id}/tickets", web_create_tiket)
 
 # TICKET
 app.router.add_get("/api/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
-app.router.add_get("/api/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
-app.router.add_post("/api/projets/{projet_id}/tickets/{id}/statut", web_post_ticket_statut)
 # TICKET COMMENTAIRES
 app.router.add_get(
     "/api/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
