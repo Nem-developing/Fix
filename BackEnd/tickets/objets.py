@@ -10,8 +10,8 @@ from typing import Optional
 @dataclass
 class ticket:
     id: int
-    serveur: str
-    objet: str
+    categorie: str
+    titre: str
     description: str
     date: str
     heure: str

@@ -1,19 +1,16 @@
-version: "3.1"
+version: '3.1'
 
 services:
   traefik:
     image: traefik:v2.10
     restart: always
     command:
-      # Dashboard Traefik (optionnel)
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     ports:
-      # HTTP
-      - "5153:80"
-      # Dashboard Traefik (optionnel)
-      - "9900:8080"
+      - "8080:80"
+      - "8081:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
@@ -32,13 +29,38 @@ services:
       DB_NAME: fix
       DB_HOSTNAME: fix-database
     ports:
-      - "9001:8080"
+      - "8000:8080"
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
-      - "traefik.http.middlewares.api-stripprefix.stripPrefix.prefixes=/api"
-      - "traefik.http.routers.fix-api.middlewares=api-stripprefix"
-      - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
+    - "traefik.enable=true"
+
+    ## Middleware de redirection : /static → /api/static
+    - "traefik.http.middlewares.static-redirect.redirectregex.regex=^/static/(.*)"
+    - "traefik.http.middlewares.static-redirect.redirectregex.replacement=/api/static/$$1"
+    - "traefik.http.middlewares.static-redirect.redirectregex.permanent=true"
+
+    ## Route de redirection static
+    - "traefik.http.routers.static-redirect.rule=PathPrefix(`/static`)"
+    - "traefik.http.routers.static-redirect.middlewares=static-redirect"
+    - "traefik.http.routers.static-redirect.entrypoints=web"
+    - "traefik.http.routers.static-redirect.priority=100"
+
+    ## Middleware pour désactiver validator Swagger UI
+    - "traefik.http.middlewares.add-validator-url.redirectregex.regex=^/api/docs$"
+    - "traefik.http.middlewares.add-validator-url.redirectregex.replacement=/api/docs?validatorUrl="
+    - "traefik.http.middlewares.add-validator-url.redirectregex.permanent=false"
+
+    ## Router pour appliquer middleware sur /api/docs
+    - "traefik.http.routers.docs-validator-disable.rule=Path(`/api/docs`)"
+    - "traefik.http.routers.docs-validator-disable.entrypoints=web"
+    - "traefik.http.routers.docs-validator-disable.middlewares=add-validator-url"
+    - "traefik.http.routers.docs-validator-disable.service=fix-api"
+
+    ## Route principale pour /api
+    - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
+    - "traefik.http.routers.fix-api.entrypoints=web"
+    - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
+
+
 
   fix-app:
     image: nemdeveloping/fix-app:2.2
@@ -63,7 +85,7 @@ services:
       MARIADB_DATABASE: fix
       MARIADB_USER: exampleuser
       MARIADB_PASSWORD: examplepass
-      MARIADB_RANDOM_ROOT_PASSWORD: "1"
+      MARIADB_RANDOM_ROOT_PASSWORD: '1'
     networks:
       - fix-network
     volumes:
@@ -79,13 +101,13 @@ services:
     networks:
       - fix-network
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
+    - "traefik.enable=true"
+    - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
 
-      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripPrefix.prefixes=/phpmyadmin"
-      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+    - "traefik.http.middlewares.phpmyadmin-stripprefix.stripPrefix.prefixes=/phpmyadmin"
+    - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
 
-      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+    - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
 
 volumes:
   fix:
