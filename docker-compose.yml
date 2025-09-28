@@ -14,15 +14,15 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - fix-network
+      - elticketo-network
 
-  fix-api:
+  elticketo-api:
     image: elticketo/api:alpha_2.0
     restart: always
     depends_on:
       - fix-database
     networks:
-      - fix-network
+      - elticketo-network
     environment:
       DB_USER: exampleuser
       DB_PASSWORD: examplepass
@@ -53,30 +53,30 @@ services:
     - "traefik.http.routers.docs-validator-disable.rule=Path(`/api/docs`)"
     - "traefik.http.routers.docs-validator-disable.entrypoints=web"
     - "traefik.http.routers.docs-validator-disable.middlewares=add-validator-url"
-    - "traefik.http.routers.docs-validator-disable.service=fix-api"
+    - "traefik.http.routers.docs-validator-disable.service=elticketo-api"
 
     ## Route principale pour /api
-    - "traefik.http.routers.fix-api.rule=PathPrefix(`/api`)"
-    - "traefik.http.routers.fix-api.entrypoints=web"
-    - "traefik.http.services.fix-api.loadbalancer.server.port=8080"
+    - "traefik.http.routers.elticketo-api.rule=PathPrefix(`/api`)"
+    - "traefik.http.routers.elticketo-api.entrypoints=web"
+    - "traefik.http.services.elticketo-api.loadbalancer.server.port=8080"
 
 
 
-  fix-app:
+  elticketo-app:
     image: elticketo/app:alpha_2.0
     restart: always
     depends_on:
       - fix-database
-      - fix-api
+      - elticketo-api
     networks:
-      - fix-network
+      - elticketo-network
     environment:
-      API_URL: "http://fix-api:8080"
+      API_URL: "http://elticketo-api:8080"
       APP_URL: "http://localhost:8000"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fix-app.rule=PathPrefix(`/`)"
-      - "traefik.http.services.fix-app.loadbalancer.server.port=5173"
+      - "traefik.http.routers.elticketo-app.rule=PathPrefix(`/`)"
+      - "traefik.http.services.elticketo-app.loadbalancer.server.port=5173"
 
   fix-database:
     image: mariadb:latest
@@ -87,7 +87,7 @@ services:
       MARIADB_PASSWORD: examplepass
       MARIADB_RANDOM_ROOT_PASSWORD: '1'
     networks:
-      - fix-network
+      - elticketo-network
     volumes:
       - db:/var/lib/mysql
 
@@ -99,7 +99,7 @@ services:
       PMA_PORT: 3306
       PMA_ABSOLUTE_URI: /phpmyadmin/
     networks:
-      - fix-network
+      - elticketo-network
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
@@ -114,4 +114,4 @@ volumes:
   db:
 
 networks:
-  fix-network:
+  elticketo-network:
