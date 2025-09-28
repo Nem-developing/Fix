@@ -10,7 +10,16 @@ from aiohttp import web
 import mysql.connector
 from datetime import datetime, timedelta
 from hashlib import sha512
+from aiohttp_apispec import (
+    setup_aiohttp_apispec,
+    docs,
+    response_schema,
+    request_schema,
+)
+from marshmallow import Schema, fields
 
+
+from stats.gestion import get_projets_stats, get_a_projet_stats, get_tickets_graph
 from database.gestion import db_ok, prepare
 from projets.gestion import create_projet, get_a_projet, get_all_projets
 from tickets.gestion import change_ticket_statut, create_ticket, get_a_ticket, get_a_ticket_commentaire, get_all_ticket_commentaire, get_all_tickets, get_ticket_statut, post_commentaire, put_commentaire
@@ -26,12 +35,13 @@ from variables.constants import VERSION
 # =========================================================================
 #                               TICKETS
 # Statut :
-#  0 : Non-Traité
-#  1 : En-Cours
-#  2 : Bloqué
-#  3 : En-Tests
-#  4 : En-Revue
-#  5 : Archivé
+#  0 : Non-Traité       --> Considéré "new"
+#  1 : En-Cours         --> Considéré "open"
+#  2 : Bloqué           --> Considéré "open"
+#  3 : En-Tests         --> Considéré "open"
+#  4 : En-Revue         --> Considéré "open"
+#  5 : Fermé            --> Considéré "closed"
+#
 #
 # Niveaux d'urgence :
 # 0 : Faible
@@ -81,8 +91,11 @@ def display():
 ################   FONCTIONS WEB   ################
 ###################################################
 
-
-# WEB : (GET) Affichage de la page d'accueil
+@docs(
+    tags=["info"],
+    summary="status",
+    description="Display API status and version",
+)
 async def web_index(request):
     return web.json_response(json.loads(display()))
 
@@ -91,17 +104,37 @@ async def web_index(request):
 # PROJETS ADMINISTRATION
 ########################
 # WEB : (GET) Récupération des informations de tous les projets
+@docs(
+    tags=["projets"],
+    summary="Get the list of all projects",
+    description="Get the list of all projects",
+)
 async def web_get_all_projets(request):
     return web.json_response(json.loads(json.dumps(get_all_projets())))
 
 
 # WEB : (GET) Récupération des informations d'un projet
+@docs(
+    tags=["projets"],
+    summary="Get the list of a specific project",
+    description="Get the list of a specific project",
+)
 async def web_get_a_projet(request):
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_a_projet(id))))
 
 
 # WEB : (POST) Création d'un nouveau projet
+class CreateProjectSchema(Schema):
+    titre = fields.Str(required=True)
+    description = fields.Str(required=True)
+
+@docs(
+    tags=["projets"],
+    summary="Créer un projet",
+    description="Créer un nouveau projet"
+)
+@request_schema(CreateProjectSchema)
 async def web_create_projet(request):
     # GET POST DATA
     post_data = await request.json()
@@ -115,6 +148,11 @@ async def web_create_projet(request):
 # TICKETS ADMINISTRATION
 ########################
 # WEB : (GET) Récupération de tous les tickets d'un projet
+@docs(
+    tags=["tickets"],
+    summary="Get the list of all tickets of a specific project",
+    description="Get the list of all tickets of a specific project",
+)
 async def web_get_all_tikets(request):
     projet_id = int(request.match_info["projet_id"])
     request_is_valid(request, with_project=True, projet_id=projet_id, level_perms_min=0)
@@ -122,6 +160,11 @@ async def web_get_all_tikets(request):
 
 
 # WEB : (GET) Récupération d'un ticket
+@docs(
+    tags=["tickets"],
+    summary="Get the list of the informations of a specific ticket",
+    description="Get the list of the informations of a specific ticket",
+)
 async def web_get_a_tiket(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
@@ -129,6 +172,11 @@ async def web_get_a_tiket(request):
 
 
 # WEB : (GET) Récupération du statut d'un ticket
+@docs(
+    tags=["tickets"],
+    summary="Get the status of a ticket",
+    description="Get the status of a ticket",
+)
 async def web_get_a_tiket_statut(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
@@ -136,20 +184,32 @@ async def web_get_a_tiket_statut(request):
 
 
 # WEB : (POST) Création d'un nouveau ticket
+class CreateTicketSchema(Schema):
+    titre = fields.Int(required=True)
+    categorie = fields.Int(required=True)
+    description = fields.Int(required=True)
+    urgence = fields.Int(required=True)
+
+@docs(
+    tags=["tickets"],
+    summary="Créer un ticket",
+    description="Créer un ticket"
+)
+@request_schema(CreateTicketSchema)
 async def web_create_tiket(request):
     projet_id = int(request.match_info["projet_id"])
     # GET POST DATA
     post_data = await request.json()
-    serveur = post_data.get("serveur")
-    data_objet = post_data.get("objet")
+    titre = post_data.get("titre")
+    categorie = post_data.get("categorie")
     description = post_data.get("description")
     urgence = post_data.get("urgence")
-    user_create = post_data.get("user_create")
+    user_id = get_user_id_from_token(get_token(request))
     return web.json_response(
         json.loads(
             json.dumps(
                 create_ticket(
-                    serveur, data_objet, description, urgence, user_create, projet_id
+                    titre, categorie, description, urgence, user_id, projet_id
                 )
             )
         )
@@ -157,6 +217,15 @@ async def web_create_tiket(request):
 
 
 # WEB : (POST) d'un nouveau statut
+class ChangeTicketStatutSchema(Schema):
+    statut = fields.Int(required=True)
+
+@docs(
+    tags=["tickets"],
+    summary="Change the status of a ticket",
+    description="Change the status of a ticket"
+)
+@request_schema(ChangeTicketStatutSchema)
 async def web_post_ticket_statut(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
@@ -184,7 +253,12 @@ async def web_post_ticket_statut(request):
     return web.json_response(json.loads(json.dumps(data)))
 
 
-# WEB : (GET) récupération d'un commentaire d'un ticket
+# WEB : (GET) récupération des commentaires d'un ticket
+@docs(
+    tags=["tickets"],
+    summary="Get the list of all comments of a specific ticket",
+    description="Get the list of all comments of a specific ticket"
+)
 async def web_get_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["id"])
@@ -194,6 +268,11 @@ async def web_get_tiket_commentaires(request):
 
 
 # WEB : (GET) Récupération d'un commentaire d'un ticket
+@docs(
+    tags=["tickets"],
+    summary="Get a specific comments of a specific ticket",
+    description="Get a specific comments of a specific ticket"
+)
 async def web_get_a_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["ticket_id"])
@@ -204,6 +283,15 @@ async def web_get_a_tiket_commentaires(request):
 
 
 # WEB : (POST) Création d'un commentaire sur un ticket
+class CreateCommentSchema(Schema):
+    message = fields.Int(required=True)
+
+@docs(
+    tags=["tickets"],
+    summary="Create a comment on a ticket",
+    description="Create a comment on a ticket"
+)
+@request_schema(CreateCommentSchema)
 async def web_post_tiket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["id"])
@@ -217,6 +305,15 @@ async def web_post_tiket_commentaires(request):
 
 
 # WEB : PUT Modification d'un commentaire sur un ticket
+class UpdateCommentSchema(Schema):
+    message = fields.Int(required=True)
+    statut = fields.Int(required=True)
+@docs(
+    tags=["tickets"],
+    summary="Update a comment on a ticket",
+    description="Update a comment on a ticket"
+)
+@request_schema(UpdateCommentSchema)
 async def web_put_tiket_commentaire(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["ticket_id"])
@@ -236,17 +333,37 @@ async def web_put_tiket_commentaire(request):
 # USERS ADMINISTRATION
 ########################
 # WEB : (GET) Liste des utilisateurs
+@docs(
+    tags=["users"],
+    summary="List users",
+    description="List users"
+)
 async def web_get_users(request):
     return web.json_response(json.loads(json.dumps(get_all_users())))
 
 
 # WEB : (GET) Liste d'un utilisateur
+@docs(
+    tags=["users"],
+    summary="Get a specific user",
+    description="Get a specific user"
+)
 async def web_get_a_users(request):
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_a_users(id))))
 
 
 # WEB : (POST) Création d'un utilisateur
+class CreateUserSchema(Schema):
+    username = fields.Str(required=True)
+    password = fields.Str(required=True)
+    super_admin = fields.Str(required=True)
+@docs(
+    tags=["users"],
+    summary="Create a user",
+    description="Create a user"
+)
+@request_schema(CreateUserSchema)
 async def web_post_users(request):
     # GET POST DATA
     post_data = await request.json()
@@ -259,6 +376,15 @@ async def web_post_users(request):
 
 
 # WEB : (POST) Changement d'un mot de passe d'un utilisateur
+class ChangePasswordSchema(Schema):
+    password = fields.Str(required=True)
+
+@docs(
+    tags=["users"],
+    summary="Change a user password",
+    description="Change a user password"
+)
+@request_schema(ChangePasswordSchema)
 async def web_post_user_mdp(request):
     id = int(request.match_info["id"])
     # GET POST DATA
@@ -276,6 +402,11 @@ async def web_post_user_mdp(request):
 
 
 # WEB : (GET) Récupération de la liste des tokens à vie pour tous les utilisateurs
+@docs(
+    tags=["tokens"],
+    summary="Get the list of all tokens",
+    description="Get the list of all tokens"
+)
 async def web_get_tokens(request):
 
     statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
@@ -287,6 +418,11 @@ async def web_get_tokens(request):
 
 
 # WEB : (GET) Récupération de la liste de mes tokens à vie
+@docs(
+    tags=["tokens"],
+    summary="Get the list of my tokens",
+    description="Get the list of my tokens"
+)
 async def web_get_my_tokens(request):
     statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
     if statut == False:
@@ -297,6 +433,16 @@ async def web_get_my_tokens(request):
 
 
 # WEB : (POST) Création d'un token
+class CreateTokenSchema(Schema):
+    username = fields.Str(required=True)
+    password = fields.Str(required=True)
+    type = fields.Str(required=True)
+@docs(
+    tags=["tokens"],
+    summary="Create a token",
+    description="Create a token"
+)
+@request_schema(CreateTokenSchema)
 async def web_post_tokens(request):
     # VARS
     EX = {"username": "admin", "password": "admin", "type": 1}
@@ -338,48 +484,113 @@ async def web_post_tokens(request):
     return web.json_response(json.loads(json.dumps({"error": False, "token": token})))
 
 
+########################
+# STATS
+########################
+
+# WEB : (GET) Récupération des statistiques de tous les projets
+@docs(
+    tags=["stats"],
+    summary="get stats of all projects",
+    description="get stats of all projects"
+)
+async def web_stats_projet(request):
+    statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
+    if statut == False:
+        data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
+        return web.json_response(json.loads(json.dumps(data)))
+
+    return web.json_response(json.loads(json.dumps(get_projets_stats())))
+
+
+# WEB : (GET) Récupération des statistiques d'un projets
+@docs(
+    tags=["stats"],
+    summary="get stats of a project",
+    description="get stats of a project"
+)
+async def web_stats_a_projet(request):
+    statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
+    if statut == False:
+        data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
+        return web.json_response(json.loads(json.dumps(data)))
+    projet_id = int(request.match_info["projet_id"])
+    return web.json_response(json.loads(json.dumps(get_a_projet_stats(projet_id))))
+
+# WEB : (GET) Récupération des statistiques de tous les ticekts d'un projet
+@docs(
+    tags=["stats"],
+    summary="get stats of all tickets of a project",
+    description="get stats of all tickets of a project"
+)
+async def web_stats_tickets(request):
+    statut, error_code, error_msg = request_is_valid(request, with_project=False, level_perms_min=0)
+    if statut == False:
+        data = {"error": statut, "error_code": error_code, "error_msg": error_msg}
+        return web.json_response(json.loads(json.dumps(data)))
+    projet_id = int(request.match_info["projet_id"])
+    try:
+        days = int(request.rel_url.query["days"])
+    except:
+        days = 7
+    return web.json_response(json.loads(json.dumps(get_tickets_graph(projet_id,days))))
+
 # Définition des routes
 app = web.Application()
-app.router.add_get("/", web_index)
+app.router.add_get("/api/", web_index)
 
 # GESTION DES PROJETS
-app.router.add_get("/projets", web_get_all_projets)
-app.router.add_get("/projets/{id}", web_get_a_projet)
-app.router.add_post("/projets", web_create_projet)
+app.router.add_get("/api/projets", web_get_all_projets)
+app.router.add_get("/api/projets/{id}", web_get_a_projet)
+app.router.add_post("/api/projets", web_create_projet)
 
 # GET ALL & CREATE ONE
-app.router.add_get("/projets/{projet_id}/tickets", web_get_all_tikets)
-app.router.add_post("/projets/{projet_id}/tickets", web_create_tiket)
+app.router.add_get("/api/projets/{projet_id}/tickets", web_get_all_tikets)
+app.router.add_post("/api/projets/{projet_id}/tickets", web_create_tiket)
 
 # TICKET
-app.router.add_get("/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
-app.router.add_get("/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
-app.router.add_post("/projets/{projet_id}/tickets/{id}/statut", web_post_ticket_statut)
+app.router.add_get("/api/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
+app.router.add_get("/api/projets/{projet_id}/tickets/{id}/statut", web_get_a_tiket_statut)
+app.router.add_post("/api/projets/{projet_id}/tickets/{id}/statut", web_post_ticket_statut)
 # TICKET COMMENTAIRES
 app.router.add_get(
-    "/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
+    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
 )
 app.router.add_get(
-    "/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
+    "/api/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
     web_get_a_tiket_commentaires,
 )
 app.router.add_post(
-    "/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires
+    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires
 )
 app.router.add_put(
-    "/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
+    "/api/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
     web_put_tiket_commentaire,
 )
 # USERS
-app.router.add_get("/utilisateurs", web_get_users)
-app.router.add_get("/utilisateurs/{id}", web_get_a_users)
-app.router.add_post("/utilisateurs", web_post_users)
-app.router.add_post("/utilisateurs/{id}/password", web_post_user_mdp)
+app.router.add_get("/api/utilisateurs", web_get_users)
+app.router.add_get("/api/utilisateurs/{id}", web_get_a_users)
+app.router.add_post("/api/utilisateurs", web_post_users)
+app.router.add_post("/api/utilisateurs/{id}/password", web_post_user_mdp)
 
 # API TOKEN
-app.router.add_get("/tokens", web_get_tokens)
-app.router.add_get("/tokens/my", web_get_my_tokens)
-app.router.add_post("/tokens", web_post_tokens)
+app.router.add_get("/api/tokens", web_get_tokens)
+app.router.add_get("/api/tokens/my", web_get_my_tokens)
+app.router.add_post("/api/tokens", web_post_tokens)
+
+# STATS
+app.router.add_get("/api/projets/stats", web_stats_projet)
+app.router.add_get("/api/projets/{projet_id}/stats", web_stats_a_projet)
+app.router.add_get("/api/projets/{projet_id}/graph", web_stats_tickets)
+
+setup_aiohttp_apispec(
+    app=app,
+    title="Documentation de L'API FIX",
+    version=VERSION,
+    url="/api/docs/swagger",
+    swagger_path="/api/docs",
+)
+
 
 prepare()
 
