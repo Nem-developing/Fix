@@ -153,7 +153,7 @@ async def web_create_projet(request):
     summary="Get the list of all tickets of a specific project",
     description="Get the list of all tickets of a specific project",
 )
-async def web_get_all_tikets(request):
+async def web_get_all_tickets(request):
     projet_id = int(request.match_info["projet_id"])
     request_is_valid(request, with_project=True, projet_id=projet_id, level_perms_min=0)
     return web.json_response(json.loads(json.dumps(get_all_tickets(projet_id))))
@@ -165,7 +165,7 @@ async def web_get_all_tikets(request):
     summary="Get the list of the informations of a specific ticket",
     description="Get the list of the informations of a specific ticket",
 )
-async def web_get_a_tiket(request):
+async def web_get_a_ticket(request):
     projet_id = int(request.match_info["projet_id"])
     id = int(request.match_info["id"])
     return web.json_response(json.loads(json.dumps(get_a_ticket(id, projet_id))))
@@ -179,19 +179,19 @@ async def web_get_a_tiket(request):
 )
 
 # WEB : (POST) Création d'un nouveau ticket
-class CreateTicketSchema(Schema):
-    titre = fields.Int(required=True)
-    categorie = fields.Int(required=True)
-    description = fields.Int(required=True)
-    urgence = fields.Int(required=True)
+class PatchTicketSchema(Schema):
+    titre = fields.Int(required=False)
+    categorie = fields.Int(required=False)
+    description = fields.Int(required=False)
+    urgence = fields.Int(required=False)
 
 @docs(
     tags=["tickets"],
-    summary="Créer un ticket",
-    description="Créer un ticket"
+    summary="PATCH un ticket",
+    description="Mettre à jour certaines informations d'un ticket sans tout envoyer."
 )
 @request_schema(CreateTicketSchema)
-async def web_create_tiket(request):
+async def PatchTicketSchema(request):
     projet_id = int(request.match_info["projet_id"])
     # GET POST DATA
     post_data = await request.json()
@@ -211,13 +211,50 @@ async def web_create_tiket(request):
     )
 
 
+# WEB : (POST) d'un nouveau statut
+class ChangeTicketStatutSchema(Schema):
+    statut = fields.Int(required=True)
+
+@docs(
+    tags=["tickets"],
+    summary="Change the status of a ticket",
+    description="Change the status of a ticket"
+)
+@request_schema(ChangeTicketStatutSchema)
+async def web_post_ticket_statut(request):
+    projet_id = int(request.match_info["projet_id"])
+    id = int(request.match_info["id"])
+    # GET POST DATA
+    post_data = await request.json()
+    new_statut = post_data.get("statut")
+
+    data = {"error": True}
+    current_statut = get_ticket_statut(id, projet_id)
+
+    if current_statut["error"] != True:
+        if new_statut < 0:
+            data = {
+                "error": True,
+                "msg": "Vous ne pouvez pas avoir un statut négatif."
+                + " Statut actuel = "
+                + str(current_statut["statut"])
+                + ".",
+            }
+        else:
+            data_try = change_ticket_statut(id, projet_id, new_statut)
+            if data_try["error"] == False:
+                return web.json_response(json.loads(json.dumps(data_try)))
+
+    return web.json_response(json.loads(json.dumps(data)))
+
+
 # WEB : (GET) récupération des commentaires d'un ticket
 @docs(
     tags=["tickets"],
     summary="Get the list of all comments of a specific ticket",
     description="Get the list of all comments of a specific ticket"
 )
-async def web_get_tiket_commentaires(request):
+async def web_get_ticket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["id"])
     return web.json_response(
@@ -231,7 +268,7 @@ async def web_get_tiket_commentaires(request):
     summary="Get a specific comments of a specific ticket",
     description="Get a specific comments of a specific ticket"
 )
-async def web_get_a_tiket_commentaires(request):
+async def web_get_a_ticket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["ticket_id"])
     id = int(request.match_info["id"])
@@ -250,7 +287,7 @@ class CreateCommentSchema(Schema):
     description="Create a comment on a ticket"
 )
 @request_schema(CreateCommentSchema)
-async def web_post_tiket_commentaires(request):
+async def web_post_ticket_commentaires(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["id"])
     # GET POST DATA
@@ -272,7 +309,7 @@ class UpdateCommentSchema(Schema):
     description="Update a comment on a ticket"
 )
 @request_schema(UpdateCommentSchema)
-async def web_put_tiket_commentaire(request):
+async def web_put_ticket_commentaire(request):
     projet_id = int(request.match_info["projet_id"])
     ticket_id = int(request.match_info["ticket_id"])
     id = int(request.match_info["id"])
@@ -503,25 +540,27 @@ app.router.add_get("/api/projets/{id}", web_get_a_projet)
 app.router.add_post("/api/projets", web_create_projet)
 
 # GET ALL & CREATE ONE
-app.router.add_get("/api/projets/{projet_id}/tickets", web_get_all_tikets)
-app.router.add_post("/api/projets/{projet_id}/tickets", web_create_tiket)
+app.router.add_get("/api/projets/{projet_id}/tickets", web_get_all_tickets)
+app.router.add_post("/api/projets/{projet_id}/tickets", web_create_ticket)
 
 # TICKET
-app.router.add_get("/api/projets/{projet_id}/tickets/{id}", web_get_a_tiket)
+app.router.add_get("/api/projets/{projet_id}/tickets/{id}", web_get_a_ticket)
+app.router.add_patch("/api/projets/{projet_id}/tickets/{id}", web_patch_a_ticket)
+app.router.add_put("/api/projets/{projet_id}/tickets/{id}", web_put_a_ticket)
 # TICKET COMMENTAIRES
 app.router.add_get(
-    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_get_tiket_commentaires
+    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_get_ticket_commentaires
 )
 app.router.add_get(
     "/api/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
-    web_get_a_tiket_commentaires,
+    web_get_a_ticket_commentaires,
 )
 app.router.add_post(
-    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_post_tiket_commentaires
+    "/api/projets/{projet_id}/tickets/{id}/commentaires", web_post_ticket_commentaires
 )
 app.router.add_put(
     "/api/projets/{projet_id}/tickets/{ticket_id}/commentaires/{id}",
-    web_put_tiket_commentaire,
+    web_put_ticket_commentaire,
 )
 # USERS
 app.router.add_get("/api/utilisateurs", web_get_users)
