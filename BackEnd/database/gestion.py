@@ -7,7 +7,7 @@ import random
 import string
 from typing import Optional
 from aiohttp import web
-import mysql.connector
+import psycopg2
 from datetime import datetime, timedelta
 from hashlib import sha512
 
@@ -31,8 +31,8 @@ def db_run(CMD, fetch=True, commit=False):
     DATA = {}
     try:
         # établir une connexion à la base de donnéess
-        conn = mysql.connector.connect(
-            host=DB_HOST, user=DB_USER, password=DB_PASSORD, database=DB_NAME
+        conn = psycopg2.connect(
+            host=DB_HOST, user=DB_USER, password=DB_PASSORD, dbname=DB_NAME
         )
 
         # créer un curseur pour exécuter les requêtes
@@ -40,21 +40,24 @@ def db_run(CMD, fetch=True, commit=False):
 
         cursor.execute(str(CMD))
         if fetch == True:
-            DATA = cursor.fetchall()
+            # For queries that don't return data (like INSERT/UPDATE without RETURNING), fetchall might fail or return empty
+            if cursor.description:
+                DATA = cursor.fetchall()
+            else:
+                DATA = {}
         else:
-            DATA = cursor.fetchone()
+            if cursor.description:
+                DATA = cursor.fetchone()
+            else:
+                DATA = {}
 
         if commit == True:
             conn.commit()
 
         cursor.close()
         conn.close()
-    except mysql.connector.errors.Programmingerror as error:
-        MSG = "Erreur d'authentification MySQL: " + str(error)
-        return body_sql(CONTENT=DATA, ERROR=True, ERROR_MSG=MSG)
-
-    except mysql.connector.errors.Databaseerror as error:
-        MSG = "Erreur de connexion MySQL " + str(error)
+    except psycopg2.Error as error:
+        MSG = "Erreur PostgreSQL: " + str(error)
         return body_sql(CONTENT=DATA, ERROR=True, ERROR_MSG=MSG)
     return body_sql(CONTENT=DATA, ERROR=False)
 
@@ -89,60 +92,68 @@ def check_if_everything_is_ok():
 
 # Fonction qui vérifie si une table existe ou non
 def verif_table(table):
-    cnx = mysql.connector.connect(
-        user=DB_USER,
-        password=DB_PASSORD,
-        host=DB_HOST,
-        database=DB_NAME,
-    )
-    cursor = cnx.cursor()
+    try:
+        cnx = psycopg2.connect(
+            user=DB_USER,
+            password=DB_PASSORD,
+            host=DB_HOST,
+            dbname=DB_NAME,
+        )
+        cursor = cnx.cursor()
 
-    cursor.execute("SHOW TABLES LIKE '{}'".format(table))
-    result = cursor.fetchone()
+        cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name = %s", (table,))
+        result = cursor.fetchone()
+        cnx.close()
 
-    if result:
-        return True
-    else:
+        if result:
+            return True
+        else:
+            return False
+    except:
         return False
 
 # Fonction qui vérifie si un trigger existe ou non
 def verif_trigger(trigger):
-    cnx = mysql.connector.connect(
-        user=DB_USER,
-        password=DB_PASSORD,
-        host=DB_HOST,
-        database=DB_NAME,
-    )
+    try:
+        cnx = psycopg2.connect(
+            user=DB_USER,
+            password=DB_PASSORD,
+            host=DB_HOST,
+            dbname=DB_NAME,
+        )
 
-    sql = """
-        SELECT 1
-        FROM INFORMATION_SCHEMA.TRIGGERS
-        WHERE TRIGGER_SCHEMA = %s
-          AND TRIGGER_NAME   = %s
-        LIMIT 1
-    """
-    cursor = cnx.cursor()
+        sql = """
+            SELECT 1
+            FROM information_schema.triggers
+            WHERE trigger_name = %s
+            LIMIT 1
+        """
+        cursor = cnx.cursor()
 
-    cursor.execute(sql, (DB_NAME, trigger))
-    result = cursor.fetchone()
+        cursor.execute(sql, (trigger,))
+        result = cursor.fetchone()
+        cnx.close()
 
-    if result:
-        return True
-    else:
+        if result:
+            return True
+        else:
+            return False
+    except:
         return False
 
 
 # Retourne Vrais si on arrive à nous connecter à la DB
 def acces_db(timeout: int = 10):
     try:
-        cnx = mysql.connector.connect(
+        cnx = psycopg2.connect(
             user=DB_USER,
             password=DB_PASSORD,
             host=DB_HOST,
-            database=DB_NAME,
-            connection_timeout=timeout,
+            dbname=DB_NAME,
+            connect_timeout=timeout,
         )
         cursor = cnx.cursor()
+        cnx.close()
         return True, []
     except Exception as e:
         return False, e
@@ -161,7 +172,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             date = maintenant.strftime("%d/%m/%Y")
             print("\t=> Ajout du projet initial.", end="")
             req_str = (
-                "INSERT INTO `projets` (`titre`, `description`, `date`, `statut`) VALUES ('Projet Initial', 'Voici un projet', '"
+                "INSERT INTO projects (titre, description, date, statut) VALUES ('Projet Initial', 'Voici un projet', '"
                 + str(date)
                 + "', '0');"
             )
@@ -175,7 +186,7 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             heure = maintenant.strftime("%H:%M:%S")
             print("\t=> Ajout du ticket de bienvenue.", end="")
             req_str = (
-                "INSERT INTO `tickets` (`categorie`, `titre`, `description`, `date`, `heure`, `utilisateur_emmeteur_du_ticket`, `date_pec`, `heure_pec`,  `date_fin`, `heure_fin`,  `urgence`, `statut`, `technicien_affecte`, `technicien_qui_archive`, `projet_id`) VALUES ('Autre', 'Bienvenue sur Fix "
+                "INSERT INTO tickets (categorie, titre, description, date, heure, utilisateur_emmeteur_du_ticket, date_pec, heure_pec,  date_fin, heure_fin,  urgence, statut, technicien_affecte, technicien_qui_archive, projet_id) VALUES ('Autre', 'Bienvenue sur Fix "
                 + str(VERSION)
                 + " !', 'Crée un ticket pour commencer ! Tu peux également afficher les détails de ce ticket en cliquant sur le bouton tout à droite !', '"
                 + str(date)
@@ -192,18 +203,18 @@ def check_and_create_db_if_required(db_name, req_to_create_db):
             heure = maintenant.strftime("%H:%M:%S")
 
             req_str = (
-                "INSERT INTO `utilisateurs` (`username`, `password`, `creation`, `super_admin`) VALUES ('admin', '"
+                "INSERT INTO utilisateurs (username, password, creation, super_admin) VALUES ('admin', '"
                 + str(chiffrer_password("admin"))
                 + "','"
                 + str(date)
-                + "', TRUE);"
+                + "', 1);"
             )
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
 
         elif str(db_name) == "utilisateurs_permissions":
             print("\t=> Ajout des permissions de l'utilisateur admin.", end="")
-            req_str = "INSERT INTO `utilisateurs_permissions` (`utilisateur_id`, `projet_id`, `permissions`) VALUES ('1', '1', '2');"
+            req_str = "INSERT INTO utilisateurs_permissions (utilisateur_id, projet_id, permissions) VALUES ('1', '1', '2');"
             db_run(req_str, fetch=False, commit=True)
             print(" OK !")
 
@@ -244,109 +255,115 @@ def prepare():
     print("Vérifcation des tables :")
     try:
         # Les requettes de créations de tables
-        req_create_projets = "CREATE TABLE `projets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `titre` varchar(50), `description` varchar(1024), `date` varchar(10) NOT NULL, `statut` int NOT NULL);"
-        req_create_tickets = "CREATE TABLE `tickets` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `projet_id` INT NOT NULL , `categorie` varchar(50) NOT NULL, `titre` varchar(50) NOT NULL, `description` longtext NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `utilisateur_emmeteur_du_ticket` varchar(25) NOT NULL, `date_pec` varchar(10) NOT NULL, `heure_pec` varchar(10) NOT NULL, `date_fin` varchar(10) NOT NULL, `heure_fin` varchar(10) NOT NULL, `urgence` INT NOT NULL, `statut` INT NOT NULL, `technicien_affecte` varchar(25) NOT NULL, `technicien_qui_archive` varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
-        req_create_utilisateurs = "CREATE TABLE `utilisateurs` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `username` varchar(16) NOT NULL, `password` varchar(512) NOT NULL, `super_admin` INT NOT NULL, `creation` varchar(10) NOT NULL );"
-        req_create_utilisateurs_permissions = "CREATE TABLE `utilisateurs_permissions` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `utilisateur_id` INT NOT NULL, `projet_id` INT NOT NULL , `permissions` INT NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id),  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));"
-        req_create_logs = "CREATE TABLE `logs` ( `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL, `utilisateur` VARCHAR(16) NOT NULL, `action` INT NOT NULL, `date` VARCHAR(10) NOT NULL, `heure` VARCHAR(8) NOT NULL, `cible` VARCHAR(256) NOT NULL );"
-        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id INT AUTO_INCREMENT, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire LONGTEXT NOT NULL, `statut` INT NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `updated` BOOLEAN DEFAULT FALSE, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
-        req_create_api_keys = "CREATE TABLE `api_keys` ( `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT, `user_id` INT NOT NULL, `token` varchar(62) NOT NULL, `date` varchar(10) NOT NULL, `heure` varchar(10) NOT NULL, `type` INT NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `utilisateurs`(`id`) );"
+        req_create_projets = "CREATE TABLE projets ( id SERIAL PRIMARY KEY, titre varchar(50), description varchar(1024), date varchar(10) NOT NULL, statut int NOT NULL);"
+        req_create_tickets = "CREATE TABLE tickets ( id SERIAL PRIMARY KEY, projet_id INT NOT NULL , categorie varchar(50) NOT NULL, titre varchar(50) NOT NULL, description TEXT NOT NULL, date varchar(10) NOT NULL, heure varchar(10) NOT NULL, utilisateur_emmeteur_du_ticket varchar(25) NOT NULL, date_pec varchar(10) NOT NULL, heure_pec varchar(10) NOT NULL, date_fin varchar(10) NOT NULL, heure_fin varchar(10) NOT NULL, urgence INT NOT NULL, statut INT NOT NULL, technicien_affecte varchar(25) NOT NULL, technicien_qui_archive varchar(25) NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        req_create_utilisateurs = "CREATE TABLE utilisateurs ( id SERIAL PRIMARY KEY, username varchar(16) NOT NULL, password varchar(512) NOT NULL, super_admin INT NOT NULL, creation varchar(10) NOT NULL );"
+        req_create_utilisateurs_permissions = "CREATE TABLE utilisateurs_permissions ( id SERIAL PRIMARY KEY, utilisateur_id INT NOT NULL, projet_id INT NOT NULL , permissions INT NOT NULL, FOREIGN KEY (projet_id) REFERENCES projets(id),  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));"
+        req_create_logs = "CREATE TABLE logs ( id SERIAL PRIMARY KEY, utilisateur VARCHAR(16) NOT NULL, action INT NOT NULL, date VARCHAR(10) NOT NULL, heure VARCHAR(8) NOT NULL, cible VARCHAR(256) NOT NULL );"
+        req_create_commentaires = "CREATE TABLE tickets_commentaires ( id SERIAL PRIMARY KEY, user_id INT, ticket_id INT, projet_id INT NOT NULL , commentaire TEXT NOT NULL, statut INT NOT NULL, date varchar(10) NOT NULL, heure varchar(10) NOT NULL, updated BOOLEAN DEFAULT FALSE, FOREIGN KEY (user_id) REFERENCES utilisateurs(id), FOREIGN KEY (ticket_id) REFERENCES tickets(id),  FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        req_create_api_keys = "CREATE TABLE api_keys ( id SERIAL PRIMARY KEY, user_id INT NOT NULL, token varchar(62) NOT NULL, date varchar(10) NOT NULL, heure varchar(10) NOT NULL, type INT NOT NULL, FOREIGN KEY (user_id) REFERENCES utilisateurs(id) );"
         req_create_tickets_stats = "CREATE TABLE IF NOT EXISTS tickets_stats ( stats_date DATE NOT NULL, projet_id INT NOT NULL, tickets_new INT DEFAULT 0, tickets_open INT DEFAULT 0, tickets_closed INT DEFAULT 0, PRIMARY KEY (stats_date, projet_id), FOREIGN KEY (projet_id) REFERENCES projets(id) );"
+        
         req_ticket_stats_create = """
-        DELIMITER $$
+        CREATE OR REPLACE FUNCTION ticket_stats_create_func() RETURNS TRIGGER AS $$
+        DECLARE
+            v_date DATE;
+        BEGIN
+            v_date := CURRENT_DATE;
+
+            IF EXISTS (
+                SELECT 1
+                FROM tickets_stats
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id
+            ) THEN
+
+                IF NEW.statut = 0 THEN
+                UPDATE tickets_stats
+                SET tickets_new = COALESCE(tickets_new, 0) + 1
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id;
+
+                ELSIF NEW.statut IN (1, 2, 3, 4) THEN
+                UPDATE tickets_stats
+                SET tickets_open = COALESCE(tickets_open, 0) + 1
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id;
+
+                ELSIF NEW.statut = 5 THEN
+                UPDATE tickets_stats
+                SET tickets_closed = COALESCE(tickets_closed, 0) + 1
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id;
+                END IF;
+
+            ELSE
+                INSERT INTO tickets_stats (
+                stats_date, projet_id, tickets_new, tickets_open, tickets_closed
+                )
+                VALUES (
+                v_date,
+                NEW.projet_id,
+                CASE WHEN NEW.statut = 0 THEN 1 ELSE 0 END,
+                CASE WHEN NEW.statut IN (1,2,3,4) THEN 1 ELSE 0 END,
+                CASE WHEN NEW.statut = 5 THEN 1 ELSE 0 END
+                );
+            END IF;
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
 
         CREATE TRIGGER ticket_stats_create
         AFTER INSERT ON tickets
         FOR EACH ROW
-        BEGIN
-        DECLARE v_date DATE;
-        SET v_date = CURDATE();
-
-        IF EXISTS (
-            SELECT 1
-            FROM tickets_stats
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id
-        ) THEN
-
-            IF NEW.statut = 0 THEN
-            UPDATE tickets_stats
-            SET tickets_new = COALESCE(tickets_new, 0) + 1
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id;
-
-            ELSEIF NEW.statut IN (1, 2, 3, 4) THEN
-            UPDATE tickets_stats
-            SET tickets_open = COALESCE(tickets_open, 0) + 1
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id;
-
-            ELSEIF NEW.statut = 5 THEN
-            UPDATE tickets_stats
-            SET tickets_closed = COALESCE(tickets_closed, 0) + 1
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id;
-            END IF;
-
-        ELSE
-            INSERT INTO tickets_stats (
-            stats_date, projet_id, tickets_new, tickets_open, tickets_closed
-            )
-            VALUES (
-            v_date,
-            NEW.projet_id,
-            IF(NEW.statut = 0, 1, 0),
-            IF(NEW.statut IN (1,2,3,4), 1, 0),
-            IF(NEW.statut = 5, 1, 0)
-            );
-        END IF;
-        END$$
-
-        DELIMITER ;
+        EXECUTE FUNCTION ticket_stats_create_func();
         """
+        
         req_ticket_stats_update = """
-        DELIMITER $$
+        CREATE OR REPLACE FUNCTION ticket_stats_update_func() RETURNS TRIGGER AS $$
+        DECLARE
+            v_date DATE;
+        BEGIN
+            v_date := CURRENT_DATE;
+
+            IF EXISTS (
+                SELECT 1
+                FROM tickets_stats
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id
+            ) THEN
+
+                IF NEW.statut = 0 THEN
+                UPDATE tickets_stats
+                SET tickets_new = COALESCE(tickets_new, 0) + 1
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id;
+
+                ELSIF NEW.statut IN (1, 2, 3, 4) THEN
+                UPDATE tickets_stats
+                SET tickets_open = COALESCE(tickets_open, 0) + 1
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id;
+
+                ELSIF NEW.statut = 5 THEN
+                UPDATE tickets_stats
+                SET tickets_closed = COALESCE(tickets_closed, 0) + 1
+                WHERE stats_date = v_date AND projet_id = NEW.projet_id;
+                END IF;
+
+            ELSE
+                INSERT INTO tickets_stats (
+                stats_date, projet_id, tickets_new, tickets_open, tickets_closed
+                )
+                VALUES (
+                v_date,
+                NEW.projet_id,
+                CASE WHEN NEW.statut = 0 THEN 1 ELSE 0 END,
+                CASE WHEN NEW.statut IN (1,2,3,4) THEN 1 ELSE 0 END,
+                CASE WHEN NEW.statut = 5 THEN 1 ELSE 0 END
+                );
+            END IF;
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
 
         CREATE TRIGGER ticket_stats_update
         AFTER UPDATE ON tickets
         FOR EACH ROW
-        BEGIN
-        DECLARE v_date DATE;
-        SET v_date = CURDATE();
-
-        IF EXISTS (
-            SELECT 1
-            FROM tickets_stats
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id
-        ) THEN
-
-            IF NEW.statut = 0 THEN
-            UPDATE tickets_stats
-            SET tickets_new = COALESCE(tickets_new, 0) + 1
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id;
-
-            ELSEIF NEW.statut IN (1, 2, 3, 4) THEN
-            UPDATE tickets_stats
-            SET tickets_open = COALESCE(tickets_open, 0) + 1
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id;
-
-            ELSEIF NEW.statut = 5 THEN
-            UPDATE tickets_stats
-            SET tickets_closed = COALESCE(tickets_closed, 0) + 1
-            WHERE stats_date = v_date AND projet_id = NEW.projet_id;
-            END IF;
-
-        ELSE
-            INSERT INTO tickets_stats (
-            stats_date, projet_id, tickets_new, tickets_open, tickets_closed
-            )
-            VALUES (
-            v_date,
-            NEW.projet_id,
-            IF(NEW.statut = 0, 1, 0),
-            IF(NEW.statut IN (1,2,3,4), 1, 0),
-            IF(NEW.statut = 5, 1, 0)
-            );
-        END IF;
-        END$$
-
-        DELIMITER ;
+        EXECUTE FUNCTION ticket_stats_update_func();
         """
 
 

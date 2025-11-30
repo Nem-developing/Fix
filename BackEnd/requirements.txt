@@ -2,6 +2,6 @@ aiohttp
 aiohttp-apispec>=2.2.3
 marshmallow>=3.10.0,<4.0.0
 apispec>=3.3.0,<4.0
-mysql-connector-python
+psycopg2-binary
 dataclasses ; python_version < "3.7"
 typing ; python_version < "3.5"
