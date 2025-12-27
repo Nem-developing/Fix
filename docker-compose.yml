@@ -17,7 +17,9 @@ services:
       - elticketo-network
 
   elticketo-api:
-    image: elticketo/api:alpha_2.0
+    build:
+      context: .
+      dockerfile: ./BackEnd/Dockerfile
     restart: always
     depends_on:
       - fix-database
@@ -29,7 +31,9 @@ services:
       DB_NAME: fix
       DB_HOSTNAME: fix-database
     ports:
-      - "8000:8080"
+      - "9001:9001"
+    volumes:
+      - ./BackEnd:/usr/src/app
     labels:
     - "traefik.enable=true"
 
@@ -58,25 +62,32 @@ services:
     ## Route principale pour /api
     - "traefik.http.routers.elticketo-api.rule=PathPrefix(`/api`)"
     - "traefik.http.routers.elticketo-api.entrypoints=web"
-    - "traefik.http.services.elticketo-api.loadbalancer.server.port=8080"
+    - "traefik.http.services.elticketo-api.loadbalancer.server.port=9001"
 
 
 
   elticketo-app:
-    image: elticketo/app:alpha_2.0
+    build:
+      context: .
+      dockerfile: ./FrontEnd/Dockerfile
     restart: always
     depends_on:
       - fix-database
       - elticketo-api
     networks:
       - elticketo-network
+    volumes:
+      - ./FrontEnd:/usr/src/app
+      - /usr/src/app/node_modules
     environment:
-      API_URL: "http://elticketo-api:8080"
-      APP_URL: "http://localhost:8000"
+      API_URL: "http://elticketo-api:9001"
+      APP_URL: "http://localhost:8082"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.elticketo-app.rule=PathPrefix(`/`)"
       - "traefik.http.services.elticketo-app.loadbalancer.server.port=5173"
+    ports:
+      - "8082:5173"
 
   fix-database:
     image: mariadb:latest

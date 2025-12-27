@@ -16,6 +16,7 @@ from aiohttp_apispec import (
     response_schema,
     request_schema,
 )
+import aiohttp_cors
 from marshmallow import Schema, fields
 
 
@@ -23,6 +24,15 @@ from stats.gestion import get_projets_stats, get_a_projet_stats, get_tickets_gra
 from database.gestion import db_ok, prepare
 from projets.gestion import create_projet, get_a_projet, get_all_projets
 from tickets.gestion import change_ticket_statut, create_ticket, get_a_ticket, get_a_ticket_commentaire, get_all_ticket_commentaire, get_all_tickets, get_ticket_statut, post_commentaire, put_commentaire
+app = web.Application()
+# Configuration CORS par défaut (autorise tout, à restreindre si besoin)
+cors = aiohttp_cors.setup(app, defaults={
+    "*": aiohttp_cors.ResourceOptions(
+        allow_credentials=True,
+        expose_headers="*",
+        allow_headers="*",
+    )
+})
 from utilisateurs.gestion import change_user_mdp, create_user, get_a_users, get_all_users, get_token, get_token_list, get_user_id_from_token, request_is_valid, token_create, verif_user_exist, verif_user_password
 from variables.constants import VERSION
 
@@ -179,7 +189,7 @@ async def web_get_a_ticket(request):
 )
 
 # WEB : (POST) Création d'un nouveau ticket
-class PatchTicketSchema(Schema):
+class CreateTicketSchema(Schema):
     titre = fields.Int(required=False)
     categorie = fields.Int(required=False)
     description = fields.Int(required=False)
@@ -187,11 +197,11 @@ class PatchTicketSchema(Schema):
 
 @docs(
     tags=["tickets"],
-    summary="PATCH un ticket",
-    description="Mettre à jour certaines informations d'un ticket sans tout envoyer."
+    summary="Créer un ticket",
+    description="Créer un nouveau ticket"
 )
 @request_schema(CreateTicketSchema)
-async def PatchTicketSchema(request):
+async def web_create_ticket(request):
     projet_id = int(request.match_info["projet_id"])
     # GET POST DATA
     post_data = await request.json()
@@ -530,8 +540,13 @@ async def web_stats_tickets(request):
         days = 7
     return web.json_response(json.loads(json.dumps(get_tickets_graph(projet_id,days))))
 
+async def web_patch_a_ticket(request):
+    return web.json_response({"error": "Not implemented"})
+
+async def web_put_a_ticket(request):
+    return web.json_response({"error": "Not implemented"})
+
 # Définition des routes
-app = web.Application()
 app.router.add_get("/api/", web_index)
 
 # GESTION DES PROJETS
@@ -589,6 +604,10 @@ setup_aiohttp_apispec(
 
 prepare()
 
-web.run_app(app)
+# Configure CORS on all routes.
+for route in list(app.router.routes()):
+    cors.add(route)
+
+web.run_app(app, port=9001)
 
 exit(0)

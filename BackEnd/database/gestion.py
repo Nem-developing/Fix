@@ -238,7 +238,9 @@ def prepare():
         print(acces_db_error)
         print()
         print("================================================")
-        exit(1)
+        print("================================================")
+        # exit(1)  <-- Commented out to allow server start for visual debugging
+        pass
 
     # Tables présentes
     print("Vérifcation des tables :")

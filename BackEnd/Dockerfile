@@ -10,5 +10,5 @@ COPY ./BackEnd/ ./
 RUN pip3 install -r /usr/src/app/requirements.txt
 
 
-EXPOSE 8080
+EXPOSE 9001
 CMD ["python3", "-u" ,"main.py"]
