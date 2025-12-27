@@ -1,8 +1,7 @@
-import React from "react";
 import DumpNombreTicket from "../components/tickets/DumpNombreTicket";
 import EtatTicketGraph from "../components/graph/Etat";
 import CategoryTicketGraph from "../components/graph/Categorie";
-import Information_dev from "../components/autres/informationdev";
+// import Information_dev from "../components/autres/informationdev";
 
 const Dashboard = () => {
   return (

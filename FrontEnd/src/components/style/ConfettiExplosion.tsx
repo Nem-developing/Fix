@@ -71,9 +71,16 @@ type Props = {
 
 const ConfettiExplosion: React.FC<Props> = ({ trigger, yOffset = 0.5 }) => {
   const confettiInstanceRef = useRef<any>(null);
-  const onInitConfetti = useCallback(({ confetti }: { confetti: any }) => {
-    confettiInstanceRef.current = confetti;
-  }, []);
+  const onInitConfetti = useCallback(
+    ({ confetti }: { confetti: any }) => {
+      confettiInstanceRef.current = confetti;
+      // If trigger is already true when initialized, fire immediately
+      if (trigger) {
+        fire(confetti, yOffset);
+      }
+    },
+    [trigger, yOffset]
+  );
 
   useEffect(() => {
     if (trigger && confettiInstanceRef.current) {

@@ -1,12 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { createTicket } from "../services/apiService";
-import ConfettiExplosion from "../components/style/ConfettiExplosion";
 import InputField from "../components/utility/InputField";
 import CategorySelector from "../components/utility/CategorySelector";
 import UrgencySelector from "../components/utility/UrgencySelector";
 import useForm from "../hooks/useForm";
-import useSuccessAnimation from "../hooks/useSuccessAnimation";
+import { useSuccessContext } from "../context/SuccessContext";
 import { categories } from "../constants/categories";
 
 interface NewTicketFormValues {
@@ -18,8 +17,7 @@ interface NewTicketFormValues {
 
 const NewTicket: React.FC = () => {
   const navigate = useNavigate();
-  const { showSuccess, successMessageRef, confettiY, triggerSuccess } =
-    useSuccessAnimation();
+  const { triggerSuccess } = useSuccessContext();
 
   const initialFormValues: NewTicketFormValues = {
     titre: "",
@@ -42,9 +40,7 @@ const NewTicket: React.FC = () => {
         const result = await createTicket(data);
         console.log("Ticket créé :", result);
         triggerSuccess();
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2500);
+        navigate("/dashboard");
       } catch (error) {
         console.error("Erreur création ticket :", error);
         alert("Erreur lors de la création du ticket.");
@@ -66,16 +62,6 @@ const NewTicket: React.FC = () => {
 
   return (
     <div className="NewTicket">
-      {showSuccess && (
-        <>
-          <div className="success-overlay-background"></div>
-          <ConfettiExplosion trigger={showSuccess} yOffset={confettiY} />
-          <div className="success-overlay-content">
-            <h2 ref={successMessageRef}>🎉 Ticket créé !</h2>
-          </div>
-        </>
-      )}
-
       <h1>Nouveau Ticket</h1>
       <div className="formdiv">
         <form onSubmit={(e) => handleSubmit(e, validateForm)}>
