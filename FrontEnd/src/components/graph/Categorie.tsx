@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { fetchStatsData } from "../../services/apiService";
 
 const CACHE_KEY = "graph-tickets-categorie";
@@ -81,24 +74,64 @@ export default function CategoryTicketGraph() {
   if (error) return <p>Erreur : {error}</p>;
 
   return (
-    <ResponsiveContainer width="100%">
-      <PieChart>
-        <Pie
-          data={data}
-          dataKey="value"
-          nameKey="name"
-          cx="50%"
-          cy="50%"
-          outerRadius={90}
-          label
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
+    <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ width: "100%", height: 300 }}>
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={90}
+              label
+            >
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div
+        className="custom-legend"
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          padding: "0 20px 20px 20px",
+          gap: "10px",
+          justifyContent: "center",
+        }}
+      >
+        {data.map((entry, index) => (
+          <div
+            key={`legend-${index}`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontSize: "0.9rem",
+              color: "#555",
+            }}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                width: 12,
+                height: 12,
+                backgroundColor: COLORS[index % COLORS.length],
+                marginRight: 8,
+                borderRadius: "2px",
+              }}
+            ></span>
+            {entry.name} ({entry.value})
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

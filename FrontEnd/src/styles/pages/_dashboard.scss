@@ -41,7 +41,7 @@
     .Graphiques {
       margin-top: map.get(var.$spacings, xl);
       @include mix.flex-space-between;
-      align-items: stretch;
+      align-items: flex-start; 
       min-height: 23em;
 
       h2 {
@@ -99,6 +99,8 @@
         .recharts-responsive-container {
           display: flex;
           flex-grow: 1;
+          margin: 1em;
+          width: calc(100% - 2em) !important; 
 
           .recharts-wrapper {
             .recharts-legend-wrapper {
